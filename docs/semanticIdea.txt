@@ -3,78 +3,39 @@ Applikationsidee
 
 Anwendungsfall:
 -> Meta:
-"Hätten die französischen Verwaltungsbehörden während der napoleonischen Neuordnung des
-deutschen Raums ein strukturiertes Wissens- und Verwaltungsmodell wie dieses zur Verfügung gehabt.."
+"Hätten die Verwaltungsbehörden im Zuge der französischen Neuordnung des deutschen
+Raums ein strukturiertes Wissens- und Verwaltungsmodell wie dieses zur Verfügung gehabt.."
 
 -> Tatsächlich:
 Historisches Wissens- und Analysewerkzeug zur strukturierten Darstellung des politischen
 und territorialen Zustands im deutschsprachigen Raum um 1800
 
-- Bildungs- / Lernsystem
 - "Semi"-historisches Analysesystem
+- Bildungs- / Lernsystem
 
-Beispielschema:
+Anwendungsfunktionen:
 
-Ort isA Class
+- Basisfunktionalitäten (CRUD)
+-- Triple-Store auslesen														api: get/triple/triples
+-- Triple-Query - Ergebnis auslesen												api: get/triple/{triple}
+-- Sparql-Query - Ergebnis auslesen												api: get/triple/{query}
+-- Triple anlegen																api: post/triple/{triple}
+-- Triple aktualisieren															api: put/triple/{triple}
+-- Triple löschen																api: delete/triple/{triple}
 
-HeiligeRömischeReich isA Class
-HeiligeRömischeReich subClassOf Ort
+- Domänenspezifische Funktionen
 
-Territorium isA Class
-Territorium subClassOf Ort
-Territorium subClassOf HeiligeRömischeReich
+-- Meta
+--- Aktive Staaten auslesen														api: get/meta/states
+--- Territoriale Änderungen auslesen (Faktor)									api: get/meta/changes
 
-Fürstentum isA Class
-Fürstentum subClassOf Territorium
+-- Operationen
+--- Staat mediatisieren -> Relationen aktualisieren / anlegen / löschen			api: post/state/mediatizate/{state}?=into{state}
+--- Staatsoberhaupt wechseln -> Relationen aktualisieren / anlegen / löschen	api: post/state/changeRuler/{state}?ruler={ruler}
+--- Staat anlegen -> Triple anlegen	api: 										api: post/state/foundState
 
-Herzogtum isA Class
-Herzogtum subClassOf Territorium
+--> Rückgabe der Triple-Store-Aktionen
+--> Log der Triple-Store-Aktionen
 
-Grafschaft isA Class
-Grafschaft subClassOf Territorium
+--- Aktionshistorie anzeigen (Log)
 
-Stadt isA Class
-Stadt subClassOf Ort
-
-FreieReichsstadt isA Class
-FreieReichsstadt subClassOf Stadt
-
-Person isA Class
-
-Herrscher isA Class
-Herrscher subClassOf Person
-
-Bürger isA Class
-Bürger subClassOf Person
-
-regiert isA Property
-regiert domain Herrscher
-regiert range Territorium
-
-untersteht isA Property
-untersteht domain Territorium
-untersteht range Herrschaftsgebiet
-
-gehörtZu isA Property
-gehörtZu domain Territorium
-gehörtZu range Reichsstand
-
-residiertIn isA Property
-residiertIn domain Person
-residiertIn range Ort
-
-belehnt isA Property
-belehnt domain Herrscher
-belehnt range Territorium
-
-istLehnsherrVon isA Property
-istLehnsherrVon domain Herrscher
-istLehnsherrVon range Herrscher
-
-istTeilDesReiches isA Property
-istTeilDesReiches domain Territorium
-istTeilDesReiches range Reichsstand
-
-liegtIn isA Property
-liegtIn domain Stadt
-liegtIn range Ort

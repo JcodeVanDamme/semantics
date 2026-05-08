@@ -1,17 +1,6 @@
 Predicate Domain Subject
 Predicate Range Object
 
-*** Application-Functions *********************************************
-- View all Triples from the Store
-
--Base Functions
--- Query Triple -> View Results
--- Create Triple
--- Update Triple
--- Delete Triple
-
-- Basic autocomplete according to Triple Type (Class / Property) and persisted Triples
-
 *** Systems Architecture ***********************************************
 
 -Backend: Java Spring Boot
