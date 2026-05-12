@@ -1,0 +1,51 @@
+Idee:
+
+- Staaten- und Territorienmanagement im deutschsprachigen Raum der frühen 1800er Jahre
+
+--> Ende des heilligen deutschen Reiches deutscher Nation, statt einheitlichem Staat
+	Unzahl an Selbstverwaltenden Einzelstaaten
+	
+--> Prozess der Mediatisierung; Zusammengliederung der Staaten; Bildungsprozess einer
+	einheitlichen Nation
+	
+--> Gewaltige
+
+Anwendungsfall:
+
+"Hätten die Verwaltungsbehörden im Zuge der französischen Neuordnung des deutschen
+Raums ein strukturiertes Wissens- und Verwaltungsmodell wie dieses zur Verfügung gehabt.."
+
+- Historisches Wissens- und Analysewerkzeug zur strukturierten Darstellung des politischen
+  und territorialen Zustands im deutschsprachigen Raum um 1800
+
+-> Bildungs- / Lernsystem
+-> "Semi" -historisches Analysesystem
+
+Anwendungsfunktionen:
+
+- Basisfunktionalitäten (CRUD)
+
+-- Triple-Store auslesen															api: get/triple/triples
+-- Triple-Query - Ergebnis auslesen													api: get/triple/{triple}
+-- Sparql-Query - Ergebnis auslesen													api: get/triple/{query}
+-- Triple anlegen																	api: post/triple/{triple}
+-- Triple aktualisieren																api: put/triple/{triple}
+-- Triple löschen																	api: delete/triple/{triple}
+
+- Domänenspezifische Funktionen
+
+-- Metainformationen
+
+--- Aktive Staaten auslesen															api: get/meta/states
+--- Territoriale Änderungen auslesen (Faktor)										api: get/meta/changes
+
+-- Operationen
+--- Staat mediatisieren -> Triple aktualisieren / anlegen / auflösen				api: post/state/mediatizate/{state}?=into{state}
+--- Staatsoberhaupt wechseln -> Triple aktualisieren / anlegen / auflösen			api: post/state/changeRuler/{state}?ruler={ruler}
+--- Staat anlegen -> Triple anlegen													api: post/state/foundState
+
+--> Rückgabe der Triple-Store-Aktionen
+--> Log der Triple-Store-Aktionen
+
+--- Aktionshistorie anzeigen (Log)													api: get/history
+
