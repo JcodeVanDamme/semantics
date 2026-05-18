@@ -1,7 +1,5 @@
 # API Documentation
 
-[Go to section](#gabba)
-
 ## Domain-Agnostic-Endpoints (CRUD)
 
 - [**POST** `/triples`](#triplesCreate) - Create a new triple
