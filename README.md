@@ -2,37 +2,36 @@
 
 ## Domain-Agnostic-Endpoints (CRUD)
 
-- [**POST** `/triples`](#triplesCreate) - Create a new triple
+- [**POST** `/triples`](#create-triple) - Create a new triple
 
-- [**GET** `/triples`](#triplesRead) - Query triples with optional filters (`s`, `p`, `o`)
+- [**GET** `/triples`](#read-triples-triple-query) - Query triples with optional filters (`s`, `p`, `o`)
 
-- [**POST** `/triples/sparql`](#triplesReadSparql) - Query triples using SPARQL
+- [**POST** `/triples/sparql`](#read-triples-sparql-query) - Query triples using SPARQL
 
-- [**PUT** `/triples`](#triplesUpdate) - Update an existing triple
+- [**PUT** `/triples`](#update-triple) - Update an existing triple
 
-- [**DELETE** `/triples`](#triplesDelete) - Delete a triple
+- [**DELETE** `/triples`](#delete-triple) - Delete a triple
 
 ## Domain-Specific-Endpoints
 
-- [**GET** `/ops/activeStates`](#activeStates) - Retrieve the number of active States
+- [**GET** `/ops/activeStates`](#get-active-states) - Retrieve the number of active States
 
-- [**GET** `/ops/stateChanges`](#stateChanges) - Retrieve the difference of active States and original States
+- [**GET** `/ops/stateChanges`](#get-state-change-factor) - Retrieve the difference of active States and original States
 
-- [**GET** `/ops/states`](#states) - Retrieve relevant Information of all active States
+- [**GET** `/ops/states`](#get-state-data) - Retrieve relevant Information of all active States
 
-- [**POST** `/ops/mediatizate`](#mediatizate) - Mediatizate a State into another one
+- [**POST** `/ops/mediatizate`](#mediatizate-state) - Mediatizate a State into another one
 
-- [**POST** `/ops/changeRuler`](#changeRuler) - Change the Ruler of a State
+- [**POST** `/ops/changeRuler`](#change-state-ruler) - Change the Ruler of a State
 
-- [**POST** `/ops/foundState`](#foundState) - Found a new State
+- [**POST** `/ops/foundState`](#found-state) - Found a new State
 
-- [**GET** `/ops/history`](#history) - Retrieve the History of State-Relevant-Actions
+- [**GET** `/ops/history`](#get-state-action-history) - Retrieve the History of State-Relevant-Actions
 
 
 ---
-# Domain-Agnostic-Endpoints (CRUD)
 
-## Create Triple <a id="triplesCreate"></a>
+# Create Triple
 
 - Writes the passed Triple into the Triple-Store
 
@@ -82,7 +81,7 @@ POST
 
 ---
 
-## Read Triples (Triple-Query) <a id="triplesRead"></a>
+# Read Triples (Triple-Query)
 
 - Returns Triples matching the passed Filters
 - Returns the whole Triple-Store if all Filters are left null
@@ -141,7 +140,7 @@ GET
 
 ---
 
-## Read Triples (SPARQL-Query) <a id="triplesReadSparql"></a>
+# Read Triples (SPARQL-Query)
 
 - Returns Triples matching the passed SPARQL-Query
 
@@ -203,7 +202,7 @@ POST
 
 ---
 
-## Update Triple <a id="triplesUpdate"></a>
+# Update Triple
 
 - Updates the passed Triple by first performing a delete, followed by a create
 
@@ -263,7 +262,7 @@ PUT
 
 ---
 
-## Delete Triple <a id="triplesDelete"></a>
+# Delete Triple
 
 - Deletes the passed Triple from the Triple-Store
 
@@ -310,9 +309,7 @@ DELETE
 
 ---
 
-# Domain-Specific-Endpoints <a id="domainSpecific"></a>
-
-### Get active States <a id="activeStates"></a>
+## Get active States
 
 - Returns the number of currently active States
 
@@ -348,7 +345,7 @@ GET
 
 ---
 
-### Get State-Change-Factor
+## Get State-Change-Factor
 
 - Returns the difference between the original number of States and the currently active States
 
@@ -384,7 +381,7 @@ GET
 
 ---
 
-### Get State-Data <a id="states"></a>
+## Get State-Data
 
 - Returns all relevant data from all active States
 
@@ -432,7 +429,7 @@ GET
 		    "name": "gabba",
             "type": "gabba"
 		  }
-        ]"
+        ]
       },
       "population": 0,
       "stateType": "gabba"
@@ -466,7 +463,7 @@ GET
 
 ---
 
-### Mediatizate State <a id="mediatizate"></a>
+## Mediatizate State
 
 - Performs all necessary Triple-Store-Actions to mark the State whose name is passed under `absorbed` as inactive aswell as performing all Actions for it to be mediatizated into the State whose Name is passed under `into`
 - Returns all resulting Triple-Store-Actions including their Action-Type along with their respective Subject, Predicate and Object
@@ -538,7 +535,7 @@ POST
 
 ---
 
-### Change State-Ruler <a id="changeRuler"></a>
+## Change State-Ruler
 
 - Performs all necessary Triple-Store-Actions to change the Ruler of the State whose Name is passed under `state` to the Ruler whose name is passed under `ruler`
 - Returns all resulting Triple-Store-Actions including their Action-Type along with their respective Subject, Predicate and Object
@@ -609,7 +606,7 @@ POST
 
 ---
 
-### Found State  <a id="foundState"></a>
+## Found State
 
 - Performs all necessary Triple-Store-Actions to create the State per Data passed in the Request-Body
 - Returns all resulting Triple-Store-Actions including their Action-Type along with their respective Subject, Predicate and Object
@@ -683,7 +680,7 @@ POST
 
 ---
 
-### Get Triple-Action-History <a id="history"></a>
+## Get State-Action-History
 
 - Returns a List of all State-Relevant-Triple-Store-Actions resulting from calls to **/ops/mediatizate**, **/ops/changeRuler** and **/ops/foundState**
 
@@ -725,3 +722,7 @@ GET
 | `triples[].triple.s` | string | Triple Subject |
 | `triples[].triple.p` | string | Triple Predicate |
 | `triples[].triple.o` | string | Triple Object |
+
+---
+
+[Jump to Top](#api-documentation)
