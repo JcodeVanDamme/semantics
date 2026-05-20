@@ -20,11 +20,9 @@ public class BitString {
     }
 
     // counts the number of occurrences of bit c in b up to position i
+    // TODO -> Is rank[ i exclusive expected Behaviour ?]
     public int rank(boolean c, int i) {
-        if (i < 0 ||i > size) {
-            throw new IndexOutOfBoundsException();
-        }
-
+        checkBounds(i);
         int setBits = b.get(0, i).cardinality();
         return c ? setBits : i - setBits;
     }
@@ -40,7 +38,7 @@ public class BitString {
                 pos = b.nextClearBit(pos + 1);
             }
             if (pos < 0) {
-                throw new ArrayStoreException();
+                throw new IndexOutOfBoundsException("select(" + c + "," + j + ") out of Range");
             }
             if (count == j) {
                 return pos;
@@ -51,7 +49,14 @@ public class BitString {
 
     // gets the bit value at b[i]
     public int access(int i) {
+        checkBounds(i);
         return b.get(i) ? 1 : 0;
+    }
+
+    private void checkBounds(int i) {
+        if (i < 0 || i > size) {
+            throw new IndexOutOfBoundsException("Index: " + i + " out of Bounds for Size: " + size);
+        }
     }
 
     @Override

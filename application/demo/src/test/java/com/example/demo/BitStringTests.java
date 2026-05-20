@@ -33,13 +33,14 @@ public class BitStringTests {
 
         // counts the number of occurrences of bit c in b up to position i
 
-        assertEquals(6, b1.rank(true, bits1.size()));
-        assertEquals(8, b1.rank(false, bits1.size()));
-        assertEquals(2, b1.rank(true, 7));
-        assertEquals(5, b1.rank(false, 7));
+        assertEquals(1, b1.rank(false,1));
+        assertEquals(0, b1.rank(true,1));
+
+        assertEquals(8, b1.rank(false,14));
+        assertEquals(6, b1.rank(true,14));
 
         // Exceeding Bounds
-        assertThrows(IndexOutOfBoundsException.class, () -> b1.rank(true, bits1.size() + 1));
+        assertThrows(IndexOutOfBoundsException.class, () -> b1.rank(true, 69));
         assertThrows(IndexOutOfBoundsException.class, () -> b1.rank(true, -1));
 
         // []
@@ -71,6 +72,7 @@ public class BitStringTests {
         BitString b1 = new BitString(bits1);
 
         // returns the position in b of the j-th bit set to c
+
         assertEquals(0, b1.select(false, 1));
         assertEquals(2, b1.select(true, 1));
         assertEquals(11, b1.select(true, 4));
@@ -78,5 +80,25 @@ public class BitStringTests {
 
         // Querying more than present
         assertThrows(ArrayStoreException.class, () -> b1.select(true, 20));
+    }
+    @Test
+    public void accessTests() {
+        List<Boolean> bits = new ArrayList<>();
+
+        bits.add(false);
+        bits.add(false);
+        bits.add(true);
+
+        // [0 0 1]
+        BitString b = new BitString(bits);
+
+        // gets the bit value at b[i]
+
+        assertEquals(0, b.access(0));
+        assertEquals(1, b.access(2));
+
+        // Exceeding Bounds
+        assertThrows(IndexOutOfBoundsException.class, () -> b.access(-1));
+        assertThrows(IndexOutOfBoundsException.class, () -> b.access(69));
     }
 }
