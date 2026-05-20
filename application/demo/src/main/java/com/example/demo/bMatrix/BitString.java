@@ -53,4 +53,9 @@ public class BitString {
     public int access(int i) {
         return b.get(i) ? 1 : 0;
     }
+
+    @Override
+    public String toString() {
+        return b.toString();
+    }
 }

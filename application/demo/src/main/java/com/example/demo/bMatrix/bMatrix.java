@@ -19,9 +19,8 @@ public class bMatrix {
     int numSubjects;
     int numObjects;
 
-    public K2Tree st;
+    K2Tree st;
     K2Tree ot;
-
 
 
     public bMatrix(int k, TripleProvider provider) {
@@ -41,8 +40,8 @@ public class bMatrix {
         numSubjects = 0;
         numObjects = 0;
 
-        st = new K2Tree(k);
-        ot = new K2Tree(k);
+        //st = new K2Tree();
+        //ot = new K2Tree();
     }
 
     public void init() {
@@ -144,110 +143,8 @@ public class bMatrix {
             ));
         }
 
-        /* ****************************************************************************
-
-        // PREFAB. DEBUG CELLS REPRESENTING LAYOUT OF ST-MATRIX AS SEEN ON P.5 IN PAPER
-
-        List<Cell> testST = new ArrayList<>();
-        testST.add(new Cell(0, 7));
-        testST.add(new Cell(0, 8));
-        testST.add(new Cell(0, 9));
-        testST.add(new Cell(1, 4));
-        testST.add(new Cell(2, 0));
-        testST.add(new Cell(2, 12));
-        testST.add(new Cell(3, 1));
-        testST.add(new Cell(3, 5));
-        testST.add(new Cell(3, 11));
-        testST.add(new Cell(4, 2));
-        testST.add(new Cell(4, 13));
-        testST.add(new Cell(5, 3));
-        testST.add(new Cell(5, 6));
-        testST.add(new Cell(5, 10));
-        assembleK2(st, testST, 0, 0, size, true);
-
-        // PREFAB. DEBUG CELLS REPRESENTING LAYOUT OF OT-MATRIX AS SEEN ON P.5 IN PAPER
-
-        List<Cell> testOT = new ArrayList<>();
-        testOT.add(new Cell(1, 0));
-        testOT.add(new Cell(1, 1));
-        testOT.add(new Cell(1, 2));
-        testOT.add(new Cell(1, 3));
-        testOT.add(new Cell(1, 9));
-        testOT.add(new Cell(2, 10));
-        testOT.add(new Cell(3, 11));
-        testOT.add(new Cell(4, 5));
-        testOT.add(new Cell(4, 6));
-        testOT.add(new Cell(4, 7));
-        testOT.add(new Cell(5, 12));
-        testOT.add(new Cell(5, 13));
-        testOT.add(new Cell(6, 4));
-        testOT.add(new Cell(7, 8));
-        assembleK2(st, testOT, 0, 0, size, true);
-
-        **************************************************************************** */
-
-        assembleK2(st, stCells, 0, 0, size, true);
-        st.assembleBitStrings();
-        assembleK2(ot, otCells, 0, 0, size, true);
-        ot.assembleBitStrings();
-    }
-    public void assembleK2(K2Tree tree, List<Cell> currentCells,  int rowStart, int colStart, int matrixSize, boolean skipBit) {
-        // Leave Reached
-        if (matrixSize == 1) {
-            if (!currentCells.isEmpty()) {
-                Cell c = currentCells.get(0);
-                if (c.row() == rowStart && c.col() == colStart) {
-                    // Set next Bit in L to 1
-                    tree.setL(true);
-                    return;
-                }
-            }
-            // Set next Bit in L to 0
-            tree.setL(false);
-            return;
-        }
-
-        boolean match = false;
-        for (Cell c : currentCells) {
-            if (matchCell(c, rowStart, colStart, matrixSize)) {
-                match = true;
-                break;
-            }
-        }
-        // Skip Addition for the Root Node
-        if (!skipBit) {
-            // Set next Bit in T to 1 if a matching Cell was found; else set Bit to 0
-            tree.setT(matrixSize, match);
-        }
-        // Break Subdivision Process for Empty Matrices
-        if (!match) {
-            return;
-        }
-
-        // Continue processing Sub-Matrices
-        int childSize = matrixSize / k;
-        for (int i = 0; i < k; i++) {
-            for (int j = 0; j < k; j++) {
-
-                int newRowStart = rowStart + i * childSize;
-                int newColStart = colStart + j * childSize;
-
-                // Reduce Cells for each Sub-Matrix
-                List<Cell> childCells = new ArrayList<>();
-                for (Cell c : currentCells) {
-                    if (matchCell(c, newRowStart, newColStart, childSize)) {
-                        childCells.add(c);
-                    }
-                }
-
-                assembleK2(tree, childCells, newRowStart, newColStart, childSize, false);
-            }
-        }
-    }
-    private boolean matchCell(Cell c, int rowStart, int colStart, int matrixSize) {
-        if (c.row() >= rowStart && c.row() < rowStart + matrixSize) {
-            return c.col() >= colStart && c.col() < colStart + matrixSize;
-        }
-        return false;
+        K2TreeBuilder k2Builder = new K2TreeBuilder();
+        st = k2Builder.constructK2(k, stCells, size);
+        ot = k2Builder.constructK2(k, otCells, size);
     }
 }

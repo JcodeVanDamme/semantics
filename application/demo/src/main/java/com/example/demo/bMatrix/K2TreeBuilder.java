@@ -17,33 +17,35 @@ public class K2TreeBuilder {
     private int maxTLevel;
 
     private int k;
-    private K2TreeBuilder() {
+
+    public K2TreeBuilder() {
         tTemp = new ArrayList<>();
         lTemp = new ArrayList<>();
         tLevels = new HashMap<>();
     }
     public K2Tree constructK2(int k, List<Cell> cells, int initialMatrixSize) {
+        tTemp.clear();
+        lTemp.clear();
+        tLevels.clear();
+        maxTLevel = 0;
 
-        K2Tree tree = new K2Tree(k);
-
-        assembleK2(tree, cells, 0, 0, initialMatrixSize, true);
-        assembleBitStrings(tree);
-
-        return tree;
+        this.k = k;
+        assembleK2(cells, 0, 0, initialMatrixSize, true);
+        return assembleBitStrings();
     }
-    private void assembleK2(K2Tree tree, List<Cell> currentCells,  int rowStart, int colStart, int matrixSize, boolean skipBit) {
+    private void assembleK2(List<Cell> currentCells,  int rowStart, int colStart, int matrixSize, boolean skipBit) {
         // Leave Reached
         if (matrixSize == 1) {
             if (!currentCells.isEmpty()) {
                 Cell c = currentCells.get(0);
                 if (c.row() == rowStart && c.col() == colStart) {
                     // Set next Bit in L to 1
-                    tree.setL(true);
+                    setL(true);
                     return;
                 }
             }
             // Set next Bit in L to 0
-            tree.setL(false);
+            setL(false);
             return;
         }
 
@@ -57,7 +59,7 @@ public class K2TreeBuilder {
         // Skip Addition for the Root Node
         if (!skipBit) {
             // Set next Bit in T to 1 if a matching Cell was found; else set Bit to 0
-            tree.setT(matrixSize, match);
+            setT(matrixSize, match);
         }
         // Break Subdivision Process for Empty Matrices
         if (!match) {
@@ -80,7 +82,7 @@ public class K2TreeBuilder {
                     }
                 }
 
-                assembleK2(tree, childCells, newRowStart, newColStart, childSize, false);
+                assembleK2(childCells, newRowStart, newColStart, childSize, false);
             }
         }
     }
@@ -99,7 +101,7 @@ public class K2TreeBuilder {
         // L-Bits as opposed to T-Bits need to be directly appended when encountered to keep the correct Order
         lTemp.add(val);
     }
-    public void assembleBitStrings(K2Tree tree) {
+    private K2Tree assembleBitStrings() {
         // First assemble final TTemp Bits in the correct Order
         for (int lvl = maxTLevel; lvl > 0; lvl = lvl / k) {
             List<Boolean> bits = tLevels.get(lvl);
@@ -107,7 +109,27 @@ public class K2TreeBuilder {
                 tTemp.addAll(bits);
             }
         }
-        tree.t() = new BitString(tTemp);
-        tree.l() = new BitString(lTemp);
+        printTemp();
+        BitString t = new BitString(tTemp);
+        BitString l = new BitString(lTemp);
+        return new K2Tree(t, l);
+    }
+
+    public void printTemp() {
+        StringBuilder strb = new StringBuilder();
+        strb.append("T: ");
+        generateString(strb, tTemp);
+        strb.append("\nL: ");
+        generateString(strb, lTemp);
+        System.out.println(strb.toString());
+    }
+    private void generateString(StringBuilder strb, List<Boolean> b) {
+        for (int i = 0; i < b.size(); i ++) {
+            String bit = b.get(i) ? "1" : "0";
+            strb.append(bit);
+            if ((i + 1) % (k*k) == 0) {
+                strb.append(' ');
+            }
+        }
     }
 }
