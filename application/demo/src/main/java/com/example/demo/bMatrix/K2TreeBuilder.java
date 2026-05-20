@@ -109,19 +109,18 @@ public class K2TreeBuilder {
                 tTemp.addAll(bits);
             }
         }
-        printTemp();
         BitString t = new BitString(tTemp);
         BitString l = new BitString(lTemp);
         return new K2Tree(t, l);
     }
 
-    public void printTemp() {
+    public String tempToString() {
         StringBuilder strb = new StringBuilder();
         strb.append("T: ");
         generateString(strb, tTemp);
         strb.append("\nL: ");
         generateString(strb, lTemp);
-        System.out.println(strb.toString());
+        return strb.toString();
     }
     private void generateString(StringBuilder strb, List<Boolean> b) {
         for (int i = 0; i < b.size(); i ++) {

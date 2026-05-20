@@ -8,6 +8,6 @@ public class BMatrixTests {
     @Test
     public void bMatrixTest() {
 
-        BMatrix bMatrix = new BMatrix(2, new TestTripleProvider());
+        BMatrix bMatrix = new BMatrix(2, 10, new TestTripleProvider());
     }
 }
