@@ -2,49 +2,38 @@ package com.example.demo.bMatrix;
 
 import java.util.*;
 
-public class bMatrix {
+public class BMatrix {
+
     private final int k;
 
-    TripleProvider provider;
-    List<Triple> encodedTriples;
+    private final List<Triple> encodedTriples;
 
-    int soID;
-    HashMap<Integer, String> soStringFromID;
-    HashMap<String, Integer> soIDFromString;
+    private final HashMap<Integer, String> soStringFromID;
+    private final HashMap<String, Integer> soIDFromString;
+    private final HashMap<Integer, String> pStringFromID;
+    private final HashMap<String, Integer> pIDFromString;
 
-    int pID;
-    HashMap<Integer, String> pStringFromID;
-    HashMap<String, Integer> pIDFromString;
+    private int soID = 0;
+    private int pID = 0;
 
-    int numSubjects;
-    int numObjects;
+    private int numSubjects = 0;
+    private int numObjects = 0;
 
-    K2Tree st;
-    K2Tree ot;
+    private K2Tree st;
+    private K2Tree ot;
 
 
-    public bMatrix(int k, TripleProvider provider) {
+    public BMatrix(int k, TripleProvider provider) {
         this.k = k;
 
-        this.provider = provider;
         encodedTriples = new ArrayList<>();
-
-        soID = 0;
         soStringFromID = new HashMap<>();
         soIDFromString = new HashMap<>();
-
-        pID = 0;
         pStringFromID = new HashMap<>();
         pIDFromString = new HashMap<>();
 
-        numSubjects = 0;
-        numObjects = 0;
+        // Init
 
-        //st = new K2Tree();
-        //ot = new K2Tree();
-    }
-
-    public void init() {
         List<Triple> triples = provider.getTriples();
         assembleIdentifiers(triples);
         decodeTriples(triples);

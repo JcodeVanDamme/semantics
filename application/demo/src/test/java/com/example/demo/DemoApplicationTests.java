@@ -16,10 +16,4 @@ class DemoApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
-	@Test
-	void bMatrixTest() {
-		//bMatrix bm = new bMatrix(2, new TestTripleProvider());
-		//bm.init();
-	}
 }
