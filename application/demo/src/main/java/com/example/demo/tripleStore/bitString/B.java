@@ -1,4 +1,4 @@
-package com.example.demo.bMatrix;
+package com.example.demo.tripleStore.bitString;
 
 public interface B {
     public int rank(boolean c, int i);

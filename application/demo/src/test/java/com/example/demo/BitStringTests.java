@@ -1,5 +1,5 @@
 package com.example.demo;
-import com.example.demo.bMatrix.BitString;
+import com.example.demo.tripleStore.bitString.BitString;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

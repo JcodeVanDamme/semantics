@@ -1,6 +1,6 @@
 package com.example.demo;
-import com.example.demo.bMatrix.TestTripleProvider;
-import com.example.demo.bMatrix.BMatrix;
+import com.example.demo.tripleStore.triple.TestTripleProvider;
+import com.example.demo.tripleStore.bMatrix.BMatrix;
 import org.junit.jupiter.api.Test;
 
 public class BMatrixTests {

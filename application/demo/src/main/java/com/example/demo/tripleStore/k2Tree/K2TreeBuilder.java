@@ -1,4 +1,6 @@
-package com.example.demo.bMatrix;
+package com.example.demo.tripleStore.k2Tree;
+
+import com.example.demo.tripleStore.bitString.BitString;
 
 import java.util.ArrayList;
 import java.util.HashMap;

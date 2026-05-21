@@ -1,4 +1,11 @@
-package com.example.demo.bMatrix;
+package com.example.demo.tripleStore.bMatrix;
+
+import com.example.demo.tripleStore.bitString.BitStringPredicate;
+import com.example.demo.tripleStore.k2Tree.Cell;
+import com.example.demo.tripleStore.k2Tree.K2Tree;
+import com.example.demo.tripleStore.k2Tree.K2TreeBuilder;
+import com.example.demo.tripleStore.triple.Triple;
+import com.example.demo.tripleStore.triple.TripleProvider;
 
 import java.util.*;
 

@@ -1,7 +1,7 @@
 package com.example.demo;
-import com.example.demo.bMatrix.Cell;
-import com.example.demo.bMatrix.K2Tree;
-import com.example.demo.bMatrix.K2TreeBuilder;
+import com.example.demo.tripleStore.k2Tree.Cell;
+import com.example.demo.tripleStore.k2Tree.K2Tree;
+import com.example.demo.tripleStore.k2Tree.K2TreeBuilder;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;

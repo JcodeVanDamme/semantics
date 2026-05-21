@@ -1,4 +1,4 @@
-package com.example.demo.bMatrix;
+package com.example.demo.tripleStore.bitString;
 
 import java.util.BitSet;
 import java.util.List;

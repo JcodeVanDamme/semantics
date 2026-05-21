@@ -1,4 +1,6 @@
-package com.example.demo.bMatrix;
+package com.example.demo.tripleStore.bitString;
+
+import com.example.demo.tripleStore.triple.Triple;
 
 import java.util.Arrays;
 import java.util.List;
