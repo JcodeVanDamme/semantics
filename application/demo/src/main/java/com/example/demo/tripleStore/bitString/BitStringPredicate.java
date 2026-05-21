@@ -71,6 +71,12 @@ public class BitStringPredicate implements B {
 
     @Override
     public String toString() {
-        return "AP: " + Arrays.toString(ap) + "\nrankP: " + Arrays.toString(rankP);
+        String COLOR = "\u001B[95m";
+        String RESET = "\u001B[0m";
+        return
+                COLOR + "AP" + RESET + ": "
+                + Arrays.toString(ap) + "\n"
+                + COLOR + "rankP" + RESET + ": "
+                + Arrays.toString(rankP);
     }
 }

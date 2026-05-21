@@ -10,5 +10,6 @@ public class BMatrixTests {
     public void bMatrixTest() {
         BMatrixBuilder builder = new BMatrixBuilder();
         BMatrix tripleStore = builder.build(2, 10, new TestTripleProvider());
+        System.out.println(tripleStore);
     }
 }

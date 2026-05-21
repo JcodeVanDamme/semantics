@@ -20,31 +20,56 @@ public class BMatrix {
         this.st = st;
         this.ot = ot;
         this.bp = bp;
-        printTriples();
     }
     // Implement Queries here
 
-    public void printTriples() {
-        System.out.println("Triples:");
+    @Override
+    public String toString() {
+        String COLOR = "\u001B[95m";
+        String RESET = "\u001B[0m";
         StringBuilder strb = new StringBuilder();
+
+        strb
+                .append("------------------------- ")
+                .append(COLOR).append("Triples").append(RESET)
+                .append(" -------------------------\n");
+
         for (Triple t : triples) {
-            strb.delete(0, strb.length());
             int s = (int) t.s();
             int p = (int) t.p();
             int o = (int) t.o();
-            strb.append('(')
-                    .append(t.s()).append(',')
-                    .append(t.p()).append(',')
-                    .append(t.o())
-                    .append(") - ")
-                    .append(dict.decodeSO(s)).append(',')
-                    .append(dict.decodeP(p)).append(',')
+
+            strb
+                    .append('(')
+                    .append(s).append(", ")
+                    .append(p).append(", ")
+                    .append(o).append(") - ")
+                    .append(dict.decodeSO(s)).append(" | ")
+                    .append(dict.decodeP(p)).append(" | ")
                     .append(dict.decodeSO(o))
                     .append('\n');
-
-            System.out.print(strb);
         }
-        System.out.println("");
-        System.out.println(bp);
+
+        strb
+                .append("---------------------------- ")
+                .append(COLOR).append("ST").append(RESET)
+                .append(" ---------------------------\n")
+                .append(st).append("\n");
+
+        strb
+                .append("---------------------------- ")
+                .append(COLOR).append("OT").append(RESET)
+                .append(" ---------------------------\n")
+                .append(ot).append("\n");
+
+        strb
+                .append("---------------------------- ")
+                .append(COLOR).append("BP").append(RESET)
+                .append(" ---------------------------\n")
+                .append(bp).append("\n");
+
+        strb.append("-----------------------------------------------------------");
+
+        return strb.toString();
     }
 }
