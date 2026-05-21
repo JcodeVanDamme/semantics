@@ -25,14 +25,12 @@ public class BMatrix {
 
     @Override
     public String toString() {
-        String COLOR = "\u001B[95m";
-        String RESET = "\u001B[0m";
         StringBuilder strb = new StringBuilder();
 
         strb
-                .append("------------------------- ")
-                .append(COLOR).append("Triples").append(RESET)
-                .append(" -------------------------\n");
+            .append("------------------------- ")
+            .append("Triples")
+            .append(" -------------------------\n");
 
         for (Triple t : triples) {
             int s = (int) t.s();
@@ -40,33 +38,33 @@ public class BMatrix {
             int o = (int) t.o();
 
             strb
-                    .append('(')
-                    .append(s).append(", ")
-                    .append(p).append(", ")
-                    .append(o).append(") - ")
-                    .append(dict.decodeSO(s)).append(" | ")
-                    .append(dict.decodeP(p)).append(" | ")
-                    .append(dict.decodeSO(o))
-                    .append('\n');
+                .append('(')
+                .append(s).append(", ")
+                .append(p).append(", ")
+                .append(o).append(") - ")
+                .append(dict.decodeSO(s)).append(" | ")
+                .append(dict.decodeP(p)).append(" | ")
+                .append(dict.decodeSO(o))
+                .append('\n');
         }
 
         strb
-                .append("---------------------------- ")
-                .append(COLOR).append("ST").append(RESET)
-                .append(" ---------------------------\n")
-                .append(st).append("\n");
+            .append("---------------------------- ")
+            .append("ST")
+            .append(" ---------------------------\n")
+            .append(st).append("\n");
 
         strb
-                .append("---------------------------- ")
-                .append(COLOR).append("OT").append(RESET)
-                .append(" ---------------------------\n")
-                .append(ot).append("\n");
+            .append("---------------------------- ")
+            .append("OT")
+            .append(" ---------------------------\n")
+            .append(ot).append("\n");
 
         strb
-                .append("---------------------------- ")
-                .append(COLOR).append("BP").append(RESET)
-                .append(" ---------------------------\n")
-                .append(bp).append("\n");
+            .append("---------------------------- ")
+            .append("BP")
+            .append(" ---------------------------\n")
+            .append(bp).append("\n");
 
         strb.append("-----------------------------------------------------------");
 

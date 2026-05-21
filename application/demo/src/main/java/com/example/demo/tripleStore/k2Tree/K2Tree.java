@@ -15,12 +15,10 @@ public class K2Tree {
 
     @Override
     public String toString() {
-        String COLOR = "\u001B[95m";
-        String RESET = "\u001B[0m";
         return
-                COLOR + "T" + RESET + ": "
+                "T: "
                 + t.toString() + "\n"
-                + COLOR + "L" + RESET + ": "
+                + "L: "
                 + l.toString();
     }
 }
