@@ -1,7 +1,5 @@
 package com.example.demo.bMatrix;
 
-import java.util.*;
-
 public class K2Tree {
 
     private final BitString t;

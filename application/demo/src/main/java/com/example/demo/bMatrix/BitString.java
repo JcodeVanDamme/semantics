@@ -3,7 +3,7 @@ package com.example.demo.bMatrix;
 import java.util.BitSet;
 import java.util.List;
 
-public class BitString {
+public class BitString implements B {
 
     private final int size;
     private final BitSet b;
@@ -20,7 +20,8 @@ public class BitString {
     }
 
     // counts the number of occurrences of bit c in b up to position i
-    // TODO -> Is rank[ i exclusive expected Behaviour ?]
+    // TODO -> Is rank[i] i | exclusive; expected Behaviour ?
+    @Override
     public int rank(boolean c, int i) {
         checkBounds(i);
         int setBits = b.get(0, i).cardinality();
@@ -28,7 +29,8 @@ public class BitString {
     }
 
     // returns the position in b of the j-th bit set to c
-    public long select(boolean c, int j) {
+    @Override
+    public int select(boolean c, int j) {
         int count = 1;
         int pos = -1;
         while (true) {
@@ -48,6 +50,7 @@ public class BitString {
     }
 
     // gets the bit value at b[i]
+    @Override
     public int access(int i) {
         checkBounds(i);
         return b.get(i) ? 1 : 0;
