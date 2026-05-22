@@ -21,7 +21,40 @@ public class BMatrix {
         this.ot = ot;
         this.bp = bp;
     }
-    // Implement Queries here
+
+    public boolean spo(int s, int p, int o) {
+
+        return true;
+    }
+    public List<Triple> sp_(int s, int p) {
+
+        return null;
+    }
+
+    public List<Triple> _po(int p, int o) {
+
+        return null;
+    }
+    public List<Triple> s_o(int s, int o) {
+
+        return null;
+    }
+    public List<Triple> s__(int s) {
+
+        return null;
+    }
+    public List<Triple> __o(int o) {
+
+        return null;
+    }
+    public List<Triple> _p_(int p) {
+
+        return null;
+    }
+    public List<Triple> ___() {
+
+        return null;
+    }
 
     @Override
     public String toString() {
