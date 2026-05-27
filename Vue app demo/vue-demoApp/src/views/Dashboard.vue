@@ -297,15 +297,19 @@
 </template>
 
 <script setup lang="ts">
+
+/* =========================================
+   IMPORTS
+========================================= */
+
 import {
   ref,
   computed
 } from 'vue'
 
 import MainLayout from '../layouts/MainLayout.vue'
-import HistoryModal from '../components/HistoryModal.vue'
 
-const showHistoryModal = ref(false)
+import HistoryModal from '../components/HistoryModal.vue'
 
 import {
   Crown,
@@ -313,101 +317,27 @@ import {
   X
 } from 'lucide-vue-next'
 
-/* =========================================
-   TYPES
-========================================= */
+import { api } from '../services/api'
 
-interface MediatizedState {
-  name: string
-  type: string
-}
-
-interface State {
-  name: string
-  ruler: string
-  title: string
-  mediatizedStates: number
-  regions: number
-  population: string
-  type: string
-
-  mediatizedList: MediatizedState[]
-}
+import {
+  useSemanticStore
+} from '../store/semanticStore'
 
 /* =========================================
-   DATA
+   STORE
 ========================================= */
 
-const states = ref<State[]>([
-  {
-    name: 'Saxony',
-    ruler: 'Frederick Augustus',
-    title: 'KING',
-    mediatizedStates: 2,
-    regions: 14,
-    population: '2.000.000',
-    type: 'Kingdom',
+const store = useSemanticStore()
 
-    mediatizedList: [
-      {
-        name: 'Leipzig',
-        type: 'Duchy'
-      },
-      {
-        name: 'Dresden',
-        type: 'County'
-      }
-    ]
-  },
+const states = store.states
 
-  {
-    name: 'Prussia',
-    ruler: 'Frederick William',
-    title: 'KING',
-    mediatizedStates: 3,
-    regions: 20,
-    population: '5.000.000',
-    type: 'Kingdom',
-
-    mediatizedList: [
-      {
-        name: 'Berlin',
-        type: 'Capital'
-      },
-      {
-        name: 'Brandenburg',
-        type: 'Province'
-      }
-    ]
-  },
-
-  {
-    name: 'France',
-    ruler: 'Napoleon',
-    title: 'EMPEROR',
-    mediatizedStates: 4,
-    regions: 40,
-    population: '12.000.000',
-    type: 'Empire',
-
-    mediatizedList: [
-      {
-        name: 'Paris',
-        type: 'Capital'
-      }
-    ]
-  }
-])
+const history = store.history
 
 /* =========================================
-   SELECTION
-========================================= */
-
-const selectedState = ref<State | null>(null)
-
-  /* =========================================
    MODALS
 ========================================= */
+
+const showHistoryModal = ref(false)
 
 const showFoundModal = ref(false)
 
@@ -416,7 +346,13 @@ const showRulerModal = ref(false)
 const showMediatizeModal = ref(false)
 
 /* =========================================
-   SEARCHES
+   SELECTION
+========================================= */
+
+const selectedState = ref<any>(null)
+
+/* =========================================
+   SEARCH
 ========================================= */
 
 const rulerSearch = ref('')
@@ -428,29 +364,37 @@ const mediatizeSearch = ref('')
 ========================================= */
 
 const newState = ref({
+
   name: '',
+
   ruler: '',
+
   population: '',
+
   type: ''
 })
 
 /* =========================================
-   AVAILABLE RULERS
+   RULERS
 ========================================= */
 
 const rulers = ref([
+
   {
     name: 'Napoleon',
     title: 'EMPEROR'
   },
+
   {
     name: 'Frederick Augustus',
     title: 'KING'
   },
+
   {
     name: 'Alexander I',
     title: 'TSAR'
   },
+
   {
     name: 'Francis II',
     title: 'EMPEROR'
@@ -460,7 +404,7 @@ const rulers = ref([
 const selectedRuler = ref<any>(null)
 
 /* =========================================
-   MEDIATIZE TARGET
+   MEDIATIZATION
 ========================================= */
 
 const selectedMediatizeTarget = ref<any>(null)
@@ -474,6 +418,7 @@ const latestEvent = ref(
 )
 
 const eventTriples = ref([
+
   {
     subject: 'Subject',
     predicate: 'Predicate',
@@ -485,7 +430,7 @@ const eventTriples = ref([
    SELECT STATE
 ========================================= */
 
-function selectState(state: State) {
+function selectState(state: any) {
 
   selectedState.value = state
 
@@ -493,11 +438,13 @@ function selectState(state: State) {
     `${state.ruler} currently rules ${state.name}.`
 
   eventTriples.value = [
+
     {
       subject: state.ruler,
       predicate: 'rules',
       object: state.name
     },
+
     {
       subject: state.name,
       predicate: 'hasPopulation',
@@ -513,7 +460,6 @@ function selectState(state: State) {
 function closePanel() {
 
   selectedState.value = null
-
 }
 
 /* =========================================
@@ -522,61 +468,15 @@ function closePanel() {
 
 function changeRuler() {
 
-  showRulerModal.value = true
-
-}
-
-/* =========================================
-   MEDIATIZATE
-========================================= */
-
-function mediatizate() {
-
-  showMediatizeModal.value = true
-
-}
-/* =========================================
-   FOUND STATE
-========================================= */
-
-function foundState() {
-
-  if (
-    !newState.value.name ||
-    !newState.value.ruler ||
-    !newState.value.population ||
-    !newState.value.type
-  ) {
+  if (!selectedState.value) {
     return
   }
 
-  states.value.push({
-    name: newState.value.name,
-    ruler: newState.value.ruler,
-    title: 'RULER',
-    mediatizedStates: 0,
-    regions: 1,
-    population: newState.value.population,
-    type: newState.value.type,
-
-    mediatizedList: []
-  })
-
-  latestEvent.value =
-    `${newState.value.name} was founded.`
-
-  showFoundModal.value = false
-
-  newState.value = {
-    name: '',
-    ruler: '',
-    population: '',
-    type: ''
-  }
+  showRulerModal.value = true
 }
 
 /* =========================================
-   APPLY RULER
+   APPLY RULER CHANGE
 ========================================= */
 
 function applyRulerChange() {
@@ -588,16 +488,41 @@ function applyRulerChange() {
     return
   }
 
-  selectedState.value.ruler =
-    selectedRuler.value.name
+  api.changeRuler(
 
-  selectedState.value.title =
+    selectedState.value.id,
+
+    selectedRuler.value.name,
+
     selectedRuler.value.title
+  )
 
   latestEvent.value =
     `${selectedRuler.value.name} became ruler of ${selectedState.value.name}.`
 
+  eventTriples.value = [
+
+    {
+      subject: selectedRuler.value.name,
+      predicate: 'rules',
+      object: selectedState.value.name
+    }
+  ]
+
   showRulerModal.value = false
+}
+
+/* =========================================
+   MEDIATIZE
+========================================= */
+
+function mediatizate() {
+
+  if (!selectedState.value) {
+    return
+  }
+
+  showMediatizeModal.value = true
 }
 
 /* =========================================
@@ -613,17 +538,88 @@ function applyMediatization() {
     return
   }
 
-  selectedState.value.mediatizedList.push({
-    name: selectedMediatizeTarget.value.name,
-    type: selectedMediatizeTarget.value.type
-  })
+  api.mediatizate(
 
-  selectedState.value.mediatizedStates++
+    selectedState.value.id,
+
+    {
+      name:
+        selectedMediatizeTarget.value.name,
+
+      type:
+        selectedMediatizeTarget.value.type
+    }
+  )
 
   latestEvent.value =
     `${selectedState.value.name} mediatized ${selectedMediatizeTarget.value.name}.`
 
+  eventTriples.value = [
+
+    {
+      subject: selectedState.value.name,
+      predicate: 'mediatizedInto',
+      object: selectedMediatizeTarget.value.name
+    }
+  ]
+
   showMediatizeModal.value = false
+}
+
+/* =========================================
+   FOUND STATE
+========================================= */
+
+function foundState() {
+
+  if (
+
+    !newState.value.name ||
+
+    !newState.value.ruler ||
+
+    !newState.value.population ||
+
+    !newState.value.type
+  ) {
+    return
+  }
+
+  api.foundState(
+
+    newState.value.name,
+
+    newState.value.ruler,
+
+    newState.value.population,
+
+    newState.value.type
+  )
+
+  latestEvent.value =
+    `${newState.value.name} was founded.`
+
+  eventTriples.value = [
+
+    {
+      subject: newState.value.name,
+      predicate: 'ruler',
+      object: newState.value.ruler
+    }
+  ]
+
+  showFoundModal.value = false
+
+  newState.value = {
+
+    name: '',
+
+    ruler: '',
+
+    population: '',
+
+    type: ''
+  }
 }
 
 /* =========================================
@@ -636,10 +632,10 @@ const filteredRulers = computed(() => {
 
     return ruler.name
       .toLowerCase()
-      .includes(rulerSearch.value.toLowerCase())
-
+      .includes(
+        rulerSearch.value.toLowerCase()
+      )
   })
-
 })
 
 /* =========================================
@@ -652,9 +648,10 @@ const filteredStates = computed(() => {
 
     return state.name
       .toLowerCase()
-      .includes(mediatizeSearch.value.toLowerCase())
-
+      .includes(
+        mediatizeSearch.value.toLowerCase()
+      )
   })
-
 })
+
 </script>

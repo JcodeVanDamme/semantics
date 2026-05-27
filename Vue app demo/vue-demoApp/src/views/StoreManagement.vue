@@ -97,10 +97,10 @@
           </thead>
           <tbody>
             <tr
-              v-for="(triple, index) in filteredTriples"
-              :key="index"
-              :class="{ selected: selectedIndex === index }"
-              @click="selectTriple(index)"
+              v-for="triple in filteredTriples"
+              :key="triple.id"
+              :class="{ selected: selectedTripleId === triple.id }"
+              @click="selectTriple(triple)"
             >
               <td>{{ triple.subject }}</td>
               <td>{{ triple.predicate }}</td>
@@ -115,7 +115,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+
+import {
+  ref,
+  reactive,
+  computed
+} from 'vue'
 
 import MainLayout from '../layouts/MainLayout.vue'
 
@@ -129,44 +134,44 @@ import {
   PackagePlus
 } from 'lucide-vue-next'
 
+import { api } from '../services/api'
+
+import {
+  useSemanticStore,
+  type Triple
+} from '../store/semanticStore'
 
 /* =========================================
-   TYPES
+   GLOBAL STORE
 ========================================= */
 
+const store = useSemanticStore()
 
-interface Triple {
-  subject: string
-  predicate: string
-  object: string
-}
+const triples = store.triples
 
 /* =========================================
-   STATE
+   FORM
 ========================================= */
 
-const triples = ref<Triple[]>([
-  {
-    subject: 'Napoleon',
-    predicate: 'rules',
-    object: 'France'
-  },
-  {
-    subject: 'Berlin',
-    predicate: 'locatedIn',
-    object: 'Prussia'
-  }
-])
+const form = reactive({
 
-const form = reactive<Triple>({
+  id: 0,
+
   subject: '',
+
   predicate: '',
+
   object: ''
 })
 
+/* =========================================
+   UI STATE
+========================================= */
+
 const editMode = ref(false)
 
-const selectedIndex = ref<number | null>(null)
+const selectedTripleId =
+  ref<number | null>(null)
 
 const search = ref('')
 
@@ -179,13 +184,17 @@ const filteredTriples = computed(() => {
   return triples.value.filter((triple) => {
 
     const text =
-      `${triple.subject} ${triple.predicate} ${triple.object}`
+
+      `${triple.subject}
+       ${triple.predicate}
+       ${triple.object}`
+
         .toLowerCase()
 
-    return text.includes(search.value.toLowerCase())
-
+    return text.includes(
+      search.value.toLowerCase()
+    )
   })
-
 })
 
 /* =========================================
@@ -195,16 +204,22 @@ const filteredTriples = computed(() => {
 function createTriple() {
 
   if (
+
     !form.subject ||
+
     !form.predicate ||
+
     !form.object
   ) {
     return
   }
 
-  triples.value.push({
+  api.createTriple({
+
     subject: form.subject,
+
     predicate: form.predicate,
+
     object: form.object
   })
 
@@ -212,43 +227,46 @@ function createTriple() {
 }
 
 /* =========================================
-   SELECT ROW
+   SELECT TRIPLE
 ========================================= */
 
-function selectTriple(index: number) {
+function selectTriple(triple: Triple) {
 
-  const triple = filteredTriples.value[index]
-
-  if (!triple) {
-    return
-  }
-
-  const realIndex = triples.value.indexOf(triple)
-
-  selectedIndex.value = realIndex
+  selectedTripleId.value = triple.id
 
   editMode.value = true
 
+  form.id = triple.id
+
   form.subject = triple.subject
+
   form.predicate = triple.predicate
+
   form.object = triple.object
 }
 
 /* =========================================
-   UPDATE
+   COMMIT CHANGES
 ========================================= */
 
 function commitChanges() {
 
-  if (selectedIndex.value === null) {
+  if (
+    selectedTripleId.value === null
+  ) {
     return
   }
 
-  triples.value[selectedIndex.value] = {
+  api.updateTriple({
+
+    id: form.id,
+
     subject: form.subject,
+
     predicate: form.predicate,
+
     object: form.object
-  }
+  })
 
   cancelEdit()
 }
@@ -259,36 +277,45 @@ function commitChanges() {
 
 function deleteTriple() {
 
-  if (selectedIndex.value === null) {
+  if (
+    selectedTripleId.value === null
+  ) {
     return
   }
 
-  triples.value.splice(selectedIndex.value, 1)
+  api.deleteTriple(
+    selectedTripleId.value
+  )
 
   cancelEdit()
 }
 
 /* =========================================
-   CANCEL
+   CANCEL EDIT
 ========================================= */
 
 function cancelEdit() {
 
   editMode.value = false
 
-  selectedIndex.value = null
+  selectedTripleId.value = null
 
   clearForm()
 }
 
 /* =========================================
-   CLEAR
+   CLEAR FORM
 ========================================= */
 
 function clearForm() {
 
+  form.id = 0
+
   form.subject = ''
+
   form.predicate = ''
+
   form.object = ''
 }
+
 </script>
