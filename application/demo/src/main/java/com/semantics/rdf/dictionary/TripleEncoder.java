@@ -1,7 +1,7 @@
-package com.example.demo.tripleStore.bMatrix;
+package com.semantics.rdf.dictionary;
 
-import com.example.demo.tripleStore.triple.Triple;
-import com.example.demo.tripleStore.triple.TripleProvider;
+import com.semantics.rdf.model.Triple;
+import com.semantics.rdf.provider.TripleProvider;
 
 import java.util.*;
 

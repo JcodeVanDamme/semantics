@@ -1,6 +1,6 @@
-package com.example.demo.tripleStore.bitString;
+package com.semantics.rdf.structure.bitstring;
 
-import com.example.demo.tripleStore.triple.Triple;
+import com.semantics.rdf.model.Triple;
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,4 +1,6 @@
-package com.example.demo.tripleStore.triple;
+package com.semantics.rdf.provider;
+
+import com.semantics.rdf.model.Triple;
 
 import java.util.List;
 

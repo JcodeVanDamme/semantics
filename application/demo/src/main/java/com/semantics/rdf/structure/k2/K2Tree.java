@@ -1,6 +1,7 @@
-package com.example.demo.tripleStore.k2Tree;
+package com.semantics.rdf.structure.k2;
 
-import com.example.demo.tripleStore.bitString.BitString;
+import com.semantics.rdf.structure.bitstring.BitString;
+import com.semantics.rdf.model.Cell;
 
 import java.util.ArrayList;
 import java.util.List;

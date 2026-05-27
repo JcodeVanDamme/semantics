@@ -1,11 +1,13 @@
-package com.example.demo.tripleStore.bMatrix;
+package com.semantics.rdf.bmatrix;
 
-import com.example.demo.tripleStore.bitString.BitStringPredicate;
-import com.example.demo.tripleStore.k2Tree.Cell;
-import com.example.demo.tripleStore.k2Tree.K2Tree;
-import com.example.demo.tripleStore.k2Tree.K2TreeBuilder;
-import com.example.demo.tripleStore.triple.Triple;
-import com.example.demo.tripleStore.triple.TripleProvider;
+import com.semantics.rdf.dictionary.TripleDictionary;
+import com.semantics.rdf.dictionary.TripleEncoder;
+import com.semantics.rdf.structure.bitstring.BitStringPredicate;
+import com.semantics.rdf.model.Cell;
+import com.semantics.rdf.structure.k2.K2Tree;
+import com.semantics.rdf.structure.k2.K2TreeBuilder;
+import com.semantics.rdf.model.Triple;
+import com.semantics.rdf.provider.TripleProvider;
 
 import java.util.*;
 

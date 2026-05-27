@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.semantics.app;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,9 +10,5 @@ import org.springframework.web.bind.annotation.RestController;
 public class DemoApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
-	}
-	@GetMapping("/api")
-	public TestResponse hello(@RequestParam(value = "param", defaultValue = "Default") String param ) {
-		return new TestResponse(param);
 	}
 }

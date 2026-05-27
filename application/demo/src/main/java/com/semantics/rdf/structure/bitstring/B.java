@@ -1,4 +1,4 @@
-package com.example.demo.tripleStore.bitString;
+package com.semantics.rdf.structure.bitstring;
 
 public interface B {
     public int rank(boolean c, int i);

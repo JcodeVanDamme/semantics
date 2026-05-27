@@ -1,5 +1,5 @@
-package com.example.demo;
-import com.example.demo.tripleStore.bitString.BitString;
+package com.semantics;
+import com.semantics.rdf.structure.bitstring.BitString;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

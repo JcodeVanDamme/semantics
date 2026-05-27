@@ -1,7 +1,7 @@
-package com.example.demo;
-import com.example.demo.tripleStore.TripleStore;
-import com.example.demo.tripleStore.triple.TestTripleProvider;
-import com.example.demo.tripleStore.triple.Triple;
+package com.semantics;
+import com.semantics.rdf.tripleStore.TripleStore;
+import com.semantics.rdf.provider.TestTripleProvider;
+import com.semantics.rdf.model.Triple;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

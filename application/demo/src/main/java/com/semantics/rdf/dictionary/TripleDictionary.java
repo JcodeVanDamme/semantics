@@ -1,7 +1,4 @@
-package com.example.demo.tripleStore.bMatrix;
-
-import com.example.demo.tripleStore.triple.Triple;
-import com.example.demo.tripleStore.triple.TripleProvider;
+package com.semantics.rdf.dictionary;
 
 import java.util.HashMap;
 import java.util.Map;

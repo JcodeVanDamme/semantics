@@ -1,4 +1,4 @@
-package com.example.demo.tripleStore.triple;
+package com.semantics.rdf.model;
 
 public record Triple(Object s, Object p, Object o) {
     @Override

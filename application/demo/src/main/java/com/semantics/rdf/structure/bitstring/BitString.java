@@ -1,4 +1,4 @@
-package com.example.demo.tripleStore.bitString;
+package com.semantics.rdf.structure.bitstring;
 
 import java.util.BitSet;
 import java.util.List;
