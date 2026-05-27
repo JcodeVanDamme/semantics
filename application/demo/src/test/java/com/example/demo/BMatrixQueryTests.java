@@ -181,4 +181,35 @@ public class BMatrixQueryTests {
         // (?, ?, G. Navarro)
         assertEquals(none, tripleStore.bMatrix().__o(s1));
     }
+
+    @Test
+    public void _p_QueryTest() {
+
+        int s1 = tripleStore.dict().encodeSO("G. Navarro");
+        int s2 = tripleStore.dict().encodeSO("T. Gagie");
+        int s3 = tripleStore.dict().encodeSO("A. Bovik");
+        int s4 = tripleStore.dict().encodeSO("G. Sullivan");
+        int p1 = tripleStore.dict().encodeP("lives in");
+        int o1 = tripleStore.dict().encodeSO("Chile");
+        int o2 = tripleStore.dict().encodeSO("Canada");
+        int o3 = tripleStore.dict().encodeSO("US");
+
+
+        List<Triple> results1 = new ArrayList<>();
+
+        // (G. Navarro, lives in, Chile)
+        results1.add(new Triple(s1, p1, o1));
+
+        // (T. Gagie, lives in, Canada)
+        results1.add(new Triple(s2, p1, o2));
+
+        // (G. Sullivan, lives in, US)
+        results1.add(new Triple(s4, p1, o3));
+
+        // (A. Bovik, lives in, US)
+        results1.add(new Triple(s3, p1, o3));
+
+        // (?. lives in, ?)
+        assertEquals(results1, tripleStore.bMatrix()._p_(p1));
+    }
 }

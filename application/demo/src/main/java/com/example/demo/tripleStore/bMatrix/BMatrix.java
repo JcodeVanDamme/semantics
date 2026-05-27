@@ -1,13 +1,11 @@
 package com.example.demo.tripleStore.bMatrix;
 
 import com.example.demo.tripleStore.bitString.BitStringPredicate;
+import com.example.demo.tripleStore.k2Tree.Cell;
 import com.example.demo.tripleStore.k2Tree.K2Tree;
 import com.example.demo.tripleStore.triple.Triple;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class BMatrix {
 
@@ -29,7 +27,9 @@ public class BMatrix {
     public boolean spo(int s, int p, int o) {
         int lPredicateBound = bp.select(true, p);
         int uPredicateBound = bp.select(true, p + 1) - 1;
+
         List<Integer> triples = st.boundedRowQuery(s, lPredicateBound, uPredicateBound);
+
         for (int t : triples) {
             if (ot.checkCell(o, t)) {
                 return true;
@@ -39,9 +39,12 @@ public class BMatrix {
     }
     public List<Triple> sp_(int s, int p) {
         List<Triple> results = new ArrayList<>();
+
         int lPredicateBound = bp.select(true, p);
         int uPredicateBound = bp.select(true, p + 1) - 1;
+
         List<Integer> triples = st.boundedRowQuery(s, lPredicateBound, uPredicateBound);
+
         for (int t : triples) {
             Integer res = ot.columnQuery(t);
             if (res != null) {
@@ -53,9 +56,12 @@ public class BMatrix {
 
     public List<Triple> _po(int p, int o) {
         List<Triple> results = new ArrayList<>();
+
         int lPredicateBound = bp.select(true, p);
         int uPredicateBound = bp.select(true, p + 1) - 1;
+
         List<Integer> triples = ot.boundedRowQuery(o, lPredicateBound, uPredicateBound);
+
         for (int t : triples) {
             Integer res = st.columnQuery(t);
             if (res != null) {
@@ -67,17 +73,21 @@ public class BMatrix {
 
     public List<Triple> s_o(int s, int o) {
         List<Triple> results = new ArrayList<>();
-        List<Integer> objectMatches = ot.rowQuery(o);
-        if (objectMatches.size() <= t) {
-            for (int t : objectMatches) {
+
+        List<Integer> objects = ot.rowQuery(o);
+
+        if (objects.size() <= t) {
+
+            for (int t : objects) {
                 if (st.checkCell(s, t)) {
                     results.add(triples.get(t));
                 }
             }
         } else {
-            List<Integer> subjectMatches = st.rowQuery(s);
-            Set<Integer> intersection = new HashSet<>(objectMatches);
-            intersection.addAll(subjectMatches);
+            List<Integer> subjects = st.rowQuery(s);
+            Set<Integer> intersection = new HashSet<>(objects);
+            intersection.retainAll(subjects);
+
             for (int t : intersection) {
                 results.add(triples.get(t));
             }
@@ -87,7 +97,9 @@ public class BMatrix {
 
     public List<Triple> s__(int s) {
         List<Triple> results = new ArrayList<>();
+
         List<Integer> subjectMatches = st.rowQuery(s);
+
         for (int t : subjectMatches) {
             Integer o = ot.columnQuery(t);
             if (o != null) {
@@ -100,7 +112,9 @@ public class BMatrix {
 
     public List<Triple> __o(int o) {
         List<Triple> results = new ArrayList<>();
+
         List<Integer> objectMatches = ot.rowQuery(o);
+
         for (int t : objectMatches) {
             Integer s = st.columnQuery(t);
             if (s != null) {
@@ -112,8 +126,46 @@ public class BMatrix {
     }
 
     public List<Triple> _p_(int p) {
+        List<Triple> results = new ArrayList<>();
 
-        return null;
+        int lPredicateBound = bp.select(true, p);
+        int uPredicateBound = bp.select(true, p + 1) - 1;
+
+        List<Cell> subjects = st.boundedRangeQuery(lPredicateBound, uPredicateBound);
+
+        if (subjects.size() <= t) {
+
+            for (Cell c : subjects) {
+                Integer res = ot.columnQuery(c.col());
+                if (res != null) {
+                    results.add(this.triples.get(c.col()));
+                }
+            }
+        } else {
+            List<Cell> objects = ot.boundedRangeQuery(lPredicateBound, uPredicateBound);
+            subjects.sort(Comparator.comparingInt(Cell::col));
+            objects.sort(Comparator.comparingInt(Cell::col));
+
+            int si = 0;
+            int oi = 0;
+            while (si < subjects.size() && oi < objects.size()) {
+                Cell sCell = subjects.get(si);
+                Cell oCell = objects.get(oi);
+
+                if (sCell.col() == oCell.col()) {
+                    results.add(new Triple(sCell.row(), p, oCell.row()));
+                    si++;
+                    oi++;
+
+                } else if (sCell.col() < oCell.col()) {
+                    si++;
+
+                } else {
+                    oi++;
+                }
+            }
+        }
+        return results;
     }
 
     public List<Triple> ___() {

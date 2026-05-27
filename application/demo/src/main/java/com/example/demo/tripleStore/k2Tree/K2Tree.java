@@ -88,6 +88,17 @@ public class K2Tree {
         }
         return null;
     }
+    public List<Cell> boundedRangeQuery(int lColBound, int uColBound) {
+        List<Cell> results = new ArrayList<>();
+        for (int row = 0; row < matrixSize; row ++) {
+            for (int col = lColBound; col <= uColBound; col++) {
+                if (checkCell(row, col)) {
+                    results.add(new Cell(row, col));
+                }
+            }
+        }
+        return results;
+    }
 
     @Override
     public String toString() {
