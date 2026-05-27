@@ -22,9 +22,15 @@ public class BMatrix {
     }
 
     public boolean spo(int s, int p, int o) {
-        int lBound = bp.select(true, p);
-        int uBound = bp.select(true, p + 1) - 1;
-        return true;
+        int lPredicateBound = bp.select(true, p);
+        int uPredicateBound = bp.select(true, p + 1) - 1;
+        List<Integer> triples = st.boundedRowQuery(s, lPredicateBound, uPredicateBound);
+        for (int t : triples) {
+            if (ot.checkCell(o, t)) {
+                return true;
+            }
+        }
+        return false;
     }
     public List<Triple> sp_(int s, int p) {
 

@@ -15,6 +15,9 @@ public class TripleStore {
     private TripleDictionary dict;
     private BMatrix bMatrix;
 
+    public TripleDictionary dict() { return dict; }
+    public BMatrix bMatrix() { return bMatrix; }
+
     public void init(TripleProvider tripleProvider) {
         BMatrixBuilder builder = new BMatrixBuilder();
         dict = new TripleDictionary();
