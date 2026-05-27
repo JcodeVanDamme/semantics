@@ -23,7 +23,8 @@ public class BMatrix {
     }
 
     public boolean spo(int s, int p, int o) {
-
+        int lBound = bp.select(true, p);
+        int uBound = bp.select(true, p + 1) - 1;
         return true;
     }
     public List<Triple> sp_(int s, int p) {

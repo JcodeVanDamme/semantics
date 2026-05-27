@@ -8,6 +8,8 @@ public class BitString implements B {
     private final int size;
     private final BitSet b;
 
+    public int size() { return size; }
+
     public BitString(List<Boolean> b) {
         size = b.size();
         long[] bits = new long[(b.size() + 63) / 64];
@@ -20,7 +22,6 @@ public class BitString implements B {
     }
 
     // counts the number of occurrences of bit c in b up to position i
-    // TODO -> Is rank[i] i | exclusive; expected Behaviour ?
     @Override
     public int rank(boolean c, int i) {
         checkBounds(i);

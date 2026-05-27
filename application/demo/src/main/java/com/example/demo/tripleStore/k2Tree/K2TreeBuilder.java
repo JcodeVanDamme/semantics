@@ -33,7 +33,7 @@ public class K2TreeBuilder {
 
         this.k = k;
         assembleK2(cells, 0, 0, initialMatrixSize, true);
-        return assembleBitStrings();
+        return assembleBitStrings(initialMatrixSize);
     }
     private void assembleK2(List<Cell> currentCells,  int rowStart, int colStart, int matrixSize, boolean skipBit) {
         // Leave Reached
@@ -103,7 +103,7 @@ public class K2TreeBuilder {
         // L-Bits as opposed to T-Bits need to be directly appended when encountered to keep the correct Order
         lTemp.add(val);
     }
-    private K2Tree assembleBitStrings() {
+    private K2Tree assembleBitStrings(int matrixSize) {
         // First assemble final TTemp Bits in the correct Order
         for (int lvl = maxTLevel; lvl > 0; lvl = lvl / k) {
             List<Boolean> bits = tLevels.get(lvl);
@@ -113,7 +113,7 @@ public class K2TreeBuilder {
         }
         BitString t = new BitString(tTemp);
         BitString l = new BitString(lTemp);
-        return new K2Tree(t, l);
+        return new K2Tree(k,matrixSize, t, l);
     }
 
     public String tempToString() {
