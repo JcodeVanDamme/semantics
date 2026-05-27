@@ -2,6 +2,9 @@ package com.example.demo.tripleStore.k2Tree;
 
 import com.example.demo.tripleStore.bitString.BitString;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class K2Tree {
 
     private final int k;
@@ -16,6 +19,15 @@ public class K2Tree {
         this.matrixSize = matrixSize;
         this.t = t;
         this.l = l;
+    }
+    public List<Integer> boundedRowQuery(int row, int lColBound, int uColBound) {
+        List<Integer> results = new ArrayList<>();
+        for (int col = lColBound; col <= uColBound; col++) {
+            if (checkCell(row, col)) {
+                results.add(col);
+            }
+        }
+        return results;
     }
     public boolean checkCell(int row, int col) {
         int currentBitIndex = 0;

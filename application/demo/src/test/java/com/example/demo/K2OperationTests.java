@@ -112,4 +112,15 @@ public class K2OperationTests {
         assertFalse(tree.checkCell(7, 6));
         assertFalse(tree.checkCell(7, 7));
     }
+
+    @Test
+    public void boundedRowQueryTest() {
+        List<Integer> results1 = new ArrayList<>();
+        results1.add(1);
+        results1.add(3);
+        assertEquals(results1, tree.boundedRowQuery(1, 0, 7));
+
+        List<Integer> results2 = new ArrayList<>();
+        assertEquals(results2, tree.boundedRowQuery(7, 0, 7));
+    }
 }
