@@ -86,13 +86,29 @@ public class BMatrix {
     }
 
     public List<Triple> s__(int s) {
-
-        return null;
+        List<Triple> results = new ArrayList<>();
+        List<Integer> subjectMatches = st.rowQuery(s);
+        for (int t : subjectMatches) {
+            Integer o = ot.columnQuery(t);
+            if (o != null) {
+                int p = bp.rank(true, t);
+                results.add(new Triple(s, p, o));
+            }
+        }
+        return results;
     }
 
     public List<Triple> __o(int o) {
-
-        return null;
+        List<Triple> results = new ArrayList<>();
+        List<Integer> objectMatches = ot.rowQuery(o);
+        for (int t : objectMatches) {
+            Integer s = st.columnQuery(t);
+            if (s != null) {
+                int p = bp.rank(true, t);
+                results.add(new Triple(s, p, o));
+            }
+        }
+        return results;
     }
 
     public List<Triple> _p_(int p) {
@@ -102,7 +118,7 @@ public class BMatrix {
 
     public List<Triple> ___() {
         return triples;
-    }git
+    }
 
     @Override
     public String toString() {

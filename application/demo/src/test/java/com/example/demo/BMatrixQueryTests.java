@@ -58,6 +58,7 @@ public class BMatrixQueryTests {
 
         int s = tripleStore.dict().encodeSO("DCC20");
         int p1 = tripleStore.dict().encodeP("has topic");
+        int p2 = tripleStore.dict().encodeP("lives in");
         int o1 = tripleStore.dict().encodeSO("Text comp.");
         int o2 = tripleStore.dict().encodeSO("Video cod.");
 
@@ -72,8 +73,6 @@ public class BMatrixQueryTests {
         // (DCC20, has topic, ?)
         assertEquals(results1, tripleStore.bMatrix().sp_(s, p1));
 
-        int p2 = tripleStore.dict().encodeP("lives in");
-
         // (DCC20, lives in, ?)
         assertEquals(none, tripleStore.bMatrix().sp_(s, p2));
     }
@@ -85,7 +84,6 @@ public class BMatrixQueryTests {
         int s2 = tripleStore.dict().encodeSO("T. Gagie");
         int s3 = tripleStore.dict().encodeSO("A. Bovik");
         int s4 = tripleStore.dict().encodeSO("G. Sullivan");
-
         int p = tripleStore.dict().encodeP("attends");
         int o = tripleStore.dict().encodeSO("DCC20");
 
@@ -125,5 +123,62 @@ public class BMatrixQueryTests {
 
         // (G. Navarro, ?, US)
         assertEquals(none, tripleStore.bMatrix().s_o(s, o2));
+    }
+
+    @Test
+    public void s__QueryTest() {
+
+        int s1 = tripleStore.dict().encodeSO("DCC20");
+        int s2 = tripleStore.dict().encodeSO("US");
+        int p1 = tripleStore.dict().encodeP("held on");
+        int p2 = tripleStore.dict().encodeP("has topic");
+        int o1 = tripleStore.dict().encodeSO("S. Lake City");
+        int o2 = tripleStore.dict().encodeSO("Text comp.");
+        int o3 = tripleStore.dict().encodeSO("Video cod.");
+
+        List<Triple> results1 = new ArrayList<>();
+
+        // (DCC20, has topic, S. Text comp.)
+        results1.add(new Triple(s1, p2, o2));
+
+        // (DCC20, has topic, S. Video cod.)
+        results1.add(new Triple(s1, p2, o3));
+
+        // (DCC20, held on, S. Lake City)
+        results1.add(new Triple(s1, p1, o1));
+
+        // (DCC20. ?, ?)
+        assertEquals(results1, tripleStore.bMatrix().s__(s1));
+
+        // (US, ?, ?)
+        assertEquals(none, tripleStore.bMatrix().s__(s2));
+    }
+
+    @Test
+    public void __oQueryTest() {
+
+        int s1 = tripleStore.dict().encodeSO("G. Navarro");
+        int s2 = tripleStore.dict().encodeSO("T. Gagie");
+        int s3 = tripleStore.dict().encodeSO("DCC20");
+        int p1 = tripleStore.dict().encodeP("expert in");
+        int p2 = tripleStore.dict().encodeP("has topic");
+        int o1 = tripleStore.dict().encodeSO("Text comp.");
+
+        List<Triple> results1 = new ArrayList<>();
+
+        // (G. Navarro, expert in, Text comp.)
+        results1.add(new Triple(s1, p1, o1));
+
+        // (G. Navarro, expert in, Text comp.)
+        results1.add(new Triple(s2, p1, o1));
+
+        // (DCC20, has topic, Text comp.)
+        results1.add(new Triple(s3, p2, o1));
+
+        // (?. ?, Text comp.)
+        assertEquals(results1, tripleStore.bMatrix().__o(o1));
+
+        // (?, ?, G. Navarro)
+        assertEquals(none, tripleStore.bMatrix().__o(s1));
     }
 }
