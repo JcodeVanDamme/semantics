@@ -33,4 +33,11 @@ public class TripleStore {
     public Boolean delete(Triple t) {
         return true;
     }
+
+    @Override
+    public String toString() {
+        return bMatrix.toString() + dict.toString() +
+                "-----------------------------------------------------------";
+    }
 }
+

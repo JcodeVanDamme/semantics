@@ -9,9 +9,10 @@ import java.util.List;
 public class BMatrix {
 
     private final List<Triple> triples;
+    private final BitStringPredicate bp;
+
     private K2Tree st;
     private K2Tree ot;
-    private final BitStringPredicate bp;
 
     public BMatrix(List<Triple> triples, K2Tree st, K2Tree ot, BitStringPredicate bp) {
         this.triples = triples;
@@ -59,8 +60,7 @@ public class BMatrix {
     public String toString() {
         StringBuilder strb = new StringBuilder();
 
-        strb
-            .append("------------------------- ")
+        strb.append("------------------------- ")
             .append("Triples")
             .append(" -------------------------\n");
 
@@ -69,33 +69,27 @@ public class BMatrix {
             int p = (int) t.p();
             int o = (int) t.o();
 
-            strb
-                .append('(')
+            strb.append('(')
                 .append(s).append(", ")
                 .append(p).append(", ")
                 .append(o).append(")")
                 .append('\n');
         }
 
-        strb
-            .append("---------------------------- ")
+        strb.append("---------------------------- ")
             .append("ST")
             .append(" ---------------------------\n")
             .append(st).append("\n");
 
-        strb
-            .append("---------------------------- ")
+        strb.append("---------------------------- ")
             .append("OT")
             .append(" ---------------------------\n")
             .append(ot).append("\n");
 
-        strb
-            .append("---------------------------- ")
+        strb.append("---------------------------- ")
             .append("BP")
             .append(" ---------------------------\n")
             .append(bp).append("\n");
-
-        strb.append("-----------------------------------------------------------");
 
         return strb.toString();
     }

@@ -4,6 +4,7 @@ import com.example.demo.tripleStore.triple.Triple;
 import com.example.demo.tripleStore.triple.TripleProvider;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class TripleDictionary {
 
@@ -56,5 +57,26 @@ public class TripleDictionary {
         String string = pDecoding.get(id);
         if (string == null) throw new IllegalStateException("Unknown P ID: " + id);
         return string;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder strb = new StringBuilder();
+
+        strb.append("----------------------- ")
+            .append("Dictionary")
+            .append(" ------------------------\n");
+
+        strb.append("Subjects / Objects:\n");
+        for (Map.Entry<Integer, String> e : soDecoding.entrySet()) {
+            strb
+                    .append(e.getKey()).append(" - ").append(e.getValue()).append("\n");
+        }
+        strb.append("\nPredicates:\n");
+        for (Map.Entry<Integer, String> e : pDecoding.entrySet()) {
+            strb
+                    .append(e.getKey()).append(" - ").append(e.getValue()).append("\n");
+        }
+        return strb.toString();
     }
 }
