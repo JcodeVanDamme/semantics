@@ -8,7 +8,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 public class K2TreeTests {
-    // Tests done using prefab. Cells as seen on p.5 in Paper
+    // Tests done using prefabricated Cells as seen on p.5 in Paper
     @Test
     void K2TestST() {
         List<Cell> testST = new ArrayList<>();

@@ -21,7 +21,7 @@ public class BMatrixBuilder {
     private K2Tree st;
     private K2Tree ot;
 
-    public BMatrix build(int k, int d, TripleDictionary dict, TripleProvider provider) {
+    public BMatrix build(int k, int d, int t, TripleDictionary dict, TripleProvider provider) {
         this.k = k;
 
         triples = TripleEncoder.encode(provider, dict);
@@ -30,7 +30,7 @@ public class BMatrixBuilder {
         assembleBinaryMatrices();
         BitStringPredicate bp = new BitStringPredicate(pCount, this.triples, d);
 
-        return new BMatrix(triples, st, ot, bp);
+        return new BMatrix(triples, st, ot, bp, t);
     }
 
     public void countValues() {

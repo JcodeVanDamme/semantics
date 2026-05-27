@@ -20,15 +20,6 @@ public class K2Tree {
         this.t = t;
         this.l = l;
     }
-    public List<Integer> boundedRowQuery(int row, int lColBound, int uColBound) {
-        List<Integer> results = new ArrayList<>();
-        for (int col = lColBound; col <= uColBound; col++) {
-            if (checkCell(row, col)) {
-                results.add(col);
-            }
-        }
-        return results;
-    }
     public boolean checkCell(int row, int col) {
         int currentBitIndex = 0;
         int matrixSize = this.matrixSize;
@@ -70,6 +61,24 @@ public class K2Tree {
             currentBitIndex = base + child;
             matrixSize = subSize;
         }
+    }
+    public List<Integer> boundedRowQuery(int row, int lColBound, int uColBound) {
+        List<Integer> results = new ArrayList<>();
+        for (int col = lColBound; col <= uColBound; col++) {
+            if (checkCell(row, col)) {
+                results.add(col);
+            }
+        }
+        return results;
+    }
+    public List<Integer> rowQuery(int row) {
+        List<Integer> results = new ArrayList<>();
+        for (int col = 0; col < matrixSize; col++) {
+            if (checkCell(row, col)) {
+                results.add(col);
+            }
+        }
+        return results;
     }
     public Integer columnQuery(int col) {
         for (int row = 0; row < matrixSize; row++) {

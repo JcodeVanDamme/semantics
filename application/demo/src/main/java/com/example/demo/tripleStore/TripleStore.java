@@ -12,6 +12,13 @@ import java.util.List;
 
 public class TripleStore {
 
+    // Tree Subdivision Factor
+    private final int K = 2;
+    // Predicate Sampling Rate
+    private final int D = 10;
+    // Merge / Unsorted Threshold
+    private final int T = 10;
+
     private TripleDictionary dict;
     private BMatrix bMatrix;
 
@@ -21,7 +28,7 @@ public class TripleStore {
     public void init(TripleProvider tripleProvider) {
         BMatrixBuilder builder = new BMatrixBuilder();
         dict = new TripleDictionary();
-        bMatrix = builder.build(2, 10, dict, tripleProvider);
+        bMatrix = builder.build(K, D,T, dict, tripleProvider);
     }
 
     public List<Triple> query(Triple t) {

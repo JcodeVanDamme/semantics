@@ -5,21 +5,25 @@ import com.example.demo.tripleStore.k2Tree.K2Tree;
 import com.example.demo.tripleStore.triple.Triple;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class BMatrix {
 
     private final List<Triple> triples;
     private final BitStringPredicate bp;
+    private final int t;
 
     private K2Tree st;
     private K2Tree ot;
 
-    public BMatrix(List<Triple> triples, K2Tree st, K2Tree ot, BitStringPredicate bp) {
+    public BMatrix(List<Triple> triples, K2Tree st, K2Tree ot, BitStringPredicate bp, int t) {
         this.triples = triples;
         this.st = st;
         this.ot = ot;
         this.bp = bp;
+        this.t = t;
     }
 
     public boolean spo(int s, int p, int o) {
@@ -60,26 +64,45 @@ public class BMatrix {
         }
         return results;
     }
-    public List<Triple> s_o(int s, int o) {
 
-        return null;
+    public List<Triple> s_o(int s, int o) {
+        List<Triple> results = new ArrayList<>();
+        List<Integer> objectMatches = ot.rowQuery(o);
+        if (objectMatches.size() <= t) {
+            for (int t : objectMatches) {
+                if (st.checkCell(s, t)) {
+                    results.add(triples.get(t));
+                }
+            }
+        } else {
+            List<Integer> subjectMatches = st.rowQuery(s);
+            Set<Integer> intersection = new HashSet<>(objectMatches);
+            intersection.addAll(subjectMatches);
+            for (int t : intersection) {
+                results.add(triples.get(t));
+            }
+        }
+        return results;
     }
+
     public List<Triple> s__(int s) {
 
         return null;
     }
+
     public List<Triple> __o(int o) {
 
         return null;
     }
+
     public List<Triple> _p_(int p) {
 
         return null;
     }
-    public List<Triple> ___() {
 
-        return null;
-    }
+    public List<Triple> ___() {
+        return triples;
+    }git
 
     @Override
     public String toString() {

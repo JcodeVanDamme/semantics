@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TripleStoreTests {
+public class BMatrixQueryTests {
 
     static TripleStore tripleStore;
     static List<Triple> none;
@@ -108,5 +108,22 @@ public class TripleStoreTests {
 
         // (?, attends, G. Navarro)
         assertEquals(none, tripleStore.bMatrix()._po(p, s1));
+    }
+
+    @Test
+    public void s_oQueryTest() {
+
+        int s = tripleStore.dict().encodeSO("G. Navarro");
+        int p1 = tripleStore.dict().encodeP("attends");
+        int o1 = tripleStore.dict().encodeSO("DCC20");
+        int o2 = tripleStore.dict().encodeSO("US");
+
+        List<Triple> results1 = new ArrayList<>();
+
+        // (G. Navarro, attends, DCC20)
+        results1.add(new Triple(s, p1, o1));
+
+        // (G. Navarro, ?, US)
+        assertEquals(none, tripleStore.bMatrix().s_o(s, o2));
     }
 }
