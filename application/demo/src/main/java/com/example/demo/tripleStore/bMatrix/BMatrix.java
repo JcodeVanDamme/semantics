@@ -4,6 +4,7 @@ import com.example.demo.tripleStore.bitString.BitStringPredicate;
 import com.example.demo.tripleStore.k2Tree.K2Tree;
 import com.example.demo.tripleStore.triple.Triple;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BMatrix {
@@ -33,13 +34,31 @@ public class BMatrix {
         return false;
     }
     public List<Triple> sp_(int s, int p) {
-
-        return null;
+        List<Triple> results = new ArrayList<>();
+        int lPredicateBound = bp.select(true, p);
+        int uPredicateBound = bp.select(true, p + 1) - 1;
+        List<Integer> triples = st.boundedRowQuery(s, lPredicateBound, uPredicateBound);
+        for (int t : triples) {
+            Integer res = ot.columnQuery(t);
+            if (res != null) {
+                results.add(this.triples.get(t));
+            }
+        }
+        return results;
     }
 
     public List<Triple> _po(int p, int o) {
-
-        return null;
+        List<Triple> results = new ArrayList<>();
+        int lPredicateBound = bp.select(true, p);
+        int uPredicateBound = bp.select(true, p + 1) - 1;
+        List<Integer> triples = ot.boundedRowQuery(o, lPredicateBound, uPredicateBound);
+        for (int t : triples) {
+            Integer res = st.columnQuery(t);
+            if (res != null) {
+                results.add(this.triples.get(t));
+            }
+        }
+        return results;
     }
     public List<Triple> s_o(int s, int o) {
 

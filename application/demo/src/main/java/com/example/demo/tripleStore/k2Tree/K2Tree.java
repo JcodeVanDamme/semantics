@@ -71,6 +71,14 @@ public class K2Tree {
             matrixSize = subSize;
         }
     }
+    public Integer columnQuery(int col) {
+        for (int row = 0; row < matrixSize; row++) {
+            if (checkCell(row, col)) {
+                return row;
+            }
+        }
+        return null;
+    }
 
     @Override
     public String toString() {
