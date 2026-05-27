@@ -1,5 +1,6 @@
 package com.example.demo.tripleStore.bMatrix;
 
+import com.example.demo.tripleStore.triple.Triple;
 import com.example.demo.tripleStore.triple.TripleProvider;
 
 import java.util.HashMap;

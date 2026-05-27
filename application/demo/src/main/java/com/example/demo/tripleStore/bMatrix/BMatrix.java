@@ -9,14 +9,12 @@ import java.util.List;
 public class BMatrix {
 
     private final List<Triple> triples;
-    private final TripleDictionary dict;
     private K2Tree st;
     private K2Tree ot;
     private final BitStringPredicate bp;
 
-    public BMatrix(List<Triple> triples, TripleDictionary dict, K2Tree st, K2Tree ot, BitStringPredicate bp) {
+    public BMatrix(List<Triple> triples, K2Tree st, K2Tree ot, BitStringPredicate bp) {
         this.triples = triples;
-        this.dict = dict;
         this.st = st;
         this.ot = ot;
         this.bp = bp;
@@ -75,10 +73,7 @@ public class BMatrix {
                 .append('(')
                 .append(s).append(", ")
                 .append(p).append(", ")
-                .append(o).append(") - ")
-                .append(dict.decodeSO(s)).append(" | ")
-                .append(dict.decodeP(p)).append(" | ")
-                .append(dict.decodeSO(o))
+                .append(o).append(")")
                 .append('\n');
         }
 

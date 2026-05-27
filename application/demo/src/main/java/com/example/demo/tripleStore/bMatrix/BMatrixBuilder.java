@@ -12,7 +12,6 @@ import java.util.*;
 public class BMatrixBuilder {
 
     private int k;
-    private TripleDictionary dict;
     private List<Triple> triples;
 
     private int sCount = 0;
@@ -21,19 +20,17 @@ public class BMatrixBuilder {
 
     private K2Tree st;
     private K2Tree ot;
-    private BitStringPredicate bp;
 
-    public BMatrix build(int k, int d, TripleProvider provider) {
+    public BMatrix build(int k, int d, TripleDictionary dict, TripleProvider provider) {
         this.k = k;
 
-        dict = new TripleDictionary();
         triples = TripleEncoder.encode(provider, dict);
 
         countValues();
         assembleBinaryMatrices();
-        bp = new BitStringPredicate(pCount, this.triples, d);
+        BitStringPredicate bp = new BitStringPredicate(pCount, this.triples, d);
 
-        return new BMatrix(triples, dict, st, ot, bp);
+        return new BMatrix(triples, st, ot, bp);
     }
 
     public void countValues() {
