@@ -2,8 +2,6 @@ package com.semantics;
 
 import com.semantics.rdf.model.Triple;
 import com.semantics.rdf.provider.TestTripleProvider;
-import com.semantics.rdf.query.Query;
-import com.semantics.rdf.query.QueryFactory;
 import com.semantics.rdf.tripleStore.TripleStore;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -12,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TripleStoreTests {
 
@@ -27,134 +24,111 @@ public class TripleStoreTests {
     }
 
     @Test
-    public void spoTest() {
-        String s = "DCC20";
-        String p = "has topic";
-        String o1 = "Text comp.";
-        String o2 = "Canada";
+    public void SPOTest() {
+        assertEquals(
+                List.of(new Triple("DCC20", "has topic", "Text comp.")),
+                tripleStore.query("DCC20", "has topic", "Text comp.")
+        );
 
-        List<Triple> res = new ArrayList<>(List.of(
-                new Triple(s, p, o1)
-        ));
-
-        assertEquals(res, tripleStore.query(s, p, o1));
-        assertEquals(List.of(), tripleStore.query(s, p, o2));
+        assertEquals(
+                List.of(),
+                tripleStore.query("DCC20", "has topic", "Canada")
+        );
     }
 
     @Test
     public void sptest() {
-        String s = "DCC20";
-        String p1 = "has topic";
-        String p2 = "lives in";
-        String o1 = "Text comp.";
-        String o2 = "Video cod.";
 
-        List<Triple> res = new ArrayList<>(List.of(
-                new Triple(s, p1, o1),
-                new Triple(s, p1, o2)
-        ));
+        assertEquals(
+                List.of(new Triple("DCC20", "has topic", "Text comp."),
+                        new Triple("DCC20", "has topic", "Video cod.")
+                ),
+                tripleStore.query("DCC20", "has topic", null)
+        );
 
-        assertEquals(res, tripleStore.query(s, p1, null));
-        assertEquals(List.of(), tripleStore.query(s, p2, null));
+        assertEquals(
+                List.of(),
+                tripleStore.query("DCC20", "lives in", null)
+        );
     }
 
     @Test
     public void poQueryTest() {
 
-        String s1 = "G. Navarro";
-        String s2 = "T. Gagie";
-        String s3 = "A. Bovik";
-        String s4 = "G. Sullivan";
-        String p = "attends";
-        String o = "DCC20";
+        assertEquals(
+                List.of(new Triple("G. Navarro", "attends", "DCC20"),
+                        new Triple("T. Gagie", "attends", "DCC20"),
+                        new Triple("A. Bovik", "attends", "DCC20"),
+                        new Triple("G. Sullivan", "attends", "DCC20")
+                ),
+                tripleStore.query(null, "attends", "DCC20")
+        );
 
-        List<Triple> res = new ArrayList<>(List.of(
-                new Triple(s1, p, o),
-                new Triple(s2, p, o),
-                new Triple(s3, p, o),
-                new Triple(s4, p, o)
-        ));
-
-        assertEquals(res, tripleStore.query(null, p, o));
-        assertEquals(List.of(), tripleStore.query(null, p, s1));
+        assertEquals(
+                List.of(),
+                tripleStore.query(null, "attends", "G. Navarro")
+        );
     }
 
     @Test
     public void s_oQueryTest() {
 
-        String s = "G. Navarro";
-        String p1 = "attends";
-        String o1 = "DCC20";
-        String o2 = "US";
-
-        List<Triple> res1 = List.of(
-                new Triple(s, p1, o1)
+        assertEquals(
+                List.of(new Triple("G. Navarro", "attends", "DCC20")
+                ),
+                tripleStore.query("G. Navarro", null, "DCC20")
         );
 
-        assertEquals(res1, tripleStore.query(s, null, o1));
-        assertEquals(List.of(), tripleStore.query(s, null, o2));
+        assertEquals(
+                List.of(),
+                tripleStore.query("G. Navarro", null, "US")
+        );
     }
 
     @Test
     public void s__QueryTest() {
 
-        String s1 = "DCC20";
-        String s2 = "US";
-        String p1 = "held on";
-        String p2 = "has topic";
-        String o1 = "S. Lake City";
-        String o2 = "Text comp.";
-        String o3 = "Video cod.";
-
-        List<Triple> res1 = List.of(
-                new Triple(s1, p2, o2),
-                new Triple(s1, p2, o3),
-                new Triple(s1, p1, o1)
+        assertEquals(
+                List.of(new Triple("DCC20", "has topic", "Text comp."),
+                        new Triple("DCC20", "has topic", "Video cod."),
+                        new Triple("DCC20", "held on", "S. Lake City")
+                ),
+                tripleStore.query("DCC20", null, null)
         );
 
-        assertEquals(res1, tripleStore.query(s1, null, null));
-        assertEquals(List.of(), tripleStore.query(s2, null, null));
+        assertEquals(List.of(),
+                tripleStore.query("US", null, null)
+        );
     }
 
     @Test
     public void __oQueryTest() {
 
-        String s1 = "G. Navarro";
-        String s2 = "T. Gagie";
-        String s3 = "DCC20";
-        String p1 = "expert in";
-        String p2 = "has topic";
-        String o1 = "Text comp.";
-
-        List<Triple> res1 = List.of(
-                new Triple(s1, p1, o1),
-                new Triple(s2, p1, o1),
-                new Triple(s3, p2, o1)
+        assertEquals(
+                List.of(new Triple("G. Navarro", "expert in", "Text comp."),
+                        new Triple("T. Gagie", "expert in", "Text comp."),
+                        new Triple("DCC20", "has topic", "Text comp.")
+                ),
+                tripleStore.query(null, null, "Text comp.")
         );
 
-        assertEquals(res1, tripleStore.query(null, null, o1));
-        assertEquals(List.of(), tripleStore.query(null, null, s1));
+        assertEquals(
+                List.of(),
+                tripleStore.query(null, null, "G. Navarro")
+        );
     }
 
     @Test
     public void _p_QueryTest() {
 
-        String s1 = "G. Navarro";
-        String s2 = "T. Gagie";
-        String s3 = "A. Bovik";
-        String s4 = "G. Sullivan";
-        String p1 = "lives in";
-        String o1 = "Chile";
-        String o2 = "Canada";
-        String o3 = "US";
-
-        List<Triple> res1 = List.of(
-                new Triple(s1, p1, o1),
-                new Triple(s2, p1, o2),
-                new Triple(s4, p1, o3),
-                new Triple(s3, p1, o3)
+        assertEquals(
+                List.of(
+                        new Triple("G. Navarro", "lives in", "Chile"),
+                        new Triple("T. Gagie", "lives in", "Canada"),
+                        new Triple("G. Sullivan", "lives in", "US"),
+                        new Triple("A. Bovik", "lives in", "US")
+                ),
+                tripleStore.query(null, "lives in", null)
         );
-
-        assertEquals(res1, tripleStore.query(null, p1, null));
     }
 }
