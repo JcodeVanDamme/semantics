@@ -121,6 +121,9 @@ public class BMatrixQueryTests {
         // (G. Navarro, attends, DCC20)
         results1.add(new Triple(s, p1, o1));
 
+        // (G. Navarro, ?, DCC20)
+        assertEquals(results1, tripleStore.bMatrix().s_o(s, o1));
+
         // (G. Navarro, ?, US)
         assertEquals(none, tripleStore.bMatrix().s_o(s, o2));
     }
