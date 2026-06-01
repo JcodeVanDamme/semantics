@@ -2,9 +2,12 @@ package com.semantics.rdf.tripleStore;
 
 import com.semantics.rdf.bmatrix.BMatrix;
 import com.semantics.rdf.bmatrix.BMatrixBuilder;
+import com.semantics.rdf.dictionary.TripleDecoder;
 import com.semantics.rdf.dictionary.TripleDictionary;
 import com.semantics.rdf.model.Triple;
 import com.semantics.rdf.provider.TripleProvider;
+import com.semantics.rdf.query.QueryFactory;
+import com.semantics.rdf.query.QueryProcessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,18 +23,27 @@ public class TripleStore {
 
     private TripleDictionary dict;
     private BMatrix bMatrix;
+    private QueryFactory factory;
+    private QueryProcessor processor;
+    private TripleDecoder decoder;
 
     public TripleDictionary dict() { return dict; }
     public BMatrix bMatrix() { return bMatrix; }
 
     public void init(TripleProvider tripleProvider) {
-        BMatrixBuilder builder = new BMatrixBuilder();
         dict = new TripleDictionary();
-        bMatrix = builder.build(K, D,T, dict, tripleProvider);
+        bMatrix = new BMatrixBuilder().build(K, D, T, dict, tripleProvider);
+
+        factory = new QueryFactory(dict);
+        processor = new QueryProcessor(bMatrix);
+        decoder = new TripleDecoder(dict);
     }
 
-    public List<Triple> query(Triple t) {
-        return new ArrayList<Triple>();
+    public List<Triple> query(String s, String p, String o) {
+        return decoder.decode(processor.process(factory.fromTriple(s, p, o)));
+    }
+    public List<Triple> query(String query) {
+        return decoder.decode(processor.process(factory.fromSparql(query)));
     }
     public Boolean create(Triple t) {
         return true;
