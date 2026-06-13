@@ -79,7 +79,7 @@ public class BitStringTests {
         assertEquals(6, b1.select(false, 5));
 
         // Querying more than present
-        assertThrows(ArrayStoreException.class, () -> b1.select(true, 20));
+        assertThrows(IndexOutOfBoundsException.class, () -> b1.select(true, 20));
     }
     @Test
     public void accessTests() {
