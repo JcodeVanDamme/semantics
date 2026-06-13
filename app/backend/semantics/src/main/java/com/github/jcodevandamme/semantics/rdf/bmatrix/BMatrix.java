@@ -2,7 +2,7 @@ package com.github.jcodevandamme.semantics.rdf.bmatrix;
 
 import com.github.jcodevandamme.semantics.rdf.model.Cell;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
-import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitStringPredicate;
+import com.github.jcodevandamme.semantics.rdf.structure.index.PredicateIndex;
 import com.github.jcodevandamme.semantics.rdf.structure.k2.K2Tree;
 
 import java.util.*;
@@ -10,13 +10,13 @@ import java.util.*;
 public class BMatrix {
 
     private final List<Triple> triples;
-    private final BitStringPredicate bp;
+    private final PredicateIndex bp;
     private final int t;
 
     private K2Tree st;
     private K2Tree ot;
 
-    public BMatrix(List<Triple> triples, K2Tree st, K2Tree ot, BitStringPredicate bp, int t) {
+    public BMatrix(List<Triple> triples, K2Tree st, K2Tree ot, PredicateIndex bp, int t) {
         this.triples = triples;
         this.st = st;
         this.ot = ot;

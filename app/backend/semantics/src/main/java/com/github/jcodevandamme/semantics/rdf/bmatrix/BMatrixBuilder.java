@@ -5,7 +5,7 @@ import com.github.jcodevandamme.semantics.rdf.dictionary.TripleEncoder;
 import com.github.jcodevandamme.semantics.rdf.model.Cell;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import com.github.jcodevandamme.semantics.rdf.provider.TripleProvider;
-import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitStringPredicate;
+import com.github.jcodevandamme.semantics.rdf.structure.index.PredicateIndex;
 import com.github.jcodevandamme.semantics.rdf.structure.k2.K2TreeBuilder;
 import com.github.jcodevandamme.semantics.rdf.structure.k2.K2Tree;
 
@@ -30,7 +30,7 @@ public class BMatrixBuilder {
 
         countValues();
         assembleBinaryMatrices();
-        BitStringPredicate bp = new BitStringPredicate(pCount, this.triples, d);
+        PredicateIndex bp = new PredicateIndex(pCount, this.triples, d);
 
         return new BMatrix(triples, st, ot, bp, t);
     }

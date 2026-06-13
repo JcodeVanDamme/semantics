@@ -1,11 +1,11 @@
-package com.github.jcodevandamme.semantics.rdf.structure.bitstring;
+package com.github.jcodevandamme.semantics.rdf.structure.index;
 
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class BitStringPredicate implements B {
+public class PredicateIndex {
 
     // Stores initial Position of each Predicate in Triples
     private final int[] ap;
@@ -15,7 +15,7 @@ public class BitStringPredicate implements B {
 
     private final int d;
 
-    public BitStringPredicate(int pCount, List<Triple> triples, int d) {
+    public PredicateIndex(int pCount, List<Triple> triples, int d) {
         this.d = d;
         ap = initializeAP(pCount, triples);
         rankP = initializeRankP(triples);
@@ -45,7 +45,6 @@ public class BitStringPredicate implements B {
         return rankP;
     }
 
-    @Override
     public int rank(boolean c, int i) {
         // -> Given Triple with Index i; what Predicate belongs to it ?
         // Approximate the Predicate Range using sampled rankP
@@ -57,16 +56,10 @@ public class BitStringPredicate implements B {
         return predicate;
     }
 
-    @Override
     public int select(boolean c, int j) {
         // -> Where does Predicate with ID j  begin in the Triple List ?
         // -> Which Columns in ST/OT / Triples belong to that predicate
         return ap[j];
-    }
-
-    @Override
-    public int access(int i) {
-        throw new UnsupportedOperationException("access not implemented");
     }
 
     @Override
