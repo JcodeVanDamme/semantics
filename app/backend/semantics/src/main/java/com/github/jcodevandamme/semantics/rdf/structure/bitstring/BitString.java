@@ -23,25 +23,22 @@ public class BitString implements B {
 
     // counts the number of occurrences of bit c in b up to position i
     @Override
-    public int rank(boolean c, int i) {
+    public int rank1(int i) {
         checkBounds(i);
-        int setBits = b.get(0, i).cardinality();
-        return c ? setBits : i - setBits;
+        return b.get(0, i).cardinality();
     }
 
     // returns the position in b of the j-th bit set to c
     @Override
-    public int select(boolean c, int j) {
+    public int select1(int j) {
         int count = 1;
         int pos = -1;
         while (true) {
-            if (c) {
-                pos = b.nextSetBit(pos + 1);
-            } else {
-                pos = b.nextClearBit(pos + 1);
-            }
+
+            pos = b.nextSetBit(pos + 1);
+
             if (pos < 0) {
-                throw new IndexOutOfBoundsException("select(" + c + "," + j + ") out of Range");
+                throw new IndexOutOfBoundsException("select1(" + j + ") out of Range");
             }
             if (count == j) {
                 return pos;
