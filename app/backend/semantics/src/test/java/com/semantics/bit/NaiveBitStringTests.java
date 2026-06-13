@@ -1,4 +1,4 @@
-package com.semantics;
+package com.semantics.bit;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.NaiveBitString;
 import org.junit.jupiter.api.Test;
 
