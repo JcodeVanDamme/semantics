@@ -1,7 +1,7 @@
 package com.semantics;
-import com.semantics.rdf.model.Cell;
-import com.semantics.rdf.structure.k2.K2Tree;
-import com.semantics.rdf.structure.k2.K2TreeBuilder;
+import com.github.jcodevandamme.semantics.rdf.model.Cell;
+import com.github.jcodevandamme.semantics.rdf.structure.k2.K2Tree;
+import com.github.jcodevandamme.semantics.rdf.structure.k2.K2TreeBuilder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

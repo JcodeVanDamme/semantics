@@ -1,7 +1,7 @@
 package com.semantics;
-import com.semantics.rdf.tripleStore.TripleStore;
-import com.semantics.rdf.provider.TestTripleProvider;
-import com.semantics.rdf.model.Triple;
+import com.github.jcodevandamme.semantics.rdf.tripleStore.TripleStore;
+import com.github.jcodevandamme.semantics.rdf.provider.TestTripleProvider;
+import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
