@@ -3,14 +3,12 @@ package com.github.jcodevandamme.semantics.rdf.structure.bitstring;
 import java.util.BitSet;
 import java.util.List;
 
-public class BitString implements B {
+public class NaiveBitString implements BitInterface {
 
     private final int size;
     private final BitSet b;
 
-    public int size() { return size; }
-
-    public BitString(List<Boolean> b) {
+    public NaiveBitString(List<Boolean> b) {
         size = b.size();
         long[] bits = new long[(b.size() + 63) / 64];
         for (int i = 0; i < b.size(); i++) {
@@ -20,28 +18,27 @@ public class BitString implements B {
         }
         this.b = BitSet.valueOf(bits);
     }
+    @Override
+    public int size() { return size; }
 
     // counts the number of occurrences of bit c in b up to position i
     @Override
-    public int rank(boolean c, int i) {
+    public int rank1(int i) {
         checkBounds(i);
-        int setBits = b.get(0, i).cardinality();
-        return c ? setBits : i - setBits;
+        return b.get(0, i).cardinality();
     }
 
     // returns the position in b of the j-th bit set to c
     @Override
-    public int select(boolean c, int j) {
+    public int select1(int j) {
         int count = 1;
         int pos = -1;
         while (true) {
-            if (c) {
-                pos = b.nextSetBit(pos + 1);
-            } else {
-                pos = b.nextClearBit(pos + 1);
-            }
+
+            pos = b.nextSetBit(pos + 1);
+
             if (pos < 0) {
-                throw new IndexOutOfBoundsException("select(" + c + "," + j + ") out of Range");
+                throw new IndexOutOfBoundsException("select1(" + j + ") out of Range");
             }
             if (count == j) {
                 return pos;
