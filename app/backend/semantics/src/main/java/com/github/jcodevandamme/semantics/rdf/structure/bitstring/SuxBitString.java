@@ -58,4 +58,22 @@ public class SuxBitString implements BitInterface {
         }
         return ((bits[i / 64] >>> (i % 64)) & 1L) != 0 ? 1 : 0;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("{");
+
+        boolean first = true;
+
+        for (int i = 0; i < size; i++) {
+            if (((bits[i / 64] >>> (i % 64)) & 1L) != 0) {
+                if (!first) sb.append(", ");
+                sb.append(i);
+                first = false;
+            }
+        }
+
+        sb.append("}");
+        return sb.toString();
+    }
 }
