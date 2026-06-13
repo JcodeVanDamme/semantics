@@ -1,5 +1,5 @@
 package com.semantics;
-import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitString;
+import com.github.jcodevandamme.semantics.rdf.structure.bitstring.NaiveBitString;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class BitStringTests {
+public class NaiveBitStringTests {
     @Test
     void rankTests() {
         List<Boolean> bits1 = new ArrayList<>();
@@ -29,7 +29,7 @@ public class BitStringTests {
         bits1.add(true);
 
         // [0 1 0 0 1 0 0 1 1 1 0 0 0 1]
-        BitString b1 = new BitString(bits1);
+        NaiveBitString b1 = new NaiveBitString(bits1);
 
         assertEquals(0, b1.rank1(1));
 
@@ -45,7 +45,7 @@ public class BitStringTests {
 
         // []
         List<Boolean> bits2 = new ArrayList<>();
-        BitString b2 = new BitString(bits2);
+        NaiveBitString b2 = new NaiveBitString(bits2);
 
         assertEquals(0, b2.rank1(bits2.size()));
     }
@@ -68,7 +68,7 @@ public class BitStringTests {
         bits1.add(true);
 
         // [0 0 1 0 0 1 0 0 1 0 0 1]
-        BitString b1 = new BitString(bits1);
+        NaiveBitString b1 = new NaiveBitString(bits1);
 
         assertEquals(2, b1.select1(1));
         assertEquals(11, b1.select1(4));
@@ -85,7 +85,7 @@ public class BitStringTests {
         bits.add(true);
 
         // [0 0 1]
-        BitString b = new BitString(bits);
+        NaiveBitString b = new NaiveBitString(bits);
 
         // gets the bit value at b[i]
 

@@ -3,12 +3,12 @@ package com.github.jcodevandamme.semantics.rdf.structure.bitstring;
 import java.util.BitSet;
 import java.util.List;
 
-public class BitString implements B {
+public class NaiveBitString implements BitInterface {
 
     private final int size;
     private final BitSet b;
 
-    public BitString(List<Boolean> b) {
+    public NaiveBitString(List<Boolean> b) {
         size = b.size();
         long[] bits = new long[(b.size() + 63) / 64];
         for (int i = 0; i < b.size(); i++) {

@@ -1,6 +1,6 @@
 package com.github.jcodevandamme.semantics.rdf.structure.k2;
 
-import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitString;
+import com.github.jcodevandamme.semantics.rdf.structure.bitstring.NaiveBitString;
 import com.github.jcodevandamme.semantics.rdf.model.Cell;
 
 import java.util.ArrayList;
@@ -112,8 +112,8 @@ public class K2TreeBuilder {
                 tTemp.addAll(bits);
             }
         }
-        BitString t = new BitString(tTemp);
-        BitString l = new BitString(lTemp);
+        NaiveBitString t = new NaiveBitString(tTemp);
+        NaiveBitString l = new NaiveBitString(lTemp);
         return new K2Tree(k,matrixSize, t, l);
     }
 

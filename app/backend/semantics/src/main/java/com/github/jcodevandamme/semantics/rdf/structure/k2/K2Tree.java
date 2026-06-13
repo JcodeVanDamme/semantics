@@ -1,7 +1,7 @@
 package com.github.jcodevandamme.semantics.rdf.structure.k2;
 
 import com.github.jcodevandamme.semantics.rdf.model.Cell;
-import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitString;
+import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,12 +10,12 @@ public class K2Tree {
 
     private final int k;
     private final int matrixSize;
-    private final BitString t;
-    private final BitString l;
+    private final BitInterface t;
+    private final BitInterface l;
 
     public int matrixSize() { return matrixSize; }
 
-    public K2Tree(int k,int matrixSize, BitString t, BitString l) {
+    public K2Tree(int k,int matrixSize, BitInterface t, BitInterface l) {
         this.k = k;
         this.matrixSize = matrixSize;
         this.t = t;
