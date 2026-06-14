@@ -1,4 +1,4 @@
-package com.semantics.bit;
+package com.semantics.bitstring;
 
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.NaiveBitString;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.SuxBitString;

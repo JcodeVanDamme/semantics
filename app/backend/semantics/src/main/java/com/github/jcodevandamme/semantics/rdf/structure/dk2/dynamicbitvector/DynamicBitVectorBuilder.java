@@ -6,7 +6,9 @@ import com.github.jcodevandamme.semantics.rdf.structure.bitstring.SuxBitString;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DynamicBitVectorBuilder {
+public final class DynamicBitVectorBuilder {
+    private DynamicBitVectorBuilder() {}
+
     /**
      * Generates a dynamic Bit-Vector in Tree Form from a static Series of Bits.
      *
@@ -27,7 +29,7 @@ public class DynamicBitVectorBuilder {
     private static List<Node> generateLeaves(BitInterface bitString, int chunkSize) {
         // List of Leaf Nodes
         // -> leaf.bits contains respective Chunk of original BitString
-        List<Node> leafs = new ArrayList<>();
+        List<Node> leaves = new ArrayList<>();
 
         for (int i = 0; i < bitString.size(); i += chunkSize) {
             // Read until Capacity or End of original BitString
@@ -41,10 +43,10 @@ public class DynamicBitVectorBuilder {
             }
 
             BitInterface subSet = new SuxBitString(chunk);
-            leafs.add(new LeafNode(1, chunkSize, subSet));
+            leaves.add(new LeafNode(1, chunkSize, subSet));
         }
 
-        return leafs;
+        return leaves;
     }
 
     private static DynamicBitVector buildTree(List<Node> level, int minCap, int maxCap) {
@@ -56,7 +58,7 @@ public class DynamicBitVectorBuilder {
             List<Node> nextLevel = new ArrayList<>();
 
             // Process all Child Nodes for the given Level
-            // -> Cycle 1; Leafs
+            // -> Cycle 1; Leaves
             // -> i == Index of current Child to be appended to Parent
             for (int i = 0; i < level.size(); i += maxCap) {
 

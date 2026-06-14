@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Dk2BuildTests {
+public class DynamicBitVectorBuildTests {
     // Tests done using prefabricated BitStrings as seen on p.109 in Paper:
     // "Compressed representation of dynamic binary relations with applications"
 
