@@ -1,4 +1,4 @@
-package com.semantics;
+package com.semantics.staticK2;
 import com.github.jcodevandamme.semantics.rdf.model.Cell;
 import com.github.jcodevandamme.semantics.rdf.structure.k2.K2Tree;
 import com.github.jcodevandamme.semantics.rdf.structure.k2.K2TreeBuilder;

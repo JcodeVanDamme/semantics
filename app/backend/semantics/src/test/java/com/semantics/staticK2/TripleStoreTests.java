@@ -1,4 +1,4 @@
-package com.semantics;
+package com.semantics.staticK2;
 
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import com.github.jcodevandamme.semantics.rdf.provider.TestTripleProvider;

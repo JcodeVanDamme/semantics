@@ -5,4 +5,5 @@ public interface BitInterface {
     int rank1(int i);
     int select1(int j);
     int access(int i);
+    int countOnes();
 }

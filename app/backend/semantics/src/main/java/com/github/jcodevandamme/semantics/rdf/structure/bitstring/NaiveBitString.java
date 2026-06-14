@@ -53,6 +53,10 @@ public class NaiveBitString implements BitInterface {
         checkBounds(i);
         return b.get(i) ? 1 : 0;
     }
+    @Override
+    public int countOnes() {
+        throw new UnsupportedOperationException("countOnes() not implemented");
+    }
 
     private void checkBounds(int i) {
         if (i < 0 || i > size) {

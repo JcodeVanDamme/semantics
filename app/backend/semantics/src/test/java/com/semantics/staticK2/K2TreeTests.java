@@ -1,4 +1,4 @@
-package com.semantics;
+package com.semantics.staticK2;
 import com.github.jcodevandamme.semantics.rdf.model.Cell;
 import com.github.jcodevandamme.semantics.rdf.structure.k2.K2Tree;
 import com.github.jcodevandamme.semantics.rdf.structure.k2.K2TreeBuilder;
@@ -8,7 +8,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 public class K2TreeTests {
-    // Tests done using prefabricated Cells as seen on p.5 in Paper
+    // Tests done using prefabricated Cells as seen on p.5
+    // in Paper: "Revisiting compact RDF stores based on k2-trees"
     @Test
     void K2TestST() {
         List<Cell> testST = new ArrayList<>();
