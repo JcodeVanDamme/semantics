@@ -1,12 +1,7 @@
 package com.github.jcodevandamme.semantics.rdf.structure.dk2;
 
-import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitInterface;
-import com.github.jcodevandamme.semantics.rdf.structure.bitstring.SuxBitString;
 import com.github.jcodevandamme.semantics.rdf.structure.dk2.dynamicbitvector.*;
 import com.github.jcodevandamme.semantics.rdf.structure.k2.K2Tree;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DK2Builder {
 
@@ -27,6 +22,6 @@ public class DK2Builder {
     public static DK2Tree build(K2Tree staticTree, int chunkSize, int minCapacity, int maxCapacity) {
         DynamicBitVector tTree = DynamicBitVectorBuilder.build(staticTree.t(), chunkSize, minCapacity, maxCapacity);
         DynamicBitVector lTree = DynamicBitVectorBuilder.build(staticTree.l(), chunkSize, minCapacity, maxCapacity);
-        return new DK2Tree(tTree, lTree);
+        return new DK2Tree(tTree, lTree, staticTree.k(), staticTree.matrixSize());
     }
 }

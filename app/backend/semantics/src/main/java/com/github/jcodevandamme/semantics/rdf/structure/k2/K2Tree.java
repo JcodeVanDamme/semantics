@@ -13,15 +13,16 @@ public class K2Tree {
     private final BitInterface t;
     private final BitInterface l;
 
-    public BitInterface t() { return t; }
-    public BitInterface l() { return l; }
-
     public K2Tree(int k,int matrixSize, BitInterface t, BitInterface l) {
         this.k = k;
         this.matrixSize = matrixSize;
         this.t = t;
         this.l = l;
     }
+    public int k() { return k; }
+    public int matrixSize() { return matrixSize; }
+    public BitInterface t() { return t; }
+    public BitInterface l() { return l; }
     public boolean checkCell(int row, int col) {
         int currentBitIndex = 0;
         int matrixSize = this.matrixSize;
