@@ -7,6 +7,7 @@ import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import com.github.jcodevandamme.semantics.rdf.provider.TripleProvider;
 import com.github.jcodevandamme.semantics.rdf.structure.index.PredicateIndex;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Builder;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Configuration;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Tree;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.k2.K2TreeBuilder;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.k2.K2Tree;
@@ -25,6 +26,8 @@ public class BMatrixBuilder {
     private K2Tree st;
     private K2Tree ot;
 
+    private PredicateIndex bp;
+
     public BMatrix buildStatic(int k, int d, int t, TripleDictionary dict, TripleProvider provider) {
         this.k = k;
 
@@ -32,20 +35,20 @@ public class BMatrixBuilder {
 
         countValues();
         assembleBinaryMatrices();
-        PredicateIndex bp = new PredicateIndex(pCount, this.triples, d);
+        bp = new PredicateIndex(pCount, this.triples, d);
         return new BMatrix(triples, st, ot, bp, t);
     }
-    public BMatrix buildDynamic(int k, int d, int t, int chunkSize, int minimumCapacity, int maximumCapacity, TripleDictionary dict, TripleProvider provider) {
+    public BMatrix buildDynamic(int k, int d, int t, DK2Configuration config, TripleDictionary dict, TripleProvider provider) {
         this.k = k;
 
         triples = TripleEncoder.encode(provider, dict);
 
         countValues();
         assembleBinaryMatrices();
-        PredicateIndex bp = new PredicateIndex(pCount, this.triples, d);
+        bp = new PredicateIndex(pCount, this.triples, d);
 
-        DK2Tree dynSt = DK2Builder.build(st, chunkSize, minimumCapacity, maximumCapacity);
-        DK2Tree dynOt = DK2Builder.build(ot, chunkSize, minimumCapacity, maximumCapacity);
+        DK2Tree dynSt = DK2Builder.build(st, config);
+        DK2Tree dynOt = DK2Builder.build(ot, config);
 
         return new BMatrix(triples, dynSt, dynOt, bp, t);
     }

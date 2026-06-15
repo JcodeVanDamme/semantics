@@ -39,7 +39,7 @@ public class DK2FindLeafTests {
                 )
         );
         BitInterface statT = new SuxBitString(tBits);
-        DynamicBitVector dynT = DynamicBitVectorBuilder.build(statT, 8, 1, 2);
+        DynamicBitVector dynT = DynamicBitVectorBuilder.build(statT, 8, 1,1, 2);
 
         List<Boolean> lBits = new ArrayList<>(
                 List.of(
@@ -57,7 +57,7 @@ public class DK2FindLeafTests {
                 )
         );
         BitInterface statL = new SuxBitString(lBits);
-        DynamicBitVector dynL = DynamicBitVectorBuilder.build(statL, 8, 1, 3);
+        DynamicBitVector dynL = DynamicBitVectorBuilder.build(statL, 8, 1, 1, 3);
 
         tree = new DK2Tree(dynT, dynL, 0, 0);
     }

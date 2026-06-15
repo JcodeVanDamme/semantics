@@ -8,6 +8,7 @@ import com.github.jcodevandamme.semantics.rdf.bmatrix.BMatrixBuilder;
 import com.github.jcodevandamme.semantics.rdf.provider.TripleProvider;
 import com.github.jcodevandamme.semantics.rdf.query.QueryFactory;
 import com.github.jcodevandamme.semantics.rdf.query.QueryProcessor;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Configuration;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class TripleStore {
     // DYNAMIC
 
     private final int CHUNK_SIZE = 4;
+    private final int LEAF_MIN_CAPACITY = 1;
     private final int INTERNAL_MIN_CAPACITY = 1;
     private final int INTERNAL_MAX_CAPACITY = 3;
 
@@ -45,7 +47,15 @@ public class TripleStore {
     }
     public void initDynamic(TripleProvider tripleProvider) {
         dict = new TripleDictionary();
-        bMatrix = new BMatrixBuilder().buildDynamic(K, D, T, CHUNK_SIZE, INTERNAL_MIN_CAPACITY, INTERNAL_MAX_CAPACITY, dict, tripleProvider);
+
+        DK2Configuration config = new DK2Configuration(
+                CHUNK_SIZE,
+                LEAF_MIN_CAPACITY,
+                INTERNAL_MIN_CAPACITY,
+                INTERNAL_MAX_CAPACITY
+        );
+
+        bMatrix = new BMatrixBuilder().buildDynamic(K, D, T, config, dict, tripleProvider);
 
         factory = new QueryFactory(dict);
         processor = new QueryProcessor(bMatrix);

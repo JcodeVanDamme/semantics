@@ -13,16 +13,24 @@ public class DK2Builder {
      * into a dynamic structure with explicit nodes open for modifications. </p>
      *
      * @param staticTree static K2-tree to generate the DK2-tree from
-     * @param chunkSize size of bit chunks used to partition the original
-     *                  T and L bitstrings; determines the size of leaf nodes
-     *                  in the resulting DynamicBitVector trees
-     * @param minCapacity minimum number of entries allowed in internal nodes
-     * @param maxCapacity maximum number of entries allowed in internal nodes
+     * @param config Configuration Parameters for the Tree
      * @return the generated DK2-tree
      */
-    public static DK2Tree build(K2Tree staticTree, int chunkSize, int minCapacity, int maxCapacity) {
-        DynamicBitVector tTree = DynamicBitVectorBuilder.build(staticTree.t(), chunkSize, minCapacity, maxCapacity);
-        DynamicBitVector lTree = DynamicBitVectorBuilder.build(staticTree.l(), chunkSize, minCapacity, maxCapacity);
+    public static DK2Tree build(K2Tree staticTree, DK2Configuration config) {
+        DynamicBitVector tTree = DynamicBitVectorBuilder.build(
+                staticTree.t(),
+                config.chunkSize(),
+                config.leafMinimumCapacity(),
+                config.internalMinimumCapacity(),
+                config.internalMaximumCapacity()
+        );
+        DynamicBitVector lTree = DynamicBitVectorBuilder.build(
+                staticTree.l(),
+                config.chunkSize(),
+                config.leafMinimumCapacity(),
+                config.internalMinimumCapacity(),
+                config.internalMaximumCapacity()
+        );
         return new DK2Tree(tTree, lTree, staticTree.k(), staticTree.matrixSize());
     }
 }

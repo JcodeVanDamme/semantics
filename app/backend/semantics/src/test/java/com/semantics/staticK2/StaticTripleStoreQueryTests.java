@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TripleStoreTests {
+public class StaticTripleStoreQueryTests {
 
     static TripleStore tripleStore;
     static List<Triple> none;

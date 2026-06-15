@@ -18,15 +18,16 @@ public final class DynamicBitVectorBuilder {
      * @param chunkSize size of bit chunks used to partition the original
      *                  Bit-String; determines the size of leaf nodes
      *                  in the resulting Dynamic-Bit-Vector
-     * @param minCapacity minimum number of entries allowed in internal nodes
-     * @param maxCapacity maximum number of entries allowed in internal nodes
+     * @param leafMinCapacity minimum number of Entries allowed in Leaf nodes
+     * @param internalMinCapacity minimum number of Entries allowed in internal nodes
+     * @param internalMaxCapacity maximum number of Entries allowed in internal nodes
      * @return the generated DynamicBitVector
      */
-    public static DynamicBitVector build(BitInterface bitString, int chunkSize, int minCapacity, int maxCapacity) {
-        List<Node> leaves = generateLeaves(bitString, chunkSize);
-        return buildTree(leaves, minCapacity, maxCapacity);
+    public static DynamicBitVector build(BitInterface bitString, int chunkSize, int leafMinCapacity, int internalMinCapacity, int internalMaxCapacity) {
+        List<Node> leaves = generateLeaves(bitString, chunkSize, leafMinCapacity);
+        return buildTree(leaves, internalMinCapacity, internalMaxCapacity);
     }
-    private static List<Node> generateLeaves(BitInterface bitString, int chunkSize) {
+    private static List<Node> generateLeaves(BitInterface bitString, int chunkSize, int minCap) {
         // List of Leaf Nodes
         // -> leaf.bits contains respective Chunk of original BitString
         List<Node> leaves = new ArrayList<>();
@@ -43,7 +44,7 @@ public final class DynamicBitVectorBuilder {
             }
 
             BitInterface subSet = new SuxBitString(chunk);
-            leaves.add(new LeafNode(1, chunkSize, subSet));
+            leaves.add(new LeafNode(minCap, chunkSize, subSet));
         }
 
         return leaves;

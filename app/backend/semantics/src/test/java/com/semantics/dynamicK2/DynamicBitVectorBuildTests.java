@@ -39,7 +39,7 @@ public class DynamicBitVectorBuildTests {
             )
         );
         statT = new SuxBitString(tBits);
-        dynT = DynamicBitVectorBuilder.build(statT, 8, 1, 2);
+        dynT = DynamicBitVectorBuilder.build(statT, 8, 1, 1, 2);
 
 
         List<Boolean> lBits = new ArrayList<>(
@@ -58,7 +58,7 @@ public class DynamicBitVectorBuildTests {
                 )
         );
         statL = new SuxBitString(lBits);
-        dynL = DynamicBitVectorBuilder.build(statL, 8, 1, 3);
+        dynL = DynamicBitVectorBuilder.build(statL, 8, 1, 1, 3);
         System.out.println(dynL);
     }
 
