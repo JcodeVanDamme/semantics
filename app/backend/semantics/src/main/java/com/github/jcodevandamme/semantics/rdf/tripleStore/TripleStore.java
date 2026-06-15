@@ -20,6 +20,12 @@ public class TripleStore {
     // Merge / Unsorted Threshold
     private final int T = 10;
 
+    // DYNAMIC
+
+    private final int CHUNK_SIZE = 4;
+    private final int INTERNAL_MIN_CAPACITY = 1;
+    private final int INTERNAL_MAX_CAPACITY = 3;
+
     private TripleDictionary dict;
     private BMatrix bMatrix;
     private QueryFactory factory;
@@ -29,9 +35,17 @@ public class TripleStore {
     public TripleDictionary dict() { return dict; }
     public BMatrix bMatrix() { return bMatrix; }
 
-    public void init(TripleProvider tripleProvider) {
+    public void initStatic(TripleProvider tripleProvider) {
         dict = new TripleDictionary();
-        bMatrix = new BMatrixBuilder().build(K, D, T, dict, tripleProvider);
+        bMatrix = new BMatrixBuilder().buildStatic(K, D, T, dict, tripleProvider);
+
+        factory = new QueryFactory(dict);
+        processor = new QueryProcessor(bMatrix);
+        decoder = new TripleDecoder(dict);
+    }
+    public void initDynamic(TripleProvider tripleProvider) {
+        dict = new TripleDictionary();
+        bMatrix = new BMatrixBuilder().buildDynamic(K, D, T, CHUNK_SIZE, INTERNAL_MIN_CAPACITY, INTERNAL_MAX_CAPACITY, dict, tripleProvider);
 
         factory = new QueryFactory(dict);
         processor = new QueryProcessor(bMatrix);

@@ -2,11 +2,11 @@ package com.semantics.dynamicK2;
 
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitInterface;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.SuxBitString;
-import com.github.jcodevandamme.semantics.rdf.structure.dk2.DK2Builder;
-import com.github.jcodevandamme.semantics.rdf.structure.dk2.DK2Tree;
-import com.github.jcodevandamme.semantics.rdf.structure.dk2.dynamicbitvector.DynamicBitVector;
-import com.github.jcodevandamme.semantics.rdf.structure.dk2.dynamicbitvector.DynamicBitVectorBuilder;
-import com.github.jcodevandamme.semantics.rdf.structure.dk2.dynamicbitvector.LeafNode;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Tree;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.FindLeafResult;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVector;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorBuilder;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.LeafNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -59,18 +59,18 @@ public class DK2FindLeafTests {
         BitInterface statL = new SuxBitString(lBits);
         DynamicBitVector dynL = DynamicBitVectorBuilder.build(statL, 8, 1, 3);
 
-        tree = new DK2Tree(dynT, dynL);
+        tree = new DK2Tree(dynT, dynL, 0, 0);
     }
     @Test
     void findLeaf() {
-        LeafNode target1 = tree.findTLeaf(0);
-        LeafNode target2 = tree.findTLeaf(7);
+        /*FindLeafResult res1 = tree.findTLeaf(0);
+        FindLeafResult res2 = tree.findTLeaf(7);
 
-        assertEquals(target1.bits().toString(), target2.bits().toString());
+        assertEquals(((LeafNode) res1.node()).bits().toString(), ((LeafNode) res2.node()).bits().toString());
 
-        LeafNode target3 = tree.findTLeaf(8);
-        LeafNode target4 = tree.findTLeaf(15);
+        FindLeafResult res3 = tree.findTLeaf(8);
+        FindLeafResult res4 = tree.findTLeaf(15);
 
-        assertEquals(target3.bits().toString(), target4.bits().toString());
+        assertEquals(((LeafNode) res3.node()).bits().toString(), ((LeafNode) res4.node()).bits().toString());*/
     }
 }

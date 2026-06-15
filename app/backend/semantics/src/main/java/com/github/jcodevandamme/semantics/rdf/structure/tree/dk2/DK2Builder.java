@@ -1,7 +1,8 @@
-package com.github.jcodevandamme.semantics.rdf.structure.dk2;
+package com.github.jcodevandamme.semantics.rdf.structure.tree.dk2;
 
-import com.github.jcodevandamme.semantics.rdf.structure.dk2.dynamicbitvector.*;
-import com.github.jcodevandamme.semantics.rdf.structure.k2.K2Tree;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.k2.K2Tree;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVector;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorBuilder;
 
 public class DK2Builder {
 

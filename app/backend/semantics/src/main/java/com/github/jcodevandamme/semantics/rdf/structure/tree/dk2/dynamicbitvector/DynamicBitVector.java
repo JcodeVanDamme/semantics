@@ -1,4 +1,4 @@
-package com.github.jcodevandamme.semantics.rdf.structure.dk2.dynamicbitvector;
+package com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector;
 
 public class DynamicBitVector {
 
@@ -7,6 +7,13 @@ public class DynamicBitVector {
         this.root = root;
     }
     public Node root() { return root; }
+    public int size() {
+        int size = 0;
+        for (Entry e : ((InternalNode) root).entries()) {
+            size += e.b();
+        }
+        return size;
+    }
 
     @Override
     public String toString() {

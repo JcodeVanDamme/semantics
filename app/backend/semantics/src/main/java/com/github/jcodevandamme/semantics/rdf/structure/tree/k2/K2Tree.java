@@ -1,12 +1,13 @@
-package com.github.jcodevandamme.semantics.rdf.structure.k2;
+package com.github.jcodevandamme.semantics.rdf.structure.tree.k2;
 
 import com.github.jcodevandamme.semantics.rdf.model.Cell;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitInterface;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.KTree;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class K2Tree {
+public class K2Tree implements KTree {
 
     private final int k;
     private final int matrixSize;
@@ -20,9 +21,13 @@ public class K2Tree {
         this.l = l;
     }
     public int k() { return k; }
-    public int matrixSize() { return matrixSize; }
     public BitInterface t() { return t; }
     public BitInterface l() { return l; }
+    @Override
+    public int matrixSize() {
+        return matrixSize;
+    }
+    @Override
     public boolean checkCell(int row, int col) {
         int currentBitIndex = 0;
         int matrixSize = this.matrixSize;
@@ -64,43 +69,6 @@ public class K2Tree {
             currentBitIndex = base + child;
             matrixSize = subSize;
         }
-    }
-    public List<Integer> boundedRowQuery(int row, int lColBound, int uColBound) {
-        List<Integer> results = new ArrayList<>();
-        for (int col = lColBound; col <= uColBound; col++) {
-            if (checkCell(row, col)) {
-                results.add(col);
-            }
-        }
-        return results;
-    }
-    public List<Integer> rowQuery(int row) {
-        List<Integer> results = new ArrayList<>();
-        for (int col = 0; col < matrixSize; col++) {
-            if (checkCell(row, col)) {
-                results.add(col);
-            }
-        }
-        return results;
-    }
-    public Integer columnQuery(int col) {
-        for (int row = 0; row < matrixSize; row++) {
-            if (checkCell(row, col)) {
-                return row;
-            }
-        }
-        return null;
-    }
-    public List<Cell> boundedRangeQuery(int lColBound, int uColBound) {
-        List<Cell> results = new ArrayList<>();
-        for (int row = 0; row < matrixSize; row ++) {
-            for (int col = lColBound; col <= uColBound; col++) {
-                if (checkCell(row, col)) {
-                    results.add(new Cell(row, col));
-                }
-            }
-        }
-        return results;
     }
 
     @Override

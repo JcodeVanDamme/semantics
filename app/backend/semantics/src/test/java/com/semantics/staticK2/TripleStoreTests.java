@@ -19,7 +19,7 @@ public class TripleStoreTests {
     @BeforeAll
     static void init() {
         tripleStore = new TripleStore();
-        tripleStore.init(new TestTripleProvider());
+        tripleStore.initStatic(new TestTripleProvider());
         none = new ArrayList<>();
     }
 

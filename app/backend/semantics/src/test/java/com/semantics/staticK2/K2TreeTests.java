@@ -1,7 +1,7 @@
 package com.semantics.staticK2;
 import com.github.jcodevandamme.semantics.rdf.model.Cell;
-import com.github.jcodevandamme.semantics.rdf.structure.k2.K2Tree;
-import com.github.jcodevandamme.semantics.rdf.structure.k2.K2TreeBuilder;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.k2.K2Tree;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.k2.K2TreeBuilder;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;

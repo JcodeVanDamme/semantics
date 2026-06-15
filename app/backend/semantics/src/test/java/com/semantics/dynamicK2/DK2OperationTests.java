@@ -1,5 +1,7 @@
-package com.semantics.staticK2;
+package com.semantics.dynamicK2;
 import com.github.jcodevandamme.semantics.rdf.model.Cell;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Builder;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Tree;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.k2.K2Tree;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.k2.K2TreeBuilder;
 import org.junit.jupiter.api.BeforeAll;
@@ -11,9 +13,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class K2OperationTests {
+public class DK2OperationTests {
 
-    static K2Tree tree;
+    static DK2Tree tree;
 
     @BeforeAll
     public static void setup() {
@@ -27,7 +29,8 @@ public class K2OperationTests {
 
 
         K2TreeBuilder k2Builder = new K2TreeBuilder();
-        tree = k2Builder.constructK2(2, testST, 8);
+        K2Tree staticTree = k2Builder.constructK2(2, testST, 8);
+        tree = DK2Builder.build(staticTree, 4, 1, 3);
     }
 
     @Test
@@ -111,16 +114,5 @@ public class K2OperationTests {
         assertFalse(tree.checkCell(7, 5));
         assertFalse(tree.checkCell(7, 6));
         assertFalse(tree.checkCell(7, 7));
-    }
-
-    @Test
-    public void boundedRowQueryTest() {
-        List<Integer> results1 = new ArrayList<>();
-        results1.add(1);
-        results1.add(3);
-        assertEquals(results1, tree.boundedRowQuery(1, 0, 7));
-
-        List<Integer> results2 = new ArrayList<>();
-        assertEquals(results2, tree.boundedRowQuery(7, 0, 7));
     }
 }

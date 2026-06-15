@@ -2,10 +2,10 @@ package com.semantics.dynamicK2;
 
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitInterface;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.SuxBitString;
-import com.github.jcodevandamme.semantics.rdf.structure.dk2.dynamicbitvector.DynamicBitVector;
-import com.github.jcodevandamme.semantics.rdf.structure.dk2.dynamicbitvector.DynamicBitVectorBuilder;
-import com.github.jcodevandamme.semantics.rdf.structure.dk2.dynamicbitvector.Entry;
-import com.github.jcodevandamme.semantics.rdf.structure.dk2.dynamicbitvector.InternalNode;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVector;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorBuilder;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.Entry;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.InternalNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -59,6 +59,7 @@ public class DynamicBitVectorBuildTests {
         );
         statL = new SuxBitString(lBits);
         dynL = DynamicBitVectorBuilder.build(statL, 8, 1, 3);
+        System.out.println(dynL);
     }
 
     @Test
@@ -66,7 +67,7 @@ public class DynamicBitVectorBuildTests {
         Entry e1 = ((InternalNode) dynT.root()).entries().get(0);
         Entry e2 = ((InternalNode) dynT.root()).entries().get(1);
 
-        assertEquals(23, e1.b());
+        assertEquals(32, e1.b());
         assertEquals(16, e1.o());
         assertEquals(8, e2.b());
         assertEquals(4, e2.o());

@@ -1,4 +1,4 @@
-package com.github.jcodevandamme.semantics.rdf.structure.dk2.dynamicbitvector;
+package com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector;
 
 import java.util.ArrayList;
 import java.util.List;
