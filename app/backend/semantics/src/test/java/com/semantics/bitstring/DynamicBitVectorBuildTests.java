@@ -1,4 +1,4 @@
-package com.semantics.dynamicK2;
+package com.semantics.bitstring;
 
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitInterface;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.SuxBitString;

@@ -14,7 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class DK2OperationTests {
+public class DK2CheckCellTests {
 
     static DK2Tree tree;
 

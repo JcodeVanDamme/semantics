@@ -5,7 +5,7 @@ import com.github.jcodevandamme.semantics.rdf.dictionary.TripleEncoder;
 import com.github.jcodevandamme.semantics.rdf.model.Cell;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import com.github.jcodevandamme.semantics.rdf.provider.TripleProvider;
-import com.github.jcodevandamme.semantics.rdf.structure.index.PredicateIndex;
+import com.github.jcodevandamme.semantics.rdf.structure.index.StaticPredicateIndex;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Builder;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Configuration;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Tree;
@@ -26,7 +26,7 @@ public class BMatrixBuilder {
     private K2Tree st;
     private K2Tree ot;
 
-    private PredicateIndex bp;
+    private StaticPredicateIndex bp;
 
     public BMatrix buildStatic(int k, int d, int t, TripleDictionary dict, TripleProvider provider) {
         this.k = k;
@@ -35,7 +35,7 @@ public class BMatrixBuilder {
 
         countValues();
         assembleBinaryMatrices();
-        bp = new PredicateIndex(pCount, this.triples, d);
+        bp = new StaticPredicateIndex(pCount, this.triples, d);
         return new BMatrix(triples, st, ot, bp, t);
     }
     public BMatrix buildDynamic(int k, int d, int t, DK2Configuration config, TripleDictionary dict, TripleProvider provider) {
@@ -45,7 +45,7 @@ public class BMatrixBuilder {
 
         countValues();
         assembleBinaryMatrices();
-        bp = new PredicateIndex(pCount, this.triples, d);
+        bp = new StaticPredicateIndex(pCount, this.triples, d);
 
         DK2Tree dynSt = DK2Builder.build(st, config);
         DK2Tree dynOt = DK2Builder.build(ot, config);

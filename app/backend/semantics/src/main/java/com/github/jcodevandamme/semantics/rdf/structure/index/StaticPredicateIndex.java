@@ -5,7 +5,7 @@ import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import java.util.Arrays;
 import java.util.List;
 
-public class PredicateIndex {
+public class StaticPredicateIndex {
 
     // Stores initial Position of each Predicate in Triples
     private final int[] ap;
@@ -15,7 +15,7 @@ public class PredicateIndex {
 
     private final int d;
 
-    public PredicateIndex(int pCount, List<Triple> triples, int d) {
+    public StaticPredicateIndex(int pCount, List<Triple> triples, int d) {
         this.d = d;
         ap = initializeAP(pCount, triples);
         rankP = initializeRankP(triples);
@@ -45,7 +45,7 @@ public class PredicateIndex {
         return rankP;
     }
 
-    public int rank(boolean c, int i) {
+    public int rank1(int i) {
         // -> Given Triple with Index i; what Predicate belongs to it ?
         // Approximate the Predicate Range using sampled rankP
         int lBound = i / d;
@@ -55,8 +55,7 @@ public class PredicateIndex {
         }
         return predicate;
     }
-
-    public int select(boolean c, int j) {
+    public int select1(int j) {
         // -> Where does Predicate with ID j  begin in the Triple List ?
         // -> Which Columns in ST/OT / Triples belong to that predicate
         return ap[j];

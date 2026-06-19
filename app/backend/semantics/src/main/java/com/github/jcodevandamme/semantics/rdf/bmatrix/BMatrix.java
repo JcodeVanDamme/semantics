@@ -2,7 +2,7 @@ package com.github.jcodevandamme.semantics.rdf.bmatrix;
 
 import com.github.jcodevandamme.semantics.rdf.model.Cell;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
-import com.github.jcodevandamme.semantics.rdf.structure.index.PredicateIndex;
+import com.github.jcodevandamme.semantics.rdf.structure.index.StaticPredicateIndex;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.K2;
 
 import java.util.*;
@@ -10,13 +10,13 @@ import java.util.*;
 public class BMatrix {
 
     private final List<Triple> triples;
-    private final PredicateIndex bp;
+    private final StaticPredicateIndex bp;
     private final int t;
 
     private K2 st;
     private K2 ot;
 
-    public BMatrix(List<Triple> triples, K2 st, K2 ot, PredicateIndex bp, int t) {
+    public BMatrix(List<Triple> triples, K2 st, K2 ot, StaticPredicateIndex bp, int t) {
         this.triples = triples;
         this.st = st;
         this.ot = ot;
@@ -24,9 +24,36 @@ public class BMatrix {
         this.t = t;
     }
 
+    public boolean addTriple(int s, int p, int o) throws IllegalArgumentException {
+        if (spo(s, p, o)) {
+            throw new IllegalArgumentException("Triple to be created already exists");
+        }
+
+        return true;
+    }
+    public boolean deleteTriple(int s, int p, int o) throws IllegalArgumentException {
+        if (!spo(s, p, o)) {
+            throw new IllegalArgumentException("Triple to be deleted does not exist");
+        }
+
+        return true;
+    }
+    public boolean updateTriple(int oldS, int oldP, int oldO, int newS, int newP, int newO) throws IllegalArgumentException {
+        if (!spo(oldS, oldP, oldO)) {
+            throw new IllegalArgumentException("Triple to be updated does not exist");
+        } else if (spo(newS, newP, newO)) {
+            throw new IllegalArgumentException("Triple to be deleted does not exist");
+        }
+
+        deleteTriple(oldS, oldP, oldO);
+        addTriple(newS, newP, newO);
+
+        return true;
+    }
+
     public boolean spo(int s, int p, int o) {
-        int lPredicateBound = bp.select(true, p);
-        int uPredicateBound = bp.select(true, p + 1) - 1;
+        int lPredicateBound = bp.select1(p);
+        int uPredicateBound = bp.select1(p + 1) - 1;
 
         List<Integer> triples = st.boundedRowQuery(s, lPredicateBound, uPredicateBound);
 
@@ -40,8 +67,8 @@ public class BMatrix {
     public List<Triple> sp_(int s, int p) {
         List<Triple> results = new ArrayList<>();
 
-        int lPredicateBound = bp.select(true, p);
-        int uPredicateBound = bp.select(true, p + 1) - 1;
+        int lPredicateBound = bp.select1(p);
+        int uPredicateBound = bp.select1(p + 1) - 1;
 
         List<Integer> triples = st.boundedRowQuery(s, lPredicateBound, uPredicateBound);
 
@@ -57,8 +84,8 @@ public class BMatrix {
     public List<Triple> _po(int p, int o) {
         List<Triple> results = new ArrayList<>();
 
-        int lPredicateBound = bp.select(true, p);
-        int uPredicateBound = bp.select(true, p + 1) - 1;
+        int lPredicateBound = bp.select1(p);
+        int uPredicateBound = bp.select1(p + 1) - 1;
 
         List<Integer> triples = ot.boundedRowQuery(o, lPredicateBound, uPredicateBound);
 
@@ -103,7 +130,7 @@ public class BMatrix {
         for (int t : subjectMatches) {
             Integer o = ot.columnQuery(t);
             if (o != null) {
-                int p = bp.rank(true, t);
+                int p = bp.rank1(t);
                 results.add(new Triple(s, p, o));
             }
         }
@@ -118,7 +145,7 @@ public class BMatrix {
         for (int t : objectMatches) {
             Integer s = st.columnQuery(t);
             if (s != null) {
-                int p = bp.rank(true, t);
+                int p = bp.rank1(t);
                 results.add(new Triple(s, p, o));
             }
         }
@@ -128,8 +155,8 @@ public class BMatrix {
     public List<Triple> _p_(int p) {
         List<Triple> results = new ArrayList<>();
 
-        int lPredicateBound = bp.select(true, p);
-        int uPredicateBound = bp.select(true, p + 1) - 1;
+        int lPredicateBound = bp.select1( p);
+        int uPredicateBound = bp.select1( p + 1) - 1;
 
         List<Cell> subjects = st.boundedRangeQuery(lPredicateBound, uPredicateBound);
 

@@ -39,7 +39,7 @@ public class DK2Tree implements K2 {
             // Obtain Base Offset for the continuous Block of currentBitIndex`s Children
             int base;
             if (matrixSize < this.matrixSize) {
-                // Call rank with + 1 to counter its exclusive Upper Bound
+                // Call rank1 with + 1 to counter its exclusive Upper Bound
                 base = rank1(tTree, currentBitIndex + 1) * (k * k);
 
             } else {
