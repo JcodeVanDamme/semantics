@@ -1,13 +1,9 @@
 package com.github.jcodevandamme.semantics.rdf.structure.tree.k2;
 
-import com.github.jcodevandamme.semantics.rdf.model.Cell;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitInterface;
-import com.github.jcodevandamme.semantics.rdf.structure.tree.KTree;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.K2;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class K2Tree implements KTree {
+public class K2Tree implements K2 {
 
     private final int k;
     private final int matrixSize;

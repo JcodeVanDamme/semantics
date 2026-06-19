@@ -13,7 +13,7 @@ import java.util.List;
  *     Higher-level Query operations on the Trees are provided as default
  *     Implementations and consist of repeated Calls to {@link #checkCell(int, int)}. </p>
  */
-public interface KTree {
+public interface K2 {
 
     /**
      * Returns the Dimension of the conceptual NxN Matrix.

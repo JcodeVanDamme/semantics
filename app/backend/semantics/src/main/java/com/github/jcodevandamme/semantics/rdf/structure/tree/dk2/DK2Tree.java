@@ -1,12 +1,9 @@
 package com.github.jcodevandamme.semantics.rdf.structure.tree.dk2;
 
-import com.github.jcodevandamme.semantics.rdf.model.Cell;
-import com.github.jcodevandamme.semantics.rdf.structure.tree.KTree;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.K2;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.*;
 
-import java.util.List;
-
-public class DK2Tree implements KTree {
+public class DK2Tree implements K2 {
 
     private final int k;
     private final int matrixSize;

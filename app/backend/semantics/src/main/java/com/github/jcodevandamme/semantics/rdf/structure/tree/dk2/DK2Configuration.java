@@ -1,7 +1,8 @@
 package com.github.jcodevandamme.semantics.rdf.structure.tree.dk2;
 
 /**
- * The type Dk 2 configuration.
+ * DK2 Tree Configuration Parameters passed by the DK2Builder to the underlying DynamicBitVectors.
+ *
  * @param chunkSize Size the static Bit-String will be partitioned into. Dictates the maximum Capacity of Leaf Nodes.
  * @param leafMinimumCapacity minimum number of Entries allowed in Leaf Nodes
  * @param internalMinimumCapacity minimum number of Entries allowed in internal Nodes

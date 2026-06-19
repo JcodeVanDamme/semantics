@@ -59,7 +59,6 @@ public class DynamicBitVectorBuildTests {
         );
         statL = new SuxBitString(lBits);
         dynL = DynamicBitVectorBuilder.build(statL, 8, 1, 1, 3);
-        System.out.println(dynL);
     }
 
     @Test
