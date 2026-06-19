@@ -8,6 +8,7 @@ import com.github.jcodevandamme.semantics.rdf.bmatrix.BMatrixBuilder;
 import com.github.jcodevandamme.semantics.rdf.provider.TripleProvider;
 import com.github.jcodevandamme.semantics.rdf.query.QueryFactory;
 import com.github.jcodevandamme.semantics.rdf.query.QueryProcessor;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Configuration;
 
 import java.util.List;
 
@@ -20,6 +21,13 @@ public class TripleStore {
     // Merge / Unsorted Threshold
     private final int T = 10;
 
+    // DYNAMIC
+
+    private final int CHUNK_SIZE = 4;
+    private final int LEAF_MIN_CAPACITY = 1;
+    private final int INTERNAL_MIN_CAPACITY = 1;
+    private final int INTERNAL_MAX_CAPACITY = 3;
+
     private TripleDictionary dict;
     private BMatrix bMatrix;
     private QueryFactory factory;
@@ -29,9 +37,25 @@ public class TripleStore {
     public TripleDictionary dict() { return dict; }
     public BMatrix bMatrix() { return bMatrix; }
 
-    public void init(TripleProvider tripleProvider) {
+    public void initStatic(TripleProvider tripleProvider) {
         dict = new TripleDictionary();
-        bMatrix = new BMatrixBuilder().build(K, D, T, dict, tripleProvider);
+        bMatrix = new BMatrixBuilder().buildStatic(K, D, T, dict, tripleProvider);
+
+        factory = new QueryFactory(dict);
+        processor = new QueryProcessor(bMatrix);
+        decoder = new TripleDecoder(dict);
+    }
+    public void initDynamic(TripleProvider tripleProvider) {
+        dict = new TripleDictionary();
+
+        DK2Configuration config = new DK2Configuration(
+                CHUNK_SIZE,
+                LEAF_MIN_CAPACITY,
+                INTERNAL_MIN_CAPACITY,
+                INTERNAL_MAX_CAPACITY
+        );
+
+        bMatrix = new BMatrixBuilder().buildDynamic(K, D, T, config, dict, tripleProvider);
 
         factory = new QueryFactory(dict);
         processor = new QueryProcessor(bMatrix);

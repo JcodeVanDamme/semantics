@@ -1,4 +1,4 @@
-package com.semantics;
+package com.semantics.staticK2;
 
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import com.github.jcodevandamme.semantics.rdf.provider.TestTripleProvider;
@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TripleStoreTests {
+public class StaticTripleStoreQueryTests {
 
     static TripleStore tripleStore;
     static List<Triple> none;
@@ -19,7 +19,7 @@ public class TripleStoreTests {
     @BeforeAll
     static void init() {
         tripleStore = new TripleStore();
-        tripleStore.init(new TestTripleProvider());
+        tripleStore.initStatic(new TestTripleProvider());
         none = new ArrayList<>();
     }
 

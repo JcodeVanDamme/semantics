@@ -60,6 +60,11 @@ public class SuxBitString implements BitInterface {
     }
 
     @Override
+    public int countOnes() {
+        return (int) rank.count();
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("{");
 
