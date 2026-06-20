@@ -65,6 +65,11 @@ public class SuxBitString implements BitInterface {
     }
 
     @Override
+    public void set(int i) {
+        throw new UnsupportedOperationException("set(int i) not implemented");
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("{");
 
