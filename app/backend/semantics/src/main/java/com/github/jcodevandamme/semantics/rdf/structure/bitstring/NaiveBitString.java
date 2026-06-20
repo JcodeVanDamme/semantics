@@ -58,6 +58,11 @@ public class NaiveBitString implements BitInterface {
         throw new UnsupportedOperationException("countOnes() not implemented");
     }
 
+    @Override
+    public void set(int i) {
+        throw new UnsupportedOperationException("set(int i) not implemented");
+    }
+
     private void checkBounds(int i) {
         if (i < 0 || i > size) {
             throw new IndexOutOfBoundsException("Index: " + i + " out of Bounds for Size: " + size);
