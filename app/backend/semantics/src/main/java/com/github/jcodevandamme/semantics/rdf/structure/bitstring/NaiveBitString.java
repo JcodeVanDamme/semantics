@@ -59,8 +59,8 @@ public class NaiveBitString implements BitInterface {
     }
 
     @Override
-    public void setBit(int i) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("setBit not implemented for NaiveBitString");
+    public void set(int i) {
+        throw new UnsupportedOperationException("set(int i) not implemented");
     }
 
     private void checkBounds(int i) {

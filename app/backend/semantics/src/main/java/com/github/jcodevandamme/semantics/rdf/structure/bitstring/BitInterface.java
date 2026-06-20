@@ -6,5 +6,5 @@ public interface BitInterface {
     int select1(int j);
     int access(int i);
     int countOnes();
-    void setBit(int i);
+    void set(int i);
 }

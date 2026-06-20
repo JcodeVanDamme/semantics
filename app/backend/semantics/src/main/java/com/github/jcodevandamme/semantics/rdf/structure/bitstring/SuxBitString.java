@@ -65,8 +65,8 @@ public class SuxBitString implements BitInterface {
     }
 
     @Override
-    public void setBit(int i) {
-
+    public void set(int i) {
+        throw new UnsupportedOperationException("set(int i) not implemented");
     }
 
     @Override
