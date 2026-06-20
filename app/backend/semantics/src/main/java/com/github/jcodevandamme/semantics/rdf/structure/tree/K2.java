@@ -100,4 +100,21 @@ public interface K2 {
         }
         return results;
     }
+
+    /**
+     * Returns all set Cells of the specified Column
+     *
+     * @param col Column Index
+     * @return Set Cells in the specified Column Range
+     */
+    default List<Cell> wholeRowQuery(int col) {
+        List<Cell> results = new ArrayList<>();
+
+        for (int row = 0; row < matrixSize(); row++) {
+            if (checkCell(row, col)) {
+                results.add(new Cell(row, col));
+            }
+        }
+        return results;
+    }
 }

@@ -65,6 +65,11 @@ public class SuxBitString implements BitInterface {
     }
 
     @Override
+    public void setBit(int i) {
+
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("{");
 

@@ -1,5 +1,5 @@
-package com.semantics.staticK2;
-import com.github.jcodevandamme.semantics.rdf.tripleStore.TripleStore;
+package com.semantics.bmatrix.staticbmatrix;
+import com.github.jcodevandamme.semantics.rdf.tripleStore.StaticTripleStore;
 import com.github.jcodevandamme.semantics.rdf.provider.TestTripleProvider;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,13 +12,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class StaticBMatrixQueryTests {
 
-    static TripleStore tripleStore;
+    static StaticTripleStore tripleStore;
     static List<Triple> none;
 
     @BeforeAll
     static void init() {
-        tripleStore = new TripleStore();
-        tripleStore.initStatic(new TestTripleProvider());
+        tripleStore = new StaticTripleStore();
+        tripleStore.init(new TestTripleProvider());
         none = new ArrayList<>();
     }
 

@@ -1,4 +1,4 @@
-package com.semantics.dynamicK2;
+package com.semantics.k2.dynamicK2;
 
 import com.github.jcodevandamme.semantics.rdf.model.Cell;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Builder;

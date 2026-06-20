@@ -1,6 +1,7 @@
 package com.github.jcodevandamme.semantics.rdf.query;
 
 import com.github.jcodevandamme.semantics.rdf.bmatrix.BMatrix;
+import com.github.jcodevandamme.semantics.rdf.bmatrix.StaticBMatrix;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 
 import java.util.ArrayList;

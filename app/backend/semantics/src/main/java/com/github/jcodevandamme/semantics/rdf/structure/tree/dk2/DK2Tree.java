@@ -1,7 +1,10 @@
 package com.github.jcodevandamme.semantics.rdf.structure.tree.dk2;
 
+import com.github.jcodevandamme.semantics.rdf.model.Cell;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.K2;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.*;
+
+import java.util.ArrayList;
 
 public class DK2Tree implements K2 {
 
@@ -24,46 +27,11 @@ public class DK2Tree implements K2 {
 
     @Override
     public boolean checkCell(int row, int col) {
-        int currentBitIndex = 0;
-        int matrixSize = this.matrixSize;
-
-        while (true) {
-            // Determine Quadrant containing (row, col) in Relation to the current Submatrix
-            int subSize = matrixSize / k;
-            int childRow = row / subSize;
-            int childCol = col / subSize;
-            // Obtain Child Index and map 2D-Coords into BitMap Index using Row-Major-Transformation
-            // (Black-Magic-Fuckery)
-            int child = childRow * k + childCol;
-
-            // Obtain Base Offset for the continuous Block of currentBitIndex`s Children
-            int base;
-            if (matrixSize < this.matrixSize) {
-                // Call rank1 with + 1 to counter its exclusive Upper Bound
-                base = rank1(tTree, currentBitIndex + 1) * (k * k);
-
-            } else {
-                // Base Offset needs to be 0 for first Cycle
-                base = 0;
-            }
-
-            // Leave reached
-            if (subSize == 1) {
-                // Obtain L-Index by treating T and L as continuous and shifting the Index by T`s Length
-                int lIdx = (base + child) - tTree.size();
-                return access(lTree, lIdx) == 1;
-
-            } else {
-                // Skip Traversal when encountering a Node without Children
-                if (access(tTree, base + child) == 0) {
-                    return false;
-                }
-            }
-            // Update target row / col to account for the now smaller Scope
-            row = row % subSize;
-            col = col % subSize;
-            currentBitIndex = base + child;
-            matrixSize = subSize;
+        TraversalResult res = getNode(row, col);
+        if (res.node() instanceof InternalNode) {
+            return false;
+        } else {
+            return ((LeafNode) res.node()).bits().access(res.localTargetIndex()) == 1;
         }
     }
 
@@ -102,5 +70,61 @@ public class DK2Tree implements K2 {
         FindLeafResult res = findTLeaf(b, i);
         LeafNode leaf = (LeafNode) res.node();
         return leaf.bits().access(i - res.bBefore());
+    }
+
+    public void set(int row, int col) {
+        TraversalResult res = getNode(row, col);
+
+        if (res.node() instanceof LeafNode) {
+            // return
+        } else {
+            //
+        }
+    }
+
+    public TraversalResult getNode(int row, int col) {
+        int currentBitIndex = 0;
+        int matrixSize = this.matrixSize;
+
+        while (true) {
+            // Determine Quadrant containing (row, col) in Relation to the current Submatrix
+            int subSize = matrixSize / k;
+            int childRow = row / subSize;
+            int childCol = col / subSize;
+            // Obtain Child Index and map 2D-Coords into BitMap Index using Row-Major-Transformation
+            // (Black-Magic-Fuckery)
+            int child = childRow * k + childCol;
+
+            // Obtain Base Offset for the continuous Block of currentBitIndex`s Children
+            int base;
+            if (matrixSize < this.matrixSize) {
+                // Call rank1 with + 1 to counter its exclusive Upper Bound
+                base = rank1(tTree, currentBitIndex + 1) * (k * k);
+
+            } else {
+                // Base Offset needs to be 0 for first Cycle
+                base = 0;
+            }
+
+            // Leave reached
+            if (subSize == 1) {
+                // Obtain L-Index by treating T and L as continuous and shifting the Index by T`s Length
+                int lIdx = (base + child) - tTree.size();
+                FindLeafResult res = findTLeaf(lTree, lIdx);
+                return new TraversalResult(res.node(), lIdx - res.bBefore());
+
+            } else {
+                // Skip Traversal when encountering a Node without Children
+                if (access(tTree, base + child) == 0) {
+                    FindLeafResult res = findTLeaf(tTree, base + child);
+                    return new TraversalResult(res.node(), (base + child) - res.bBefore());
+                }
+            }
+            // Update target row / col to account for the now smaller Scope
+            row = row % subSize;
+            col = col % subSize;
+            currentBitIndex = base + child;
+            matrixSize = subSize;
+        }
     }
 }

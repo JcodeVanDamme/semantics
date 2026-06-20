@@ -5,6 +5,7 @@ import com.github.jcodevandamme.semantics.rdf.dictionary.TripleEncoder;
 import com.github.jcodevandamme.semantics.rdf.model.Cell;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import com.github.jcodevandamme.semantics.rdf.provider.TripleProvider;
+import com.github.jcodevandamme.semantics.rdf.structure.index.DynamicPredicateIndex;
 import com.github.jcodevandamme.semantics.rdf.structure.index.StaticPredicateIndex;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Builder;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Configuration;
@@ -28,7 +29,7 @@ public class BMatrixBuilder {
 
     private StaticPredicateIndex bp;
 
-    public BMatrix buildStatic(int k, int d, int t, TripleDictionary dict, TripleProvider provider) {
+    public StaticBMatrix buildStatic(int k, int d, int t, TripleDictionary dict, TripleProvider provider) {
         this.k = k;
 
         triples = TripleEncoder.encode(provider, dict);
@@ -36,21 +37,21 @@ public class BMatrixBuilder {
         countValues();
         assembleBinaryMatrices();
         bp = new StaticPredicateIndex(pCount, this.triples, d);
-        return new BMatrix(triples, st, ot, bp, t);
+        return new StaticBMatrix(triples, st, ot, bp, t);
     }
-    public BMatrix buildDynamic(int k, int d, int t, DK2Configuration config, TripleDictionary dict, TripleProvider provider) {
+    public DynamicBMatrix buildDynamic(int k, int t, DK2Configuration config, TripleDictionary dict, TripleProvider provider) {
         this.k = k;
 
         triples = TripleEncoder.encode(provider, dict);
 
         countValues();
         assembleBinaryMatrices();
-        bp = new StaticPredicateIndex(pCount, this.triples, d);
+        DynamicPredicateIndex bp = new DynamicPredicateIndex(this.triples);
 
         DK2Tree dynSt = DK2Builder.build(st, config);
         DK2Tree dynOt = DK2Builder.build(ot, config);
 
-        return new BMatrix(triples, dynSt, dynOt, bp, t);
+        return new DynamicBMatrix(triples, dynSt, dynOt, bp, t);
     }
 
     public void countValues() {

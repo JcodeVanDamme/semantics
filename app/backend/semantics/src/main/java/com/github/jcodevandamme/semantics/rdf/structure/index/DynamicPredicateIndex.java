@@ -20,7 +20,7 @@ public class DynamicPredicateIndex {
             int pId = (int) triples.get(i).p();
 
             tripleIndexesByPredicateId
-                    .computeIfAbsent(pId, k -> new ArrayList<Integer>())
+                    .computeIfAbsent(pId, k -> new ArrayList<>())
                     .add(i);
         }
     }
