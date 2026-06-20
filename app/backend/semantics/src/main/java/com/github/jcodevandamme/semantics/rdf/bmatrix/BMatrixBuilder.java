@@ -27,8 +27,6 @@ public class BMatrixBuilder {
     private K2Tree st;
     private K2Tree ot;
 
-    private StaticPredicateIndex bp;
-
     public StaticBMatrix buildStatic(int k, int d, int t, TripleDictionary dict, TripleProvider provider) {
         this.k = k;
 
@@ -36,7 +34,7 @@ public class BMatrixBuilder {
 
         countValues();
         assembleBinaryMatrices();
-        bp = new StaticPredicateIndex(pCount, this.triples, d);
+        StaticPredicateIndex bp = new StaticPredicateIndex(pCount, triples, d);
         return new StaticBMatrix(triples, st, ot, bp, t);
     }
     public DynamicBMatrix buildDynamic(int k, int t, DK2Configuration config, TripleDictionary dict, TripleProvider provider) {
@@ -46,7 +44,7 @@ public class BMatrixBuilder {
 
         countValues();
         assembleBinaryMatrices();
-        DynamicPredicateIndex bp = new DynamicPredicateIndex(this.triples);
+        DynamicPredicateIndex bp = new DynamicPredicateIndex(triples);
 
         DK2Tree dynSt = DK2Builder.build(st, config);
         DK2Tree dynOt = DK2Builder.build(ot, config);

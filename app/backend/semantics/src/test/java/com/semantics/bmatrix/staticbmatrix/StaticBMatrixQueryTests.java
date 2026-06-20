@@ -29,28 +29,28 @@ public class StaticBMatrixQueryTests {
         int o = tripleStore.dict().encodeSO("Text comp.");
 
         // (DCC20, has topic, Text comp.)
-        assertTrue(tripleStore.bMatrix().spo(s, p, o));
+        assertTrue(tripleStore.bMatrix().spoQuery(s, p, o));
 
         s = tripleStore.dict().encodeSO("DCC20");
         p = tripleStore.dict().encodeP("has topic");
         o = tripleStore.dict().encodeSO("Canada");
 
         // (DCC20, has topic, Canada)
-        assertFalse(tripleStore.bMatrix().spo(s, p, o));
+        assertFalse(tripleStore.bMatrix().spoQuery(s, p, o));
 
         s = tripleStore.dict().encodeSO("G. Navarro");
         p = tripleStore.dict().encodeP("has topic");
         o = tripleStore.dict().encodeSO("Text comp.");
 
         // (G. Navarro, has topic, Text comp.)
-        assertFalse(tripleStore.bMatrix().spo(s, p, o));
+        assertFalse(tripleStore.bMatrix().spoQuery(s, p, o));
 
         s = tripleStore.dict().encodeSO("DCC20");
         p = tripleStore.dict().encodeP("lives in");
         o = tripleStore.dict().encodeSO("Text comp.");
 
         // (DCC20, lives in, Text comp.)
-        assertFalse(tripleStore.bMatrix().spo(s, p, o));
+        assertFalse(tripleStore.bMatrix().spoQuery(s, p, o));
     }
 
     @Test
@@ -71,10 +71,10 @@ public class StaticBMatrixQueryTests {
         results1.add(new Triple(s, p1, o2));
 
         // (DCC20, has topic, ?)
-        assertEquals(results1, tripleStore.bMatrix().sp_(s, p1));
+        assertEquals(results1, tripleStore.bMatrix().sp_Query(s, p1));
 
         // (DCC20, lives in, ?)
-        assertEquals(none, tripleStore.bMatrix().sp_(s, p2));
+        assertEquals(none, tripleStore.bMatrix().sp_Query(s, p2));
     }
 
     @Test
@@ -102,10 +102,10 @@ public class StaticBMatrixQueryTests {
         results1.add(new Triple(s4, p, o));
 
         // (?, attends, DCC20)
-        assertEquals(results1, tripleStore.bMatrix()._po(p, o));
+        assertEquals(results1, tripleStore.bMatrix()._poQuery(p, o));
 
         // (?, attends, G. Navarro)
-        assertEquals(none, tripleStore.bMatrix()._po(p, s1));
+        assertEquals(none, tripleStore.bMatrix()._poQuery(p, s1));
     }
 
     @Test
@@ -122,10 +122,10 @@ public class StaticBMatrixQueryTests {
         results1.add(new Triple(s, p1, o1));
 
         // (G. Navarro, ?, DCC20)
-        assertEquals(results1, tripleStore.bMatrix().s_o(s, o1));
+        assertEquals(results1, tripleStore.bMatrix().s_oQuery(s, o1));
 
         // (G. Navarro, ?, US)
-        assertEquals(none, tripleStore.bMatrix().s_o(s, o2));
+        assertEquals(none, tripleStore.bMatrix().s_oQuery(s, o2));
     }
 
     @Test
@@ -151,10 +151,10 @@ public class StaticBMatrixQueryTests {
         results1.add(new Triple(s1, p1, o1));
 
         // (DCC20. ?, ?)
-        assertEquals(results1, tripleStore.bMatrix().s__(s1));
+        assertEquals(results1, tripleStore.bMatrix().s__Query(s1));
 
         // (US, ?, ?)
-        assertEquals(none, tripleStore.bMatrix().s__(s2));
+        assertEquals(none, tripleStore.bMatrix().s__Query(s2));
     }
 
     @Test
@@ -179,10 +179,10 @@ public class StaticBMatrixQueryTests {
         results1.add(new Triple(s3, p2, o1));
 
         // (?. ?, Text comp.)
-        assertEquals(results1, tripleStore.bMatrix().__o(o1));
+        assertEquals(results1, tripleStore.bMatrix().__oQuery(o1));
 
         // (?, ?, G. Navarro)
-        assertEquals(none, tripleStore.bMatrix().__o(s1));
+        assertEquals(none, tripleStore.bMatrix().__oQuery(s1));
     }
 
     @Test
@@ -213,6 +213,6 @@ public class StaticBMatrixQueryTests {
         results1.add(new Triple(s3, p1, o3));
 
         // (?. lives in, ?)
-        assertEquals(results1, tripleStore.bMatrix()._p_(p1));
+        assertEquals(results1, tripleStore.bMatrix()._p_Query(p1));
     }
 }

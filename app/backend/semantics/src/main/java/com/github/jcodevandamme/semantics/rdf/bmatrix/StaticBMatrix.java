@@ -24,34 +24,34 @@ public class StaticBMatrix implements BMatrix{
         this.t = t;
     }
 
-    public boolean addTriple(int s, int p, int o) throws IllegalArgumentException {
-        if (spo(s, p, o)) {
+    public boolean add(int s, int p, int o) throws IllegalArgumentException {
+        if (spoQuery(s, p, o)) {
             throw new IllegalArgumentException("Triple to be created already exists");
         }
 
         return true;
     }
-    public boolean deleteTriple(int s, int p, int o) throws IllegalArgumentException {
-        if (!spo(s, p, o)) {
+    public boolean delete(int s, int p, int o) throws IllegalArgumentException {
+        if (!spoQuery(s, p, o)) {
             throw new IllegalArgumentException("Triple to be deleted does not exist");
         }
 
         return true;
     }
-    public boolean updateTriple(int oldS, int oldP, int oldO, int newS, int newP, int newO) throws IllegalArgumentException {
-        if (!spo(oldS, oldP, oldO)) {
+    public boolean update(int oldS, int oldP, int oldO, int newS, int newP, int newO) throws IllegalArgumentException {
+        if (!spoQuery(oldS, oldP, oldO)) {
             throw new IllegalArgumentException("Triple to be updated does not exist");
-        } else if (spo(newS, newP, newO)) {
+        } else if (spoQuery(newS, newP, newO)) {
             throw new IllegalArgumentException("Triple to be deleted does not exist");
         }
 
-        deleteTriple(oldS, oldP, oldO);
-        addTriple(newS, newP, newO);
+        delete(oldS, oldP, oldO);
+        add(newS, newP, newO);
 
         return true;
     }
 
-    public boolean spo(int s, int p, int o) {
+    public boolean spoQuery(int s, int p, int o) {
         int lPredicateBound = bp.select1(p);
         int uPredicateBound = bp.select1(p + 1) - 1;
 
@@ -64,7 +64,7 @@ public class StaticBMatrix implements BMatrix{
         }
         return false;
     }
-    public List<Triple> sp_(int s, int p) {
+    public List<Triple> sp_Query(int s, int p) {
         List<Triple> results = new ArrayList<>();
 
         int lPredicateBound = bp.select1(p);
@@ -81,7 +81,7 @@ public class StaticBMatrix implements BMatrix{
         return results;
     }
 
-    public List<Triple> _po(int p, int o) {
+    public List<Triple> _poQuery(int p, int o) {
         List<Triple> results = new ArrayList<>();
 
         int lPredicateBound = bp.select1(p);
@@ -98,7 +98,7 @@ public class StaticBMatrix implements BMatrix{
         return results;
     }
 
-    public List<Triple> s_o(int s, int o) {
+    public List<Triple> s_oQuery(int s, int o) {
         List<Triple> results = new ArrayList<>();
 
         List<Integer> objects = ot.rowQuery(o);
@@ -122,7 +122,7 @@ public class StaticBMatrix implements BMatrix{
         return results;
     }
 
-    public List<Triple> s__(int s) {
+    public List<Triple> s__Query(int s) {
         List<Triple> results = new ArrayList<>();
 
         List<Integer> subjectMatches = st.rowQuery(s);
@@ -137,7 +137,7 @@ public class StaticBMatrix implements BMatrix{
         return results;
     }
 
-    public List<Triple> __o(int o) {
+    public List<Triple> __oQuery(int o) {
         List<Triple> results = new ArrayList<>();
 
         List<Integer> objectMatches = ot.rowQuery(o);
@@ -152,7 +152,7 @@ public class StaticBMatrix implements BMatrix{
         return results;
     }
 
-    public List<Triple> _p_(int p) {
+    public List<Triple> _p_Query(int p) {
         List<Triple> results = new ArrayList<>();
 
         int lPredicateBound = bp.select1( p);
@@ -195,7 +195,7 @@ public class StaticBMatrix implements BMatrix{
         return results;
     }
 
-    public List<Triple> ___() {
+    public List<Triple> ___Query() {
         return triples;
     }
 

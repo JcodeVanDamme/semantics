@@ -3,7 +3,6 @@ package com.github.jcodevandamme.semantics.rdf.bmatrix;
 import com.github.jcodevandamme.semantics.rdf.model.Cell;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import com.github.jcodevandamme.semantics.rdf.structure.index.DynamicPredicateIndex;
-import com.github.jcodevandamme.semantics.rdf.structure.index.StaticPredicateIndex;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.K2;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Tree;
 
@@ -32,8 +31,8 @@ public class DynamicBMatrix implements BMatrix {
         freedColumns = new ArrayList<>();
     }
 
-    public boolean addTriple(int s, int p, int o) throws IllegalArgumentException {
-        if (spo(s, p, o)) {
+    public boolean add(int s, int p, int o) throws IllegalArgumentException {
+        if (spoQuery(s, p, o)) {
             throw new IllegalArgumentException("Triple to be created already exists");
         }
 
@@ -46,27 +45,27 @@ public class DynamicBMatrix implements BMatrix {
 
         return true;
     }
-    public boolean deleteTriple(int s, int p, int o) throws IllegalArgumentException {
-        if (!spo(s, p, o)) {
+    public boolean delete(int s, int p, int o) throws IllegalArgumentException {
+        if (!spoQuery(s, p, o)) {
             throw new IllegalArgumentException("Triple to be deleted does not exist");
         }
 
         return true;
     }
-    public boolean updateTriple(int oldS, int oldP, int oldO, int newS, int newP, int newO) throws IllegalArgumentException {
-        if (!spo(oldS, oldP, oldO)) {
+    public boolean update(int oldS, int oldP, int oldO, int newS, int newP, int newO) throws IllegalArgumentException {
+        if (!spoQuery(oldS, oldP, oldO)) {
             throw new IllegalArgumentException("Triple to be updated does not exist");
-        } else if (spo(newS, newP, newO)) {
+        } else if (spoQuery(newS, newP, newO)) {
             throw new IllegalArgumentException("Triple to be deleted does not exist");
         }
 
-        deleteTriple(oldS, oldP, oldO);
-        addTriple(newS, newP, newO);
+        delete(oldS, oldP, oldO);
+        add(newS, newP, newO);
 
         return true;
     }
 
-    public boolean spo(int s, int p, int o) {
+    public boolean spoQuery(int s, int p, int o) {
         List<Integer> cols = bp.select1(p);
 
         List<Integer> triples = new ArrayList<>();
@@ -83,7 +82,7 @@ public class DynamicBMatrix implements BMatrix {
         return false;
     }
 
-    public List<Triple> sp_(int s, int p) {
+    public List<Triple> sp_Query(int s, int p) {
         List<Triple> results = new ArrayList<>();
 
         List<Integer> cols = bp.select1(p);
@@ -103,7 +102,7 @@ public class DynamicBMatrix implements BMatrix {
         return results;
     }
 
-    public List<Triple> _po(int p, int o) {
+    public List<Triple> _poQuery(int p, int o) {
         List<Triple> results = new ArrayList<>();
 
         List<Integer> cols = bp.select1(p);
@@ -122,7 +121,7 @@ public class DynamicBMatrix implements BMatrix {
         }
         return results;
     }
-    public List<Triple> s_o(int s, int o) {
+    public List<Triple> s_oQuery(int s, int o) {
         List<Triple> results = new ArrayList<>();
 
         List<Integer> objects = ot.rowQuery(o);
@@ -145,7 +144,7 @@ public class DynamicBMatrix implements BMatrix {
         }
         return results;
     }
-    public List<Triple> s__(int s) {
+    public List<Triple> s__Query(int s) {
         List<Triple> results = new ArrayList<>();
 
         List<Integer> subjectMatches = st.rowQuery(s);
@@ -159,7 +158,7 @@ public class DynamicBMatrix implements BMatrix {
         }
         return results;
     }
-    public List<Triple> __o(int o) {
+    public List<Triple> __oQuery(int o) {
         List<Triple> results = new ArrayList<>();
 
         List<Integer> objectMatches = ot.rowQuery(o);
@@ -173,7 +172,7 @@ public class DynamicBMatrix implements BMatrix {
         }
         return results;
     }
-    public List<Triple> _p_(int p) {
+    public List<Triple> _p_Query(int p) {
         List<Triple> results = new ArrayList<>();
         List<Integer> cols = bp.select1(p);
 
@@ -222,7 +221,7 @@ public class DynamicBMatrix implements BMatrix {
         results.sort(Comparator.comparingInt(t -> (int) t.s()));
         return results;
     }
-    public List<Triple> ___() {
+    public List<Triple> ___Query() {
         return triples;
     }
 
