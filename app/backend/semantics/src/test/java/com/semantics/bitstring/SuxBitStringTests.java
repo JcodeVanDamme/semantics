@@ -32,6 +32,8 @@ public class SuxBitStringTests {
         // [0 1 0 0 1 0 0 1 1 1 0 0 0 1]
         SuxBitString b1 = new SuxBitString(bits1);
 
+        assertEquals(0, b1.rank1(0));
+
         assertEquals(0, b1.rank1(1));
 
         assertEquals(1, b1.rank1(2));

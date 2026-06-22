@@ -31,6 +31,8 @@ public class NaiveBitStringTests {
         // [0 1 0 0 1 0 0 1 1 1 0 0 0 1]
         NaiveBitString b1 = new NaiveBitString(bits1);
 
+        assertEquals(0, b1.rank1(0));
+
         assertEquals(0, b1.rank1(1));
 
         assertEquals(1, b1.rank1(2));

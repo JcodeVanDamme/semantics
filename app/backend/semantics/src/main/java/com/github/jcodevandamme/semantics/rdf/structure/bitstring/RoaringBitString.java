@@ -44,6 +44,9 @@ public class RoaringBitString implements BitInterface {
         if (i < 0 || i > size) {
             throw new IndexOutOfBoundsException("rank1(" + i + ") out of Range");
         }
+        if (i == 0) {
+            return 0;
+        }
         return bits.rank(i - 1);
     }
 
@@ -67,9 +70,23 @@ public class RoaringBitString implements BitInterface {
     public int countOnes() {
         return bits.getCardinality();
     }
-
     @Override
     public void set(int i) {
         bits.add(i);
+    }
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("{");
+
+        boolean first = true;
+
+        for (int i : bits) {
+            if (!first) sb.append(", ");
+            sb.append(i);
+            first = false;
+        }
+
+        sb.append("}");
+        return sb.toString();
     }
 }

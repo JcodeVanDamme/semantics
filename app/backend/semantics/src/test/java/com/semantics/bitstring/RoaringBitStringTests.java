@@ -33,6 +33,8 @@ public class RoaringBitStringTests {
         // [0 1 0 0 1 0 0 1 1 1 0 0 0 1]
         RoaringBitString b1 = new RoaringBitString(bits1);
 
+        assertEquals(0, b1.rank1(0));
+
         assertEquals(0, b1.rank1(1));
 
         assertEquals(1, b1.rank1(2));

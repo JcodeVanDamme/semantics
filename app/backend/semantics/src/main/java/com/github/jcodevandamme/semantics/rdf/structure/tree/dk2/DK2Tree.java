@@ -1,10 +1,7 @@
 package com.github.jcodevandamme.semantics.rdf.structure.tree.dk2;
 
-import com.github.jcodevandamme.semantics.rdf.model.Cell;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.K2;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.*;
-
-import java.util.ArrayList;
 
 public class DK2Tree implements K2 {
 
@@ -27,27 +24,34 @@ public class DK2Tree implements K2 {
 
     @Override
     public boolean checkCell(int row, int col) {
+        // res contains the last node encountered while traversing the tree to target (row,col)
         TraversalResult res = getNode(row, col);
+        // Internal Node means Cell isn't set
         if (res.node() instanceof InternalNode) {
             return false;
         } else {
+            // Check Bit Value of Cell using local Index
             return ((LeafNode) res.node()).bits().access(res.localTargetIndex()) == 1;
         }
     }
 
-    public FindLeafResult findTLeaf(DynamicBitVector tree, int p) {
+    // Returns the Leaf Node corresponding to the Bit Index p
+    public FindLeafResult findLeaf(DynamicBitVector tree, int p) {
         return checkNode(
                 p,
                 new FindLeafResult(tree.root(), 0, 0));
     }
 
+    // Continuous traversing the tree according to Index p until a Leaf is found
     private FindLeafResult checkNode(int p, FindLeafResult res) {
         int bBefore = res.bBefore();
         int oBefore  = res.oBefore();
-        if (res.node() instanceof LeafNode) {
+        Node node = res.node();
+
+        if (node instanceof LeafNode) {
             return res;
         }
-        for (Entry e : ((InternalNode) res.node()).entries()) {
+        for (Entry e : ((InternalNode) node).entries()) {
             if (p < e.b() + bBefore) {
                 return checkNode(
                         p,
@@ -61,25 +65,15 @@ public class DK2Tree implements K2 {
     }
 
     private int rank1(DynamicBitVector b, int i) {
-        FindLeafResult res = findTLeaf(b, i);
+        FindLeafResult res = findLeaf(b, i);
         LeafNode leaf = (LeafNode) res.node();
         return res.oBefore() + leaf.bits().rank1(i - res.bBefore());
     }
 
     private int access(DynamicBitVector b, int i) {
-        FindLeafResult res = findTLeaf(b, i);
+        FindLeafResult res = findLeaf(b, i);
         LeafNode leaf = (LeafNode) res.node();
         return leaf.bits().access(i - res.bBefore());
-    }
-
-    public void set(int row, int col) {
-        TraversalResult res = getNode(row, col);
-
-        if (res.node() instanceof LeafNode) {
-            // return
-        } else {
-            //
-        }
     }
 
     public TraversalResult getNode(int row, int col) {
@@ -110,13 +104,13 @@ public class DK2Tree implements K2 {
             if (subSize == 1) {
                 // Obtain L-Index by treating T and L as continuous and shifting the Index by T`s Length
                 int lIdx = (base + child) - tTree.size();
-                FindLeafResult res = findTLeaf(lTree, lIdx);
+                FindLeafResult res = findLeaf(lTree, lIdx);
                 return new TraversalResult(res.node(), lIdx - res.bBefore());
 
             } else {
                 // Skip Traversal when encountering a Node without Children
                 if (access(tTree, base + child) == 0) {
-                    FindLeafResult res = findTLeaf(tTree, base + child);
+                    FindLeafResult res = findLeaf(tTree, base + child);
                     return new TraversalResult(res.node(), (base + child) - res.bBefore());
                 }
             }

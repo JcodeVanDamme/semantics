@@ -1,6 +1,7 @@
 package com.github.jcodevandamme.semantics.rdf.structure.tree.k2;
 
 import com.github.jcodevandamme.semantics.rdf.model.Cell;
+import com.github.jcodevandamme.semantics.rdf.structure.bitstring.RoaringBitString;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.SuxBitString;
 
 import java.util.ArrayList;
@@ -112,8 +113,8 @@ public class K2TreeBuilder {
                 tTemp.addAll(bits);
             }
         }
-        SuxBitString t = new SuxBitString(tTemp);
-        SuxBitString l = new SuxBitString(lTemp);
+        RoaringBitString t = new RoaringBitString(tTemp);
+        RoaringBitString l = new RoaringBitString(lTemp);
         return new K2Tree(k,matrixSize, t, l);
     }
 

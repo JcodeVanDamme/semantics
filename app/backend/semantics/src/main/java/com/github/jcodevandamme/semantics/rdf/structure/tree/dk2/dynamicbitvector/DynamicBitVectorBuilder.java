@@ -1,6 +1,7 @@
 package com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector;
 
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitInterface;
+import com.github.jcodevandamme.semantics.rdf.structure.bitstring.RoaringBitString;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.SuxBitString;
 
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public final class DynamicBitVectorBuilder {
                 chunk.add(bitString.access(j) == 1);
             }
 
-            BitInterface subSet = new SuxBitString(chunk);
+            BitInterface subSet = new RoaringBitString(chunk);
             leaves.add(new LeafNode(minCap, chunkSize, subSet));
         }
 

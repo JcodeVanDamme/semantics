@@ -1,6 +1,7 @@
 package com.semantics.bitstring;
 
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitInterface;
+import com.github.jcodevandamme.semantics.rdf.structure.bitstring.RoaringBitString;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.SuxBitString;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVector;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorBuilder;
@@ -38,7 +39,7 @@ public class DynamicBitVectorBuildTests {
                 true, true, false, false
             )
         );
-        statT = new SuxBitString(tBits);
+        statT = new RoaringBitString(tBits);
         dynT = DynamicBitVectorBuilder.build(statT, 8, 1, 1, 2);
 
 
@@ -57,7 +58,7 @@ public class DynamicBitVectorBuildTests {
                         true, false, true, false
                 )
         );
-        statL = new SuxBitString(lBits);
+        statL = new RoaringBitString(lBits);
         dynL = DynamicBitVectorBuilder.build(statL, 8, 1, 1, 3);
     }
 
