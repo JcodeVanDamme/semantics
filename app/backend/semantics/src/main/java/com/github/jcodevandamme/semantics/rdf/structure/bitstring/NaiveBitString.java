@@ -59,8 +59,8 @@ public class NaiveBitString implements BitInterface {
         }
     }
     @Override
-    public int setBitCount() {
-        throw new UnsupportedOperationException("setBitCount() not implemented");
+    public int countSetBits() {
+        throw new UnsupportedOperationException("countSetBits() not implemented");
     }
 
     @Override

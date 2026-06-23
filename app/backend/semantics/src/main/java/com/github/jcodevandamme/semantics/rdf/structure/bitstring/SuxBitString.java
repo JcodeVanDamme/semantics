@@ -60,7 +60,7 @@ public class SuxBitString implements BitInterface {
     }
 
     @Override
-    public int setBitCount() {
+    public int countSetBits() {
         return (int) rank.count();
     }
 

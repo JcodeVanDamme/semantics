@@ -25,16 +25,24 @@ public class DynamicBitVector {
         return size;
     }
 
-    public void set(boolean value, LeafNode leaf, int index) {
+    public static void set(boolean value, LeafNode leaf, int index) {
         boolean oneSet = false;
         boolean oneUnset = false;
 
         if (leaf.bits().access(index) == 1) {
             if (!value) {
+                System.out.println("Setting 1 to 0");
                 oneUnset = true;
+            } else {
+                System.out.println("Bit was 1, no update necessary");
+                return;
             }
         } else if (value) {
+            System.out.println("Setting 0 to 1");
             oneSet = true;
+        } else {
+            System.out.println("Bit was 0, no update necessary");
+            return;
         }
 
         leaf.bits().setBit(value, index);
@@ -42,7 +50,7 @@ public class DynamicBitVector {
         updateOCounters(leaf, oneSet, oneUnset);
     }
 
-    private void updateOCounters(LeafNode leaf, boolean oneSet, boolean oneUnset) {
+    private static void updateOCounters(LeafNode leaf, boolean oneSet, boolean oneUnset) {
         Node current = leaf;
         while (current.parent() != null) {
             InternalNode parent = current.parent();

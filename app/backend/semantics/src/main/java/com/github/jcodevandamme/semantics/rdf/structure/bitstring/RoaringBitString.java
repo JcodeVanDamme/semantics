@@ -69,7 +69,7 @@ public class RoaringBitString implements BitInterface {
     }
 
     @Override
-    public int setBitCount() {
+    public int countSetBits() {
         return bits.getCardinality();
     }
     @Override
@@ -85,7 +85,6 @@ public class RoaringBitString implements BitInterface {
     public void addBits(int i, int numBits) {
         assert numBits >= 0;
         if (numBits == 0) {
-            System.out.println("Return from 0");
             return;
         }
 

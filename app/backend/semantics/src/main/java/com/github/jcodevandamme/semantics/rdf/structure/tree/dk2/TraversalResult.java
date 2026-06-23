@@ -1,6 +1,6 @@
 package com.github.jcodevandamme.semantics.rdf.structure.tree.dk2;
 
-import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.Node;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.LeafNode;
 
-public record TraversalResult(Node node, int localTargetIndex) {
+public record TraversalResult(LeafNode leafNode, int localTargetIndex, boolean leafInL) {
 }

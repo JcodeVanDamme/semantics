@@ -5,7 +5,7 @@ public class Entry {
     public Entry(Node child) {
         if (child instanceof LeafNode) {
             b = child.size();
-            o = ((LeafNode) child).bits().setBitCount();
+            o = ((LeafNode) child).bits().countSetBits();
         } else {
             b = 0;
             o = 0;

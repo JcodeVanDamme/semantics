@@ -24,14 +24,68 @@ public class DK2Tree implements K2 {
 
     @Override
     public boolean checkCell(int row, int col) {
-        // res contains the last node encountered while traversing the tree to target (row,col)
+        // res contains the last leafNode encountered while traversing the tree to target (row, col)
         TraversalResult res = findNode(row, col);
-        // Internal Node means Cell isn't setBit
-        if (res.node() instanceof InternalNode) {
+
+        // Path ended in upper Levels of the Tree
+        if (!res.leafInL()) {
             return false;
+        }
+
+        // Check Bit Value of Cell using local Index
+        return res.leafNode().bits().access(res.localTargetIndex()) == 1;
+    }
+
+    public void updateCell(int row, int col, boolean value) {
+        TraversalResult res = findNode(row, col);
+        // Update found Cell
+        DynamicBitVector.set(value, res.leafNode(), res.localTargetIndex());
+
+        if (value) {
+            // Target Cell was found in T
+            // -> Expand Tree to include target Cell
+            if (!res.leafInL()) {
+                expandTree(res, row, col);
+            }
         } else {
-            // Check Bit Value of Cell using local Index
-            return ((LeafNode) res.node()).bits().access(res.localTargetIndex()) == 1;
+            // Target Cell was found in L
+            // -> No need to
+            if (res.leafInL()) {
+                reduceTree(res, row, col);
+            }
+        }
+    }
+    private void reduceTree(TraversalResult match, int targetRow, int targetCol) {
+        // Leaf has become irrelevant after update
+        if (match.leafNode().bits().countSetBits() == 0) {
+
+            InternalNode parent = match.leafNode().parent();
+            parent.remove(match.leafNode());
+        }
+
+    }
+    private void expandTree(TraversalResult match, int targetRow, int targetCol) {
+        // Path to Cell ended in upper Tree
+        // -> set relevant Bit in T Leaf and expand Tree
+        int childIdx = rank1(tTree, match.localTargetIndex()) * (k * k);
+        tTree.addK2Bits(match.leafNode(), k, childIdx);
+
+        // Continue Traversal to target Cell and keep expanding the Tree
+        // until Leaf in L was reached
+        // -> then update
+        boolean found = false;
+        while (!found) {
+
+            match = findNode(targetRow, targetCol);
+            DynamicBitVector.set(true, match.leafNode(), match.localTargetIndex());
+
+            if (match.leafInL()) {
+                found = true;
+
+            } else {
+                childIdx = rank1(tTree, match.localTargetIndex() * (k * k));
+                tTree.addK2Bits(match.leafNode(), k, childIdx);
+            }
         }
     }
 
@@ -53,26 +107,41 @@ public class DK2Tree implements K2 {
             if (matrixSize < this.matrixSize) {
                 // Call rank1 with + 1 to counter its exclusive Upper Bound
                 base = rank1(tTree, currentBitIndex + 1) * (k * k);
-
             } else {
                 // Base Offset needs to be 0 for first Cycle
                 base = 0;
             }
 
-            // Leave reached
+            int idx = base + child;
+
+            // Leaf reached
             if (subSize == 1) {
+
                 // Obtain L-Index by treating T and L as continuous and shifting the Index by T`s Length
-                int lIdx = (base + child) - tTree.size();
-                FindLeafResult res = findLeaf(lTree, lIdx);
-                return new TraversalResult(res.node(), lIdx - res.bBefore());
+                idx -= tTree.size();
+
+                FindLeafResult res = findLeaf(lTree, idx);
+                return new TraversalResult(
+                        (LeafNode) res.node(),
+                        // idx needs to be offsetted by bBefore to correctly align (Dont ask me why)
+                        idx - res.bBefore(),
+                        true);
 
             } else {
+
                 // Skip Traversal when encountering a Node without Children
-                if (access(tTree, base + child) == 0) {
-                    FindLeafResult res = findLeaf(tTree, base + child);
-                    return new TraversalResult(res.node(), (base + child) - res.bBefore());
+                if (access(tTree, idx) == 0) {
+
+                    FindLeafResult res = findLeaf(tTree, idx);
+                    return new TraversalResult(
+                            (LeafNode) res.node(),
+                            // idx needs to be offsetted by bBefore to correctly align (Dont ask me why)
+                            idx - res.bBefore(),
+                            false
+                    );
                 }
             }
+
             // Update target row / col to account for the now smaller Scope
             row = row % subSize;
             col = col % subSize;
@@ -120,5 +189,12 @@ public class DK2Tree implements K2 {
         FindLeafResult res = findLeaf(b, i);
         LeafNode leaf = (LeafNode) res.node();
         return leaf.bits().access(i - res.bBefore());
+    }
+
+    @Override
+    public String toString() {
+        return
+            "T:\n" + tTree + "\n" +
+            "L:\n" + lTree;
     }
 }

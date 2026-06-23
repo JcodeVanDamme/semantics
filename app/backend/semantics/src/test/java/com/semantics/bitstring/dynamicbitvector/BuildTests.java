@@ -90,7 +90,7 @@ public class BuildTests {
         Entry e2 = ((InternalNode) dynT.root()).entries().get(1);
 
         assertEquals(statT.size(), e1.b() + e2.b());
-        assertEquals(statT.setBitCount(), e1.o() + e2.o());
+        assertEquals(statT.countSetBits(), e1.o() + e2.o());
     }
 
     @Test
@@ -99,6 +99,6 @@ public class BuildTests {
         Entry e2 = ((InternalNode) dynL.root()).entries().get(1);
 
         assertEquals(statL.size(), e1.b() + e2.b());
-        assertEquals(statL.setBitCount(), e1.o() + e2.o());
+        assertEquals(statL.countSetBits(), e1.o() + e2.o());
     }
 }
