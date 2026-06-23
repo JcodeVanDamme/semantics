@@ -1,13 +1,15 @@
 package com.github.jcodevandamme.semantics.rdf.structure.bitstring;
 
+import org.roaringbitmap.IntConsumer;
 import org.roaringbitmap.RoaringBitmap;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class RoaringBitString implements BitInterface {
 
-    private final RoaringBitmap bits;
-    private final int size;
+    private RoaringBitmap bits;
+    private int size;
 
     public RoaringBitString(List<Boolean> b) {
         bits = RoaringBitmap.bitmapOf(mapIndexes(b));
@@ -67,12 +69,64 @@ public class RoaringBitString implements BitInterface {
     }
 
     @Override
-    public int countOnes() {
+    public int setBitCount() {
         return bits.getCardinality();
     }
     @Override
-    public void set(int i) {
-        bits.add(i);
+    public void setBit(boolean value, int i) {
+        if (value) {
+            bits.add(i);
+        } else {
+            bits.remove(i);
+        }
+    }
+
+    @Override
+    public void addBits(int i, int numBits) {
+        assert numBits >= 0;
+        if (numBits == 0) {
+            System.out.println("Return from 0");
+            return;
+        }
+
+        RoaringBitmap updated = new RoaringBitmap();
+        bits.forEach((IntConsumer) value -> {
+            if (value >= i) {
+                updated.add(value + numBits);
+            } else {
+                updated.add(value);
+            }
+        });
+        bits = updated;
+        size += numBits;
+    }
+    @Override
+    public int removeBits(int i, int numBits) {
+        if (numBits < 0) {
+            numBits = -numBits;
+        } else if (numBits == 0) {
+            return 0;
+        }
+
+        RoaringBitmap updated = new RoaringBitmap();
+        AtomicInteger bitsKept = new AtomicInteger();
+        int finalNumBits = numBits;
+        bits.forEach((IntConsumer) value -> {
+            if (value < i) {
+                updated.add(value);
+                bitsKept.getAndIncrement();
+            } else if (value >= i + finalNumBits) {
+                updated.add(value - finalNumBits);
+                bitsKept.getAndIncrement();
+            }
+        });
+
+        int bitsRemoved = size - bitsKept.get();
+
+        bits = updated;
+        size -= numBits;
+
+        return bitsRemoved;
     }
     @Override
     public String toString() {

@@ -25,8 +25,8 @@ public class DK2Tree implements K2 {
     @Override
     public boolean checkCell(int row, int col) {
         // res contains the last node encountered while traversing the tree to target (row,col)
-        TraversalResult res = getNode(row, col);
-        // Internal Node means Cell isn't set
+        TraversalResult res = findNode(row, col);
+        // Internal Node means Cell isn't setBit
         if (res.node() instanceof InternalNode) {
             return false;
         } else {
@@ -35,48 +35,7 @@ public class DK2Tree implements K2 {
         }
     }
 
-    // Returns the Leaf Node corresponding to the Bit Index p
-    public FindLeafResult findLeaf(DynamicBitVector tree, int p) {
-        return checkNode(
-                p,
-                new FindLeafResult(tree.root(), 0, 0));
-    }
-
-    // Continuous traversing the tree according to Index p until a Leaf is found
-    private FindLeafResult checkNode(int p, FindLeafResult res) {
-        int bBefore = res.bBefore();
-        int oBefore  = res.oBefore();
-        Node node = res.node();
-
-        if (node instanceof LeafNode) {
-            return res;
-        }
-        for (Entry e : ((InternalNode) node).entries()) {
-            if (p < e.b() + bBefore) {
-                return checkNode(
-                        p,
-                        new FindLeafResult(e.p(), bBefore, oBefore)
-                );
-            }
-            bBefore += e.b();
-            oBefore += e.o();
-        }
-        return null;
-    }
-
-    private int rank1(DynamicBitVector b, int i) {
-        FindLeafResult res = findLeaf(b, i);
-        LeafNode leaf = (LeafNode) res.node();
-        return res.oBefore() + leaf.bits().rank1(i - res.bBefore());
-    }
-
-    private int access(DynamicBitVector b, int i) {
-        FindLeafResult res = findLeaf(b, i);
-        LeafNode leaf = (LeafNode) res.node();
-        return leaf.bits().access(i - res.bBefore());
-    }
-
-    public TraversalResult getNode(int row, int col) {
+    public TraversalResult findNode(int row, int col) {
         int currentBitIndex = 0;
         int matrixSize = this.matrixSize;
 
@@ -120,5 +79,46 @@ public class DK2Tree implements K2 {
             currentBitIndex = base + child;
             matrixSize = subSize;
         }
+    }
+
+    // Returns the Leaf Node corresponding to the Bit Index p
+    public FindLeafResult findLeaf(DynamicBitVector tree, int p) {
+        return checkNode(
+                p,
+                new FindLeafResult(tree.root(), 0, 0));
+    }
+
+    // Continuous traversing the tree according to Index p until a Leaf is found
+    private FindLeafResult checkNode(int p, FindLeafResult res) {
+        int bBefore = res.bBefore();
+        int oBefore  = res.oBefore();
+        Node node = res.node();
+
+        if (node instanceof LeafNode) {
+            return res;
+        }
+        for (Entry e : ((InternalNode) node).entries()) {
+            if (p < e.b() + bBefore) {
+                return checkNode(
+                        p,
+                        new FindLeafResult(e.p(), bBefore, oBefore)
+                );
+            }
+            bBefore += e.b();
+            oBefore += e.o();
+        }
+        return null;
+    }
+
+    private int rank1(DynamicBitVector b, int i) {
+        FindLeafResult res = findLeaf(b, i);
+        LeafNode leaf = (LeafNode) res.node();
+        return res.oBefore() + leaf.bits().rank1(i - res.bBefore());
+    }
+
+    private int access(DynamicBitVector b, int i) {
+        FindLeafResult res = findLeaf(b, i);
+        LeafNode leaf = (LeafNode) res.node();
+        return leaf.bits().access(i - res.bBefore());
     }
 }

@@ -5,7 +5,7 @@ public class Entry {
     public Entry(Node child) {
         if (child instanceof LeafNode) {
             b = child.size();
-            o = ((LeafNode) child).bits().countOnes();
+            o = ((LeafNode) child).bits().setBitCount();
         } else {
             b = 0;
             o = 0;
@@ -31,5 +31,12 @@ public class Entry {
     public int b() { return b; }
     public int o() { return o; }
     public Node p() { return p; }
+
+    public void updateB(int delta) {
+        b += delta;
+    }
+    public void updateO(int delta) {
+        o += delta;
+    }
 
 }

@@ -2,7 +2,6 @@ package com.semantics.bitstring;
 
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.NaiveBitString;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.RoaringBitString;
-import com.github.jcodevandamme.semantics.rdf.structure.bitstring.SuxBitString;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -112,11 +111,28 @@ public class RoaringBitStringTests {
         // [0 0 1]
         RoaringBitString b = new RoaringBitString(bits);
 
-        b.set(0);
-        b.set(1);
+        b.setBit(true, 0);
+        b.setBit(true, 1);
 
         assertEquals(1, b.access(0));
         assertEquals(1, b.access(1));
         assertEquals(1, b.access(2));
+
+        List<Boolean> bits2 = new ArrayList<>();
+
+        bits2.add(true);
+        bits2.add(true);
+        bits2.add(true);
+
+        // [1 1 1]
+        RoaringBitString b2 = new RoaringBitString(bits2);
+
+        b2.setBit(false, 0);
+        b2.setBit(false, 1);
+        b2.setBit(false, 2);
+
+        assertEquals(0, b2.access(0));
+        assertEquals(0, b2.access(1));
+        assertEquals(0, b2.access(2));
     }
 }

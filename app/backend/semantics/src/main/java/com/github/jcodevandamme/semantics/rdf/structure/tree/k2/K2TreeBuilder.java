@@ -62,7 +62,7 @@ public class K2TreeBuilder {
         }
         // Skip Addition for the Root Node
         if (!skipBit) {
-            // Set next Bit in T to 1 if a matching Cell was found; else set Bit to 0
+            // Set next Bit in T to 1 if a matching Cell was found; else setBit Bit to 0
             setT(matrixSize, match);
         }
         // Break Subdivision Process for Empty Matrices

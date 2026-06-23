@@ -10,6 +10,11 @@ public abstract class Node {
     private int minCapacity;
     private int maxCapacity;
 
+    private InternalNode parent;
+
+
+    private int indexInParent;
+
     public Node(int minCapacity, int maxCapacity) {
         this.minCapacity = minCapacity;
         this.maxCapacity = maxCapacity;
@@ -19,4 +24,10 @@ public abstract class Node {
     public int minCapacity() { return minCapacity; }
     public int maxCapacity() { return maxCapacity; }
 
+    public void setParent(InternalNode parent, int indexInParent) {
+        this.parent = parent;
+        this.indexInParent = indexInParent;
+    }
+    public InternalNode parent() { return parent; }
+    public int indexInParent() { return indexInParent; }
 }

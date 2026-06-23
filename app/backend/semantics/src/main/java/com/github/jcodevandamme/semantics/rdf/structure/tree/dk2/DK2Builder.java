@@ -19,17 +19,11 @@ public class DK2Builder {
     public static DK2Tree build(K2Tree staticTree, DK2Configuration config) {
         DynamicBitVector tTree = DynamicBitVectorBuilder.build(
                 staticTree.t(),
-                config.chunkSize(),
-                config.leafMinimumCapacity(),
-                config.internalMinimumCapacity(),
-                config.internalMaximumCapacity()
+                config
         );
         DynamicBitVector lTree = DynamicBitVectorBuilder.build(
                 staticTree.l(),
-                config.chunkSize(),
-                config.leafMinimumCapacity(),
-                config.internalMinimumCapacity(),
-                config.internalMaximumCapacity()
+                config
         );
         return new DK2Tree(tTree, lTree, staticTree.k(), staticTree.matrixSize());
     }

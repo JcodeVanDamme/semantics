@@ -10,7 +10,7 @@ public class SuxBitString implements BitInterface {
     private final Rank rank;
     private final Select select;
     private final long[] bits;
-    private final int size;
+    private int size;
 
     public SuxBitString(List<Boolean> b) {
         long[] bits = new long[(b.size() + 63) / 64];
@@ -60,13 +60,22 @@ public class SuxBitString implements BitInterface {
     }
 
     @Override
-    public int countOnes() {
+    public int setBitCount() {
         return (int) rank.count();
     }
 
     @Override
-    public void set(int i) {
-        throw new UnsupportedOperationException("set(int i) not implemented");
+    public void setBit(boolean value, int i) {
+        throw new UnsupportedOperationException("setBit(int i) not implemented");
+    }
+    @Override
+    public void addBits(int i, int numBits) {
+        throw new UnsupportedOperationException("addBits(int i, int numBits) not implemented");
+    }
+
+    @Override
+    public int removeBits(int i, int numBits) {
+        throw new UnsupportedOperationException("removeBits(int i, int numBits) not implemented");
     }
 
     @Override

@@ -5,7 +5,7 @@ import java.util.List;
 
 public class NaiveBitString implements BitInterface {
 
-    private final int size;
+    private int size;
     private final BitSet b;
 
     public NaiveBitString(List<Boolean> b) {
@@ -28,7 +28,7 @@ public class NaiveBitString implements BitInterface {
         return b.get(0, i).cardinality();
     }
 
-    // returns the position in b of the j-th bit set to c
+    // returns the position in b of the j-th bit setBit to c
     @Override
     public int select1(int j) {
         int count = 1;
@@ -53,20 +53,29 @@ public class NaiveBitString implements BitInterface {
         checkBounds(i);
         return b.get(i) ? 1 : 0;
     }
-    @Override
-    public int countOnes() {
-        throw new UnsupportedOperationException("countOnes() not implemented");
-    }
-
-    @Override
-    public void set(int i) {
-        throw new UnsupportedOperationException("set(int i) not implemented");
-    }
-
     private void checkBounds(int i) {
         if (i < 0 || i > size) {
             throw new IndexOutOfBoundsException("Index: " + i + " out of Bounds for Size: " + size);
         }
+    }
+    @Override
+    public int setBitCount() {
+        throw new UnsupportedOperationException("setBitCount() not implemented");
+    }
+
+    @Override
+    public void setBit(boolean value, int i) {
+        throw new UnsupportedOperationException("setBit(int i) not implemented");
+    }
+
+    @Override
+    public void addBits(int i, int numBits) {
+        throw new UnsupportedOperationException("addBits(int i, int numBits) not implemented");
+    }
+
+    @Override
+    public int removeBits(int i, int numBits) {
+        throw new UnsupportedOperationException("removeBits(int i, int numBits) not implemented");
     }
 
     @Override

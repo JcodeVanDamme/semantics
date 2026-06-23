@@ -1,8 +1,8 @@
-package com.semantics.bitstring;
+package com.semantics.bitstring.dynamicbitvector;
 
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitInterface;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.RoaringBitString;
-import com.github.jcodevandamme.semantics.rdf.structure.bitstring.SuxBitString;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Configuration;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVector;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorBuilder;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.Entry;
@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DynamicBitVectorBuildTests {
+public class BuildTests {
     // Tests done using prefabricated BitStrings as seen on p.109 in Paper:
     // "Compressed representation of dynamic binary relations with applications"
 
@@ -40,7 +40,7 @@ public class DynamicBitVectorBuildTests {
             )
         );
         statT = new RoaringBitString(tBits);
-        dynT = DynamicBitVectorBuilder.build(statT, 8, 1, 1, 2);
+        dynT = DynamicBitVectorBuilder.build(statT, new DK2Configuration(8, 1, 1, 2));
 
 
         List<Boolean> lBits = new ArrayList<>(
@@ -59,7 +59,7 @@ public class DynamicBitVectorBuildTests {
                 )
         );
         statL = new RoaringBitString(lBits);
-        dynL = DynamicBitVectorBuilder.build(statL, 8, 1, 1, 3);
+        dynL = DynamicBitVectorBuilder.build(statL, new DK2Configuration(8, 1, 1, 3));
     }
 
     @Test
@@ -90,7 +90,7 @@ public class DynamicBitVectorBuildTests {
         Entry e2 = ((InternalNode) dynT.root()).entries().get(1);
 
         assertEquals(statT.size(), e1.b() + e2.b());
-        assertEquals(statT.countOnes(), e1.o() + e2.o());
+        assertEquals(statT.setBitCount(), e1.o() + e2.o());
     }
 
     @Test
@@ -99,6 +99,6 @@ public class DynamicBitVectorBuildTests {
         Entry e2 = ((InternalNode) dynL.root()).entries().get(1);
 
         assertEquals(statL.size(), e1.b() + e2.b());
-        assertEquals(statL.countOnes(), e1.o() + e2.o());
+        assertEquals(statL.setBitCount(), e1.o() + e2.o());
     }
 }

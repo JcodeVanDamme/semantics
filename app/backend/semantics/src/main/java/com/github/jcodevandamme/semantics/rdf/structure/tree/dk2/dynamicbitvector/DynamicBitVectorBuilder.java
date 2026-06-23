@@ -2,7 +2,7 @@ package com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvect
 
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitInterface;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.RoaringBitString;
-import com.github.jcodevandamme.semantics.rdf.structure.bitstring.SuxBitString;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Configuration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,17 +16,12 @@ public final class DynamicBitVectorBuilder {
      * <p> This process converts the static bitmap into a dynamic structure with explicit nodes. </p>
      *
      * @param bitString static Bit String to generate the Dynamic-Bit-Vector from
-     * @param chunkSize size of bit chunks used to partition the original
-     *                  Bit-String; determines the size of leaf nodes
-     *                  in the resulting Dynamic-Bit-Vector
-     * @param leafMinCapacity minimum number of Entries allowed in Leaf nodes
-     * @param internalMinCapacity minimum number of Entries allowed in internal nodes
-     * @param internalMaxCapacity maximum number of Entries allowed in internal nodes
+     * @param config Configuration Parameters for the Tree
      * @return the generated DynamicBitVector
      */
-    public static DynamicBitVector build(BitInterface bitString, int chunkSize, int leafMinCapacity, int internalMinCapacity, int internalMaxCapacity) {
-        List<Node> leaves = generateLeaves(bitString, chunkSize, leafMinCapacity);
-        return buildTree(leaves, internalMinCapacity, internalMaxCapacity);
+    public static DynamicBitVector build(BitInterface bitString, DK2Configuration config) {
+        List<Node> leaves = generateLeaves(bitString, config.chunkSize(), config.leafMinimumCapacity());
+        return buildTree(leaves, config);
     }
     private static List<Node> generateLeaves(BitInterface bitString, int chunkSize, int minCap) {
         // List of Leaf Nodes
@@ -51,7 +46,7 @@ public final class DynamicBitVectorBuilder {
         return leaves;
     }
 
-    private static DynamicBitVector buildTree(List<Node> level, int minCap, int maxCap) {
+    private static DynamicBitVector buildTree(List<Node> level, DK2Configuration config) {
         // Keep on Building until all Nodes have been processed
         // i.e. until Root Node -> level.size() == 1; has been reached
         while (level.size() > 1) {
@@ -62,18 +57,22 @@ public final class DynamicBitVectorBuilder {
             // Process all Child Nodes for the given Level
             // -> Cycle 1; Leaves
             // -> i == Index of current Child to be appended to Parent
-            for (int i = 0; i < level.size(); i += maxCap) {
+            for (int i = 0; i < level.size(); i += config.internalMaximumCapacity()) {
 
                 // Current Parent Node
-                InternalNode parent = new InternalNode(minCap, maxCap);
+                InternalNode parent = new InternalNode(config.internalMinimumCapacity(), config.internalMaximumCapacity());
 
                 // Append to Parent until Parents Capacity has been reached
-                // or there are no more Nodes left to process
-                int end = Math.min(i + maxCap, level.size());
+                // or there are no more Nodes t1 to process
+                int end = Math.min(i + config.internalMaximumCapacity(), level.size());
 
                 // Append Child to Parent
+                int childIdx = 0;
                 for (int j = i; j < end; j++) {
-                    parent.add(level.get(j));
+                    Node child = level.get(j);
+                    parent.add(child, parent.entries().size());
+                    child.setParent(parent, childIdx);
+                    childIdx++;
                 }
 
                 // Append the Parent Node to next Level
@@ -84,6 +83,6 @@ public final class DynamicBitVectorBuilder {
             level = nextLevel;
         }
 
-        return new DynamicBitVector(level.getFirst());
+        return new DynamicBitVector(level.getFirst(), config);
     }
 }
