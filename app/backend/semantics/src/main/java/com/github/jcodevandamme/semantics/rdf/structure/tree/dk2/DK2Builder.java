@@ -1,5 +1,6 @@
 package com.github.jcodevandamme.semantics.rdf.structure.tree.dk2;
 
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorConfiguration;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.k2.K2Tree;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVector;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorBuilder;
@@ -16,7 +17,7 @@ public class DK2Builder {
      * @param config Configuration Parameters for the Tree
      * @return the generated DK2-tree
      */
-    public static DK2Tree build(K2Tree staticTree, DK2Configuration config) {
+    public static DK2Tree build(K2Tree staticTree, DynamicBitVectorConfiguration config, int numberOfSetColumns) {
         DynamicBitVector tTree = DynamicBitVectorBuilder.build(
                 staticTree.t(),
                 config
@@ -25,6 +26,6 @@ public class DK2Builder {
                 staticTree.l(),
                 config
         );
-        return new DK2Tree(tTree, lTree, staticTree.k(), staticTree.matrixSize());
+        return new DK2Tree(tTree, lTree, staticTree.k(), staticTree.matrixSize(), numberOfSetColumns);
     }
 }

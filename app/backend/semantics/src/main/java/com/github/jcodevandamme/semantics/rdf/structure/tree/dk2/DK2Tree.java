@@ -1,7 +1,11 @@
 package com.github.jcodevandamme.semantics.rdf.structure.tree.dk2;
 
+import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitInterface;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.K2;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DK2Tree implements K2 {
 
@@ -10,11 +14,33 @@ public class DK2Tree implements K2 {
     private final DynamicBitVector tTree;
     private final DynamicBitVector lTree;
 
-    public DK2Tree(DynamicBitVector tTree, DynamicBitVector lTree, int k, int matrixSize) {
+    private int currentColumnIndex;
+    private List<Integer> freedColumns;
+
+    public DK2Tree(DynamicBitVector tTree, DynamicBitVector lTree, int k, int matrixSize, int numberOfSetColumns) {
         this.k = k;
         this.matrixSize = matrixSize;
         this.tTree = tTree;
         this.lTree = lTree;
+
+
+        currentColumnIndex = numberOfSetColumns;
+        freedColumns = new ArrayList<>();
+    }
+
+    @Override
+    public boolean addEntry(int row, int col) {
+        return true;
+    }
+
+    @Override
+    public boolean removeEntry(int row, int col) {
+        return true;
+    }
+
+    @Override
+    public boolean update(int removeRow, int removeCol, int addRow, int addCol) {
+        return true;
     }
 
     @Override
@@ -28,7 +54,7 @@ public class DK2Tree implements K2 {
         TraversalResult res = findNode(row, col);
 
         // Path ended in upper Levels of the Tree
-        if (!res.leafInL()) {
+        if (!res.leafIsInL()) {
             return false;
         }
 
@@ -44,25 +70,16 @@ public class DK2Tree implements K2 {
         if (value) {
             // Target Cell was found in T
             // -> Expand Tree to include target Cell
-            if (!res.leafInL()) {
+            if (!res.leafIsInL()) {
                 expandTree(res, row, col);
             }
         } else {
             // Target Cell was found in L
             // -> No need to
-            if (res.leafInL()) {
+            if (res.leafIsInL()) {
                 reduceTree(res, row, col);
             }
         }
-    }
-    private void reduceTree(TraversalResult match, int targetRow, int targetCol) {
-        // Leaf has become irrelevant after update
-        if (match.leafNode().bits().countSetBits() == 0) {
-
-            InternalNode parent = match.leafNode().parent();
-            parent.remove(match.leafNode());
-        }
-
     }
     private void expandTree(TraversalResult match, int targetRow, int targetCol) {
         // Path to Cell ended in upper Tree
@@ -79,7 +96,7 @@ public class DK2Tree implements K2 {
             match = findNode(targetRow, targetCol);
             DynamicBitVector.set(true, match.leafNode(), match.localTargetIndex());
 
-            if (match.leafInL()) {
+            if (match.leafIsInL()) {
                 found = true;
 
             } else {
@@ -87,6 +104,45 @@ public class DK2Tree implements K2 {
                 tTree.addK2Bits(match.leafNode(), k, childIdx);
             }
         }
+    }
+    private void reduceTree(TraversalResult match, int row, int col) {
+        LeafNode lLeaf = match.leafNode();
+        int lIdx = match.localTargetIndex();
+        LeafNode tLeaf = match.parentTLeafNode();
+        int tIdx = match.parentLLeafIndex();
+
+        if (checkK2SiblingBits(lLeaf.bits(), lIdx)) {
+            return;
+        }
+
+        /*
+       lTree.removeK2Bits(lLeaf, k, lIdx);
+
+        /*
+        if (lLeaf.bits().size() > 0) {
+            return;
+        }
+        // Remove Leaf Node from Parent Nodes Entries
+        lLeaf.parent().entries().remove(lLeaf.indexInParent());
+
+        /*
+
+        // Unset Bit in T which pointed to LLeaf
+        DynamicBitVector.set(false, tLeaf, tIdx);
+
+        if (!checkK2SiblingBits(tLeaf.bits(), tIdx)) {
+            tLeaf.parent().entries().remove(tLeaf.indexInParent());
+        }*/
+    }
+
+    private boolean checkK2SiblingBits(BitInterface bits, int blockStartIdx) {
+        int end = Math.min(bits.size(), k*k);
+        for (int i = 0; i < end; i++) {
+            if (bits.access(blockStartIdx + i) == 1) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public TraversalResult findNode(int row, int col) {
@@ -117,15 +173,22 @@ public class DK2Tree implements K2 {
             // Leaf reached
             if (subSize == 1) {
 
-                // Obtain L-Index by treating T and L as continuous and shifting the Index by T`s Length
-                idx -= tTree.size();
+                // Retrieve the Leaf in T corresponding to the following Leaf in L
+                FindLeafResult tRes = findLeaf(tTree, currentBitIndex);
 
-                FindLeafResult res = findLeaf(lTree, idx);
+                // Obtain L-Index by treating T and L as continuous and shifting the Index by T`s Length
+                int lIdx = idx - tTree.size();
+                FindLeafResult lRes = findLeaf(lTree, lIdx);
+
                 return new TraversalResult(
-                        (LeafNode) res.node(),
+                        (LeafNode) lRes.node(),
                         // idx needs to be offsetted by bBefore to correctly align (Dont ask me why)
-                        idx - res.bBefore(),
-                        true);
+                        lIdx - lRes.bBefore(),
+                        true,
+                        (LeafNode) tRes.node(),
+                        // Index of Bit in Parent Node correlating to Leaf L
+                        currentBitIndex - tRes.bBefore()
+                );
 
             } else {
 
@@ -137,7 +200,9 @@ public class DK2Tree implements K2 {
                             (LeafNode) res.node(),
                             // idx needs to be offsetted by bBefore to correctly align (Dont ask me why)
                             idx - res.bBefore(),
-                            false
+                            false,
+                            null,
+                            null
                     );
                 }
             }

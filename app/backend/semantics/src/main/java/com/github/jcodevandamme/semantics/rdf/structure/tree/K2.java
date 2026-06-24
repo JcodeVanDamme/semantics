@@ -15,6 +15,11 @@ import java.util.List;
  */
 public interface K2 {
 
+    boolean addEntry(int row, int col);
+    boolean removeEntry(int row, int col);
+    boolean update(int removeRow, int removeCol, int addRow, int addCol);
+
+
     /**
      * Returns the Dimension of the conceptual NxN Matrix.
      *

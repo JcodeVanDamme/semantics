@@ -17,18 +17,12 @@ public class DynamicBMatrix implements BMatrix {
     private K2 st;
     private K2 ot;
 
-    private int currentColumn;
-    private final ArrayList<Integer> freedColumns;
-
     public DynamicBMatrix(List<Triple> triples, DK2Tree st, DK2Tree ot, DynamicPredicateIndex bp, int t) {
         this.triples = triples;
         this.st = st;
         this.ot = ot;
         this.bp = bp;
         this.t = t;
-
-        currentColumn = triples.size();
-        freedColumns = new ArrayList<>();
     }
 
     public boolean add(int s, int p, int o) throws IllegalArgumentException {
@@ -36,12 +30,6 @@ public class DynamicBMatrix implements BMatrix {
             throw new IllegalArgumentException("Triple to be created already exists");
         }
 
-        if (currentColumn < st.matrixSize() && currentColumn < ot.matrixSize()) {
-            // Insert
-        } else {
-            // Expand
-            // Insert
-        }
 
         return true;
     }

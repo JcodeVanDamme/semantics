@@ -2,14 +2,13 @@ package com.github.jcodevandamme.semantics.rdf.tripleStore;
 
 import com.github.jcodevandamme.semantics.rdf.bmatrix.BMatrixBuilder;
 import com.github.jcodevandamme.semantics.rdf.bmatrix.DynamicBMatrix;
-import com.github.jcodevandamme.semantics.rdf.bmatrix.StaticBMatrix;
 import com.github.jcodevandamme.semantics.rdf.dictionary.TripleDecoder;
 import com.github.jcodevandamme.semantics.rdf.dictionary.TripleDictionary;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import com.github.jcodevandamme.semantics.rdf.provider.TripleProvider;
 import com.github.jcodevandamme.semantics.rdf.query.QueryFactory;
 import com.github.jcodevandamme.semantics.rdf.query.QueryProcessor;
-import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Configuration;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorConfiguration;
 
 import java.util.List;
 
@@ -38,7 +37,7 @@ public class DynamicTripleStore {
     public void init(TripleProvider tripleProvider) {
         dict = new TripleDictionary();
 
-        DK2Configuration config = new DK2Configuration(
+        DynamicBitVectorConfiguration config = new DynamicBitVectorConfiguration(
                 CHUNK_SIZE,
                 LEAF_MIN_CAPACITY,
                 INTERNAL_MIN_CAPACITY,

@@ -1,7 +1,7 @@
 package com.semantics.k2.dynamicK2;
 import com.github.jcodevandamme.semantics.rdf.model.Cell;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Builder;
-import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Configuration;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorConfiguration;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Tree;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.k2.K2Tree;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.k2.K2TreeBuilder;
@@ -31,7 +31,7 @@ public class DK2CheckCellTests {
 
         K2TreeBuilder k2Builder = new K2TreeBuilder();
         K2Tree staticTree = k2Builder.constructK2(2, testST, 8);
-        tree = DK2Builder.build(staticTree, new DK2Configuration(4, 1, 1, 3));
+        tree = DK2Builder.build(staticTree, new DynamicBitVectorConfiguration(4, 1, 1, 3), testST.size());
     }
 
     @Test

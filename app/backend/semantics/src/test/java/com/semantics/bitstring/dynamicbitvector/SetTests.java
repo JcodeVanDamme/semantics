@@ -2,7 +2,7 @@ package com.semantics.bitstring.dynamicbitvector;
 
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitInterface;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.RoaringBitString;
-import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Configuration;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorConfiguration;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ public class SetTests {
         );
         BitInterface b = new RoaringBitString(bits);
 
-        bitVector = DynamicBitVectorBuilder.build(b, new DK2Configuration(8, 1, 1, 3));
+        bitVector = DynamicBitVectorBuilder.build(b, new DynamicBitVectorConfiguration(8, 1, 1, 3));
         root = ((InternalNode)bitVector.root());
         internal1 = ((InternalNode)((InternalNode) bitVector.root()).entries().get(0).p());
         internal2 = ((InternalNode)((InternalNode) bitVector.root()).entries().get(1).p());

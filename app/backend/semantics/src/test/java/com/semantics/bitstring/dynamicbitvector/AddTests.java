@@ -2,7 +2,7 @@ package com.semantics.bitstring.dynamicbitvector;
 
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitInterface;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.RoaringBitString;
-import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Configuration;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorConfiguration;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVector;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorBuilder;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.InternalNode;
@@ -27,7 +27,7 @@ public class AddTests {
         BitInterface b = new RoaringBitString(bits);
 
         // Root [1,1,1,1, 1,1,1,1]
-        DynamicBitVector bitVector = DynamicBitVectorBuilder.build(b, new DK2Configuration(12, 1, 1, 1));
+        DynamicBitVector bitVector = DynamicBitVectorBuilder.build(b, new DynamicBitVectorConfiguration(12, 1, 1, 1));
 
         // insert k*K = 4 zeros at index 2
         bitVector.addK2Bits((LeafNode) bitVector.root(), 2, 4);
@@ -59,7 +59,7 @@ public class AddTests {
         BitInterface b = new RoaringBitString(bits);
 
         // Root [1,1,1,1, 1,1,1,1]
-        DynamicBitVector bitVector = DynamicBitVectorBuilder.build(b, new DK2Configuration(8, 1, 1, 1));
+        DynamicBitVector bitVector = DynamicBitVectorBuilder.build(b, new DynamicBitVectorConfiguration(8, 1, 1, 1));
 
         // insert k*K = 4 zeros at index 2
         bitVector.addK2Bits((LeafNode) bitVector.root(), 2, 4);
@@ -115,7 +115,7 @@ public class AddTests {
         //   L4 {1, 6}
         //   L5 {0, 6}
         //   L6 {0, 1, 2, 3}
-        DynamicBitVector bitVector = DynamicBitVectorBuilder.build(b, new DK2Configuration(8, 1, 1, 3));
+        DynamicBitVector bitVector = DynamicBitVectorBuilder.build(b, new DynamicBitVectorConfiguration(8, 1, 1, 3));
 
         InternalNode i1 = (InternalNode) ((InternalNode) bitVector.root()).entries().get(0).p();
         LeafNode l1 = (LeafNode) i1.entries().get(0).p();

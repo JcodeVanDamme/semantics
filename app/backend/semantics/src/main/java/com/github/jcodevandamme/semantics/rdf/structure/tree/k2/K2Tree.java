@@ -19,6 +19,22 @@ public class K2Tree implements K2 {
     public int k() { return k; }
     public BitInterface t() { return t; }
     public BitInterface l() { return l; }
+
+    @Override
+    public boolean addEntry(int row, int col) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean removeEntry(int row, int col) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean update(int removeRow, int removeCol, int addRow, int addCol) {
+        throw new UnsupportedOperationException();
+    }
+
     @Override
     public int matrixSize() {
         return matrixSize;

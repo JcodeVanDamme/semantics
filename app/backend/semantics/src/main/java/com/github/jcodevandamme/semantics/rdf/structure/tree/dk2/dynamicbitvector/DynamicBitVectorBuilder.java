@@ -2,7 +2,6 @@ package com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvect
 
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitInterface;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.RoaringBitString;
-import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Configuration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ public final class DynamicBitVectorBuilder {
      * @param config Configuration Parameters for the Tree
      * @return the generated DynamicBitVector
      */
-    public static DynamicBitVector build(BitInterface bitString, DK2Configuration config) {
+    public static DynamicBitVector build(BitInterface bitString, DynamicBitVectorConfiguration config) {
         List<Node> leaves = generateLeaves(bitString, config.chunkSize(), config.leafMinimumCapacity());
         return buildTree(leaves, config);
     }
@@ -46,7 +45,7 @@ public final class DynamicBitVectorBuilder {
         return leaves;
     }
 
-    private static DynamicBitVector buildTree(List<Node> level, DK2Configuration config) {
+    private static DynamicBitVector buildTree(List<Node> level, DynamicBitVectorConfiguration config) {
         // Keep on Building until all Nodes have been processed
         // i.e. until Root Node -> level.size() == 1; has been reached
         while (level.size() > 1) {

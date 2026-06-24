@@ -3,7 +3,7 @@ package com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvect
 import com.github.jcodevandamme.semantics.rdf.model.Tuple;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitInterface;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.RoaringBitString;
-import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Configuration;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.TraversalResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +11,8 @@ import java.util.List;
 public class DynamicBitVector {
 
     private Node root;
-    private final DK2Configuration config;
-    public DynamicBitVector(Node root, DK2Configuration config) {
+    private final DynamicBitVectorConfiguration config;
+    public DynamicBitVector(Node root, DynamicBitVectorConfiguration config) {
         this.root = root;
         this.config = config;
     }
@@ -31,17 +31,16 @@ public class DynamicBitVector {
 
         if (leaf.bits().access(index) == 1) {
             if (!value) {
-                System.out.println("Setting 1 to 0");
                 oneUnset = true;
+
             } else {
-                System.out.println("Bit was 1, no update necessary");
                 return;
             }
+
         } else if (value) {
-            System.out.println("Setting 0 to 1");
             oneSet = true;
+
         } else {
-            System.out.println("Bit was 0, no update necessary");
             return;
         }
 
@@ -67,7 +66,7 @@ public class DynamicBitVector {
     }
 
     public void addK2Bits(LeafNode leaf,int k, int index) {
-        // Append k^2 Bits by shifting the indices
+        // Append k*k Bits by shifting the indices
         // -> Updates BitString Size internally
         leaf.bits().addBits(index, k*k);
 
@@ -75,7 +74,6 @@ public class DynamicBitVector {
 
         // If Leaf Capacity was reached, split in two
         if (leaf.size() > leaf.maxCapacity()) {
-
             Tuple<LeafNode> leafs = splitLeafNode(leaf, k);
 
             InternalNode parent;
@@ -101,7 +99,7 @@ public class DynamicBitVector {
             parent.add(leafs.t2(), leaf.indexInParent() + 1);
             leafs.t2().setParent(parent, leaf.indexInParent() + 1);
 
-            expandInternal(parent);
+            expandInternalIfNecessary(parent);
         }
     }
 
@@ -117,19 +115,6 @@ public class DynamicBitVector {
             current = parent;
         }
     }
-    private void decreaseBCounters(LeafNode leaf, int delta) {
-        assert delta <= 0;
-
-        Node current = leaf;
-        while (current.parent() != null) {
-            InternalNode parent = current.parent();
-
-            parent.entries().get(current.indexInParent()).updateB(delta);
-
-            current = parent;
-        }
-    }
-
     private Tuple<LeafNode> splitLeafNode(LeafNode node, int k) {
         Tuple<BitInterface> splitBits = splitBits(node.bits(), k);
 
@@ -149,9 +134,9 @@ public class DynamicBitVector {
         );
     }
     public Tuple<BitInterface> splitBits(BitInterface bitString, int k) {
+        int blockSize = k * k;
         int half = bitString.size() / 2;
-        int overshoot = half % (k*k);
-        int splitIdx = (k*k) - overshoot + half;
+        int splitIdx = ((half + blockSize - 1) / blockSize) * blockSize;
 
         List<Boolean> leftBits = new ArrayList<>();
         List<Boolean> rightBits = new ArrayList<>();
@@ -168,7 +153,7 @@ public class DynamicBitVector {
                 new RoaringBitString(rightBits)
         );
     }
-    private void expandInternal(InternalNode node) {
+    private void expandInternalIfNecessary(InternalNode node) {
         if (node.size() > node.maxCapacity()) {
             Tuple<InternalNode> nodes = splitInternalNode(node);
 
@@ -196,7 +181,7 @@ public class DynamicBitVector {
                 parent.add(nodes.t2(), node.indexInParent() + 1);
                 nodes.t2().setParent(parent, node.indexInParent() + 1);
 
-                expandInternal(node.parent());
+                expandInternalIfNecessary(node.parent());
             }
         }
     }
@@ -240,44 +225,27 @@ public class DynamicBitVector {
                 rightEntries
         );
     }
-    public void removeK2Bits(LeafNode leaf,int k, int index) {
-        // Append k^2 Bits by shifting the indices
+    public void removeK2Bits(LeafNode leaf, int k, int index) {
+        // Remove k*k Bits by shifting the indices
         // -> Updates BitString Size internally
-        int removedBits = leaf.bits().removeBits(index, k*k);
-
+        leaf.bits().removeBits(index, k * k);
         decreaseBCounters(leaf, k);
+    }
 
-        // If Leaf Capacity was reached, split in two
-        if (leaf.size() > leaf.maxCapacity()) {
+    public static void decreaseBCounters(LeafNode leaf, int k) {
+        assert k > 0;
 
-            Tuple<LeafNode> leafs = splitLeafNode(leaf, k);
+        Node current = leaf;
+        while (current.parent() != null) {
+            InternalNode parent = current.parent();
 
-            InternalNode parent;
+            parent.entries().get(current.indexInParent()).updateB(-(k*k));
 
-            if (leaf.parent() == null) {
-                parent = new InternalNode(
-                        config.internalMinimumCapacity(),
-                        config.internalMaximumCapacity()
-                );
-                parent.add(leafs.t1(), 0);
-                parent.add(leafs.t2(), 1);
-                root = parent;
-                return;
-            }
-
-            parent = leaf.parent();
-            parent.remove(leaf);
-
-            // Append new ones
-            parent.add(leafs.t1(), leaf.indexInParent());
-            leafs.t1().setParent(parent, leaf.indexInParent());
-
-            parent.add(leafs.t2(), leaf.indexInParent() + 1);
-            leafs.t2().setParent(parent, leaf.indexInParent() + 1);
-
-            expandInternal(parent);
+            current = parent;
         }
     }
+
+
     @Override
     public String toString() {
         StringBuilder strb = new StringBuilder();

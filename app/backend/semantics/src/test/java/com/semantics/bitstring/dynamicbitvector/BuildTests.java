@@ -2,7 +2,7 @@ package com.semantics.bitstring.dynamicbitvector;
 
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitInterface;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.RoaringBitString;
-import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Configuration;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorConfiguration;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVector;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorBuilder;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.Entry;
@@ -40,7 +40,7 @@ public class BuildTests {
             )
         );
         statT = new RoaringBitString(tBits);
-        dynT = DynamicBitVectorBuilder.build(statT, new DK2Configuration(8, 1, 1, 2));
+        dynT = DynamicBitVectorBuilder.build(statT, new DynamicBitVectorConfiguration(8, 1, 1, 2));
 
 
         List<Boolean> lBits = new ArrayList<>(
@@ -59,7 +59,7 @@ public class BuildTests {
                 )
         );
         statL = new RoaringBitString(lBits);
-        dynL = DynamicBitVectorBuilder.build(statL, new DK2Configuration(8, 1, 1, 3));
+        dynL = DynamicBitVectorBuilder.build(statL, new DynamicBitVectorConfiguration(8, 1, 1, 3));
     }
 
     @Test

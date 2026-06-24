@@ -1,4 +1,4 @@
-package com.semantics.bitstring;
+package com.semantics.bitstring.roaringbitstring;
 
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.NaiveBitString;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.RoaringBitString;
@@ -10,7 +10,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class RoaringBitStringTests {
+public class RankAccessSelectSetTests {
     @Test
     void rankTests() {
         List<Boolean> bits1 = new ArrayList<>();
