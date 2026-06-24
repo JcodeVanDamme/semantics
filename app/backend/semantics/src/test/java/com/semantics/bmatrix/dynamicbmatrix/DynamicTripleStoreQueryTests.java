@@ -2,6 +2,7 @@ package com.semantics.bmatrix.dynamicbmatrix;
 
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import com.github.jcodevandamme.semantics.rdf.provider.TestTripleProvider;
+import com.github.jcodevandamme.semantics.rdf.tripleStore.DynamicTripleStore;
 import com.github.jcodevandamme.semantics.rdf.tripleStore.StaticTripleStore;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -13,12 +14,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DynamicTripleStoreQueryTests {
 
-    static StaticTripleStore tripleStore;
+    static DynamicTripleStore tripleStore;
     static List<Triple> none;
 
     @BeforeAll
     static void init() {
-        tripleStore = new StaticTripleStore();
+        tripleStore = new DynamicTripleStore();
         tripleStore.init(new TestTripleProvider());
         none = new ArrayList<>();
     }
