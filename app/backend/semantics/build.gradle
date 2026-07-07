@@ -15,9 +15,9 @@ java {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-	implementation 'it.unimi.dsi:sux4j:5.4.1'
 	implementation 'org.roaringbitmap:RoaringBitmap:1.6.9'
 	implementation 'org.roaringbitmap:bsi:1.6.9'
+    implementation 'org.apache.jena:jena-arq:5.0.0'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

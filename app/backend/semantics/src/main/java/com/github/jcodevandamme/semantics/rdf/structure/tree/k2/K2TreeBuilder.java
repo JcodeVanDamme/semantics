@@ -2,7 +2,6 @@ package com.github.jcodevandamme.semantics.rdf.structure.tree.k2;
 
 import com.github.jcodevandamme.semantics.rdf.model.Cell;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.RoaringBitString;
-import com.github.jcodevandamme.semantics.rdf.structure.bitstring.SuxBitString;
 
 import java.util.ArrayList;
 import java.util.HashMap;

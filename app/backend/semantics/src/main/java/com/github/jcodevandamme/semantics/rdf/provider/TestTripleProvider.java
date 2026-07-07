@@ -1,6 +1,7 @@
 package com.github.jcodevandamme.semantics.rdf.provider;
 
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
+import org.apache.el.stream.Stream;
 
 import java.util.ArrayList;
 import java.util.List;

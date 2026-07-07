@@ -1,0 +1,14 @@
+<http://example.org/DCC20> <http://example.org/heldOn> <http://example.org/SLakeCity> .
+<http://example.org/SLakeCity> <http://example.org/capitalOf> <http://example.org/Utah> .
+<http://example.org/DCC20> <http://example.org/hasTopic> "Text comp." .
+<http://example.org/DCC20> <http://example.org/hasTopic> "Video cod." .
+<http://example.org/GNavarro> <http://example.org/attends> <http://example.org/DCC20> .
+<http://example.org/GNavarro> <http://example.org/livesIn> <http://example.org/Chile> .
+<http://example.org/GNavarro> <http://example.org/expertIn> "Text comp." .
+<http://example.org/TGagie> <http://example.org/attends> <http://example.org/DCC20> .
+<http://example.org/TGagie> <http://example.org/livesIn> <http://example.org/Canada> .
+<http://example.org/TGagie> <http://example.org/expertIn> "Text comp." .
+<http://example.org/ABovik> <http://example.org/attends> <http://example.org/DCC20> .
+<http://example.org/ABovik> <http://example.org/livesIn> <http://example.org/US> .
+<http://example.org/GSullivan> <http://example.org/attends> <http://example.org/DCC20> .
+<http://example.org/GSullivan> <http://example.org/livesIn> <http://example.org/US> .
