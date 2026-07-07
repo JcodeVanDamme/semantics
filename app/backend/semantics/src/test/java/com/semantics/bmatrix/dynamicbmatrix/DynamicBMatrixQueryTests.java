@@ -4,6 +4,7 @@ import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import com.github.jcodevandamme.semantics.rdf.provider.TestTripleProvider;
 import com.github.jcodevandamme.semantics.rdf.tripleStore.DynamicTripleStore;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -16,8 +17,8 @@ public class DynamicBMatrixQueryTests {
     static DynamicTripleStore tripleStore;
     static List<Triple> none;
 
-    @BeforeAll
-    static void init() {
+    @BeforeEach
+    void init() {
         tripleStore = new DynamicTripleStore();
         tripleStore.init(new TestTripleProvider());
         none = new ArrayList<>();

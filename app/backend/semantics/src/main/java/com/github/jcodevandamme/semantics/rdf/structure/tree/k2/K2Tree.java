@@ -31,9 +31,7 @@ public class K2Tree implements K2 {
     }
 
     @Override
-    public boolean update(int removeRow, int removeCol, int addRow, int addCol) {
-        throw new UnsupportedOperationException();
-    }
+    public int getNextAvailableColumnIndex() { throw new UnsupportedOperationException(); }
 
     @Override
     public int matrixSize() {

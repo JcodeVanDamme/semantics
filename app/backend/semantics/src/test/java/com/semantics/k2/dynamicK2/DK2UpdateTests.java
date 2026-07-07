@@ -24,10 +24,10 @@ public class DK2UpdateTests {
     public void setup() {
         List<Cell> cells = new ArrayList<>();
         cells.add(new Cell(0, 0));
-        cells.add(new Cell(1, 1));
-        cells.add(new Cell(2, 2));
-        cells.add(new Cell(3, 3));
-        cells.add(new Cell(4, 4));
+        cells.add(new Cell(0, 2));
+        cells.add(new Cell(3, 0));
+        cells.add(new Cell(5, 2));
+        cells.add(new Cell(5, 3));
 
         K2TreeBuilder k2Builder = new K2TreeBuilder();
         K2Tree staticTree = k2Builder.constructK2(2, cells, 8);
@@ -37,34 +37,42 @@ public class DK2UpdateTests {
     @Test
     public void setCell_cellNotSet_Test() {
         System.out.println(tree);
-        assertFalse(tree.checkCell(5, 0));
-
-        tree.updateCell(5,0, true);
+        assertFalse(tree.checkCell(2, 7));
+        tree.updateCell(2, 7, true);
+        assertTrue(tree.checkCell(2, 7));
         System.out.println(tree);
-        assertTrue(tree.checkCell(5, 0));
     }
 
     @Test
     public void setCell_cellSet_Test() {
         System.out.println(tree);
         assertTrue(tree.checkCell(0, 0));
-
-        tree.updateCell(0,0, true);
-        System.out.println(tree);
+        tree.updateCell(0, 0, true);
         assertTrue(tree.checkCell(0, 0));
+        System.out.println(tree);
     }
 
     @Test
-    public void unsetCell_cellSet_Test() {
+    public void unsetCell_cellSet_noPruning_Test() {
         System.out.println(tree);
-        assertTrue(tree.checkCell(4, 4));
-
-        tree.updateCell(4,4, false);
+        assertTrue(tree.checkCell(5, 3));
+        tree.updateCell(5, 3, false);
         System.out.println(tree);
-        assertFalse(tree.checkCell(4, 4));
+        assertFalse(tree.checkCell(5, 3));
+    }
 
-        //tree.updateCell(4,4, true);
-        //assertTrue(tree.checkCell(4, 4));
-        //System.out.println(tree);
+    @Test
+    public void unsetCell_cellSet_pruning_Test() {
+        System.out.println(tree);
+        assertTrue(tree.checkCell(0, 0));
+        tree.updateCell(0, 0, false);
+        System.out.println(tree);
+        assertFalse(tree.checkCell(0, 0));
+    }
+
+    @Test
+    void gabba() {
+
+
     }
 }

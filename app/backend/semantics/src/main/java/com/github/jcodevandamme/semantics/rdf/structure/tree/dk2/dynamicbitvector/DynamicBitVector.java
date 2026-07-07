@@ -12,10 +12,12 @@ public class DynamicBitVector {
 
     private Node root;
     private final DynamicBitVectorConfiguration config;
+
     public DynamicBitVector(Node root, DynamicBitVectorConfiguration config) {
         this.root = root;
         this.config = config;
     }
+
     public Node root() { return root; }
     public int size() {
         int size = 0;
@@ -23,6 +25,22 @@ public class DynamicBitVector {
             size += e.b();
         }
         return size;
+    }
+
+    public void expandRoot(int k) {
+        Node firstLeaf = root;
+        while (!(firstLeaf instanceof LeafNode)) {
+            firstLeaf = ((InternalNode) firstLeaf).entries().getFirst().p();
+        }
+
+        addK2Bits((LeafNode) firstLeaf, k, 0);
+
+        firstLeaf = root;
+        while (!(firstLeaf instanceof LeafNode)) {
+            firstLeaf = ((InternalNode) firstLeaf).entries().getFirst().p();
+        }
+
+        set(true, (LeafNode) firstLeaf, 0);
     }
 
     public static void set(boolean value, LeafNode leaf, int index) {
@@ -94,10 +112,10 @@ public class DynamicBitVector {
 
             // Append new ones
             parent.add(leafs.t1(), leaf.indexInParent());
-            leafs.t1().setParent(parent, leaf.indexInParent());
+            reindexChildren(parent);
 
             parent.add(leafs.t2(), leaf.indexInParent() + 1);
-            leafs.t2().setParent(parent, leaf.indexInParent() + 1);
+            reindexChildren(parent);
 
             expandInternalIfNecessary(parent);
         }
@@ -172,14 +190,16 @@ public class DynamicBitVector {
                 root = parent;
 
             } else {
+
                 parent = node.parent();
                 parent.entries().remove(node.indexInParent());
 
                 parent.add(nodes.t1(), node.indexInParent());
-                nodes.t1().setParent(parent, node.indexInParent());
+                reindexChildren(parent);
+
 
                 parent.add(nodes.t2(), node.indexInParent() + 1);
-                nodes.t2().setParent(parent, node.indexInParent() + 1);
+                reindexChildren(parent);
 
                 expandInternalIfNecessary(node.parent());
             }
@@ -193,18 +213,18 @@ public class DynamicBitVector {
                 config.internalMaximumCapacity()
         );
         leftNode.entries().addAll(splitEntries.t1());
+        reindexChildren(leftNode);
 
         InternalNode rightNode = new InternalNode(
                 config.internalMinimumCapacity(),
                 config.internalMaximumCapacity()
         );
         rightNode.entries().addAll(splitEntries.t2());
+        reindexChildren(rightNode);
 
-        return new Tuple<InternalNode>(
-                leftNode,
-                rightNode
-        );
+        return new Tuple<InternalNode>(leftNode, rightNode);
     }
+
     public Tuple<List<Entry>> splitEntries(List<Entry> entries) {
 
         int splitIdx = entries.size() / 2;
@@ -225,6 +245,17 @@ public class DynamicBitVector {
                 rightEntries
         );
     }
+
+    public static void reindexChildren(InternalNode parent) {
+        for (int i = 0; i < parent.entries().size(); i++) {
+            // Assuming e.p() gets the child Node from the Entry
+            Node child = parent.entries().get(i).p();
+            if (child != null) {
+                child.setParent(parent, i);
+            }
+        }
+    }
+
     public void removeK2Bits(LeafNode leaf, int k, int index) {
         // Remove k*k Bits by shifting the indices
         // -> Updates BitString Size internally

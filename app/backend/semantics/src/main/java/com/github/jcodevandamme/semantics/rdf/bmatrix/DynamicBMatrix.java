@@ -30,15 +30,35 @@ public class DynamicBMatrix implements BMatrix {
             throw new IllegalArgumentException("Triple to be created already exists");
         }
 
+        int stCol = st.getNextAvailableColumnIndex();
+        int otCol = ot.getNextAvailableColumnIndex();
 
+        if (stCol != otCol) {
+            throw new IllegalStateException("ST and OT Triple Indexes have diverged");
+        }
+
+        int tripleIdx = stCol;
+        st.addEntry(s, tripleIdx);
+        ot.addEntry(o, tripleIdx);
+        bp.registerTriple(tripleIdx, p);
         return true;
     }
+
     public boolean delete(int s, int p, int o) throws IllegalArgumentException {
         if (!spoQuery(s, p, o)) {
             throw new IllegalArgumentException("Triple to be deleted does not exist");
         }
 
-        return true;
+        try {
+            int tripleIdx = getTripleIdx(s, p, o);
+            st.removeEntry(s, tripleIdx);
+            ot.removeEntry(o, tripleIdx);
+            bp.deregisterTriple(tripleIdx, p);
+            return true;
+
+        } catch (IllegalStateException ex) {
+            throw new IllegalStateException("Column Index in ST for Triple {"+ s +"," + p + "," + o +"} not found");
+        }
     }
     public boolean update(int oldS, int oldP, int oldO, int newS, int newP, int newO) throws IllegalArgumentException {
         if (!spoQuery(oldS, oldP, oldO)) {
@@ -51,6 +71,16 @@ public class DynamicBMatrix implements BMatrix {
         add(newS, newP, newO);
 
         return true;
+    }
+
+    private int getTripleIdx(int s, int p, int o) {
+        List<Integer> triples = bp.select1(p);
+        for (int col : triples) {
+            if (st.checkCell(s, col) && ot.checkCell(o, col)) {
+                return col;
+            }
+        }
+        throw new IllegalStateException("Column Index not found");
     }
 
     public boolean spoQuery(int s, int p, int o) {

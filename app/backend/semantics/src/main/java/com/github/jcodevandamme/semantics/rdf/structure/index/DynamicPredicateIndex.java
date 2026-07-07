@@ -10,27 +10,31 @@ public class DynamicPredicateIndex {
     Map<Integer, Integer> predicateByTripleId;
 
     public DynamicPredicateIndex(List<Triple> triples) {
-        initializeTripleIndexesByPredicateId(triples);
-        initializePredicatesByTripleId(triples);
-    }
-
-    private void initializeTripleIndexesByPredicateId(List<Triple> triples) {
         tripleIndexesByPredicateId = new HashMap<>();
-        for (int i = 0; i < triples.size(); i++) {
-            int pId = (int) triples.get(i).p();
+        predicateByTripleId = new HashMap<>();
 
-            tripleIndexesByPredicateId
-                    .computeIfAbsent(pId, k -> new ArrayList<>())
-                    .add(i);
+        for (int tripleIdx = 0; tripleIdx < triples.size(); tripleIdx++) {
+            int pId = (int) triples.get(tripleIdx).p();
+            registerTriple(tripleIdx,  pId);
         }
     }
-    private void initializePredicatesByTripleId(List<Triple> triples) {
-        predicateByTripleId = new HashMap<>();
-        for (int i = 0; i < triples.size(); i++) {
-            int pId = (int) triples.get(i).p();
 
-            predicateByTripleId.put(i, pId);
+    public void registerTriple(int tripleIdx, int pId) {
+        tripleIndexesByPredicateId
+                .computeIfAbsent(pId, k -> new ArrayList<>())
+                .add(tripleIdx);
+        predicateByTripleId.put(tripleIdx, pId);
+    }
+
+    public void deregisterTriple(int tripleIdx, int pId) {
+        List<Integer> cols = tripleIndexesByPredicateId.get(pId);
+        if (cols != null) {
+            cols.remove((Integer) tripleIdx);
+            if (cols.isEmpty()) {
+                tripleIndexesByPredicateId.remove(pId);
+            }
         }
+        predicateByTripleId.remove(tripleIdx);
     }
 
     // -> Given Triple with Index i; what Predicate belongs to it ?
