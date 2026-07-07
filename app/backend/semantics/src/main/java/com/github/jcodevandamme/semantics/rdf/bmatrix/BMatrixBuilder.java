@@ -6,7 +6,6 @@ import com.github.jcodevandamme.semantics.rdf.model.Cell;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import com.github.jcodevandamme.semantics.rdf.provider.TripleProvider;
 import com.github.jcodevandamme.semantics.rdf.structure.index.DynamicPredicateIndex;
-import com.github.jcodevandamme.semantics.rdf.structure.index.StaticPredicateIndex;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Builder;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorConfiguration;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Tree;
@@ -27,20 +26,10 @@ public class BMatrixBuilder {
     private K2Tree st;
     private K2Tree ot;
 
-    public StaticBMatrix buildStatic(int k, int d, int t, TripleDictionary dict, TripleProvider provider) {
+    public BMatrix build(int k, int t, DynamicBitVectorConfiguration config, TripleDictionary dict, TripleProvider provider) {
         this.k = k;
 
-        triples = TripleEncoder.encode(provider, dict);
-
-        countValues();
-        assembleBinaryMatrices();
-        StaticPredicateIndex bp = new StaticPredicateIndex(pCount, triples, d);
-        return new StaticBMatrix(triples, st, ot, bp, t);
-    }
-    public DynamicBMatrix buildDynamic(int k, int t, DynamicBitVectorConfiguration config, TripleDictionary dict, TripleProvider provider) {
-        this.k = k;
-
-        triples = TripleEncoder.encode(provider, dict);
+        triples = TripleEncoder.encode(provider.getTriples(), dict);
 
         countValues();
         assembleBinaryMatrices();
@@ -49,7 +38,7 @@ public class BMatrixBuilder {
         DK2Tree dynSt = DK2Builder.build(st, config, triples.size());
         DK2Tree dynOt = DK2Builder.build(ot, config, triples.size());
 
-        return new DynamicBMatrix(triples, dynSt, dynOt, bp, t);
+        return new BMatrix(triples, dynSt, dynOt, bp, t);
     }
 
     public void countValues() {

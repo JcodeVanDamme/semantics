@@ -9,9 +9,11 @@ import java.util.List;
 public class QueryProcessor {
 
     private final BMatrix bMatrix;
+
     public QueryProcessor(BMatrix bMatrix) {
         this.bMatrix = bMatrix;
     }
+
     public List<Triple> process(Query query) {
         if (query instanceof TripleQuery) {
             return processTripleQuery((TripleQuery) query);

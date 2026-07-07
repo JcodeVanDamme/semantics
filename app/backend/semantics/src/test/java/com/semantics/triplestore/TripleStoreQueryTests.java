@@ -1,9 +1,8 @@
-package com.semantics.bmatrix.dynamicbmatrix;
+package com.semantics.triplestore;
 
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import com.github.jcodevandamme.semantics.rdf.provider.TestTripleProvider;
-import com.github.jcodevandamme.semantics.rdf.tripleStore.DynamicTripleStore;
-import com.github.jcodevandamme.semantics.rdf.tripleStore.StaticTripleStore;
+import com.github.jcodevandamme.semantics.rdf.tripleStore.TripleStore;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -12,14 +11,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DynamicTripleStoreQueryTests {
+public class TripleStoreQueryTests {
 
-    static DynamicTripleStore tripleStore;
+    static TripleStore tripleStore;
     static List<Triple> none;
 
     @BeforeAll
     static void init() {
-        tripleStore = new DynamicTripleStore();
+        tripleStore = new TripleStore();
         tripleStore.init(new TestTripleProvider());
         none = new ArrayList<>();
     }
@@ -90,9 +89,9 @@ public class DynamicTripleStoreQueryTests {
     public void s__QueryTest() {
 
         assertEquals(
-                List.of(new Triple("DCC20", "has topic", "Text comp."),
-                        new Triple("DCC20", "has topic", "Video cod."),
-                        new Triple("DCC20", "held on", "S. Lake City")
+                List.of(new Triple("DCC20", "held on", "S. Lake City"),
+                        new Triple("DCC20", "has topic", "Text comp."),
+                        new Triple("DCC20", "has topic", "Video cod.")
                 ),
                 tripleStore.query("DCC20", null, null)
         );
@@ -106,9 +105,9 @@ public class DynamicTripleStoreQueryTests {
     public void __oQueryTest() {
 
         assertEquals(
-                List.of(new Triple("G. Navarro", "expert in", "Text comp."),
-                        new Triple("T. Gagie", "expert in", "Text comp."),
-                        new Triple("DCC20", "has topic", "Text comp.")
+                List.of(new Triple("DCC20", "has topic", "Text comp."),
+                        new Triple("G. Navarro", "expert in", "Text comp."),
+                        new Triple("T. Gagie", "expert in", "Text comp.")
                 ),
                 tripleStore.query(null, null, "Text comp.")
         );
@@ -126,8 +125,8 @@ public class DynamicTripleStoreQueryTests {
                 List.of(
                         new Triple("G. Navarro", "lives in", "Chile"),
                         new Triple("T. Gagie", "lives in", "Canada"),
-                        new Triple("G. Sullivan", "lives in", "US"),
-                        new Triple("A. Bovik", "lives in", "US")
+                        new Triple("A. Bovik", "lives in", "US"),
+                        new Triple("G. Sullivan", "lives in", "US")
                 ),
                 tripleStore.query(null, "lives in", null)
         );

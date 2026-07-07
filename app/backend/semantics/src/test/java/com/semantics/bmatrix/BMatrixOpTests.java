@@ -1,9 +1,10 @@
-package com.semantics.bmatrix.dynamicbmatrix;
+package com.semantics.bmatrix;
 
+import com.github.jcodevandamme.semantics.rdf.bmatrix.TripleAlreadyExistsException;
+import com.github.jcodevandamme.semantics.rdf.bmatrix.TripleNotFoundException;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import com.github.jcodevandamme.semantics.rdf.provider.TestTripleProvider;
-import com.github.jcodevandamme.semantics.rdf.tripleStore.DynamicTripleStore;
-import org.junit.jupiter.api.BeforeAll;
+import com.github.jcodevandamme.semantics.rdf.tripleStore.TripleStore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,14 +13,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DynamicBMatrixDeleteTests {
+public class BMatrixOpTests {
 
-    static DynamicTripleStore tripleStore;
+    static TripleStore tripleStore;
     static List<Triple> none;
 
     @BeforeEach
     void init() {
-        tripleStore = new DynamicTripleStore();
+        tripleStore = new TripleStore();
         tripleStore.init(new TestTripleProvider());
         none = new ArrayList<>();
     }
@@ -60,7 +61,7 @@ public class DynamicBMatrixDeleteTests {
         int p = tripleStore.dict().encodeP("has topic");
         int o = tripleStore.dict().encodeSO("Chile");
 
-        assertThrows(IllegalArgumentException.class, () -> tripleStore.bMatrix().delete(s, p, o));
+        assertThrows(TripleNotFoundException.class, () -> tripleStore.bMatrix().delete(s, p, o));
     }
 
     @Test
@@ -105,7 +106,7 @@ public class DynamicBMatrixDeleteTests {
         int p = tripleStore.dict().encodeP("has topic");
         int o = tripleStore.dict().encodeSO("Text comp.");
 
-        assertThrows(IllegalArgumentException.class, () -> tripleStore.bMatrix().add(s, p, o));
+        assertThrows(TripleAlreadyExistsException.class, () -> tripleStore.bMatrix().add(s, p, o));
     }
 
     @Test
@@ -119,5 +120,32 @@ public class DynamicBMatrixDeleteTests {
 
         assertTrue(tripleStore.bMatrix().delete(sDel, pDel, oDel));
         assertTrue(tripleStore.bMatrix().add(sAdd, pAdd, oAdd));
+    }
+
+    @Test
+    public void update_valid_tripleUpdated() {
+        int sDel = tripleStore.dict().encodeSO("DCC20");
+        int pDel = tripleStore.dict().encodeP("has topic");
+        int oDel = tripleStore.dict().encodeSO("Text comp.");
+        int sAdd = tripleStore.dict().encodeSO("DCC20");
+        int pAdd = tripleStore.dict().encodeP("has topic");
+        int oAdd = tripleStore.dict().encodeSO("Chile");
+
+        assertTrue(tripleStore.bMatrix().update(sDel, pDel, oDel, sAdd, pAdd, oAdd));
+        assertTrue(tripleStore.bMatrix().spoQuery(sAdd, pAdd, oAdd));
+        assertFalse(tripleStore.bMatrix().spoQuery(sDel, pDel, oDel));
+    }
+
+    @Test
+    public void gabba() {
+        assertTrue(tripleStore.delete(
+                new Triple("A. Bovik", "lives in", "US")
+        ));
+        assertTrue(tripleStore.delete(
+                new Triple("G. Sullivan", "lives in", "US")
+        ));
+        assertTrue(tripleStore.create(
+                new Triple("Gabba", "und", "Atzen")
+        ));
     }
 }

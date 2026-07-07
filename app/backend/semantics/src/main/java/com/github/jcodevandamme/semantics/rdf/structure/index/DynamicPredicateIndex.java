@@ -47,6 +47,7 @@ public class DynamicPredicateIndex {
     // -> Where does Predicate with ID j  begin in the Triple List ?
     // -> Which Columns in ST/OT / Triples belong to that predicate
     public List<Integer> select1(int j) {
-        return tripleIndexesByPredicateId.get(j);
+        List<Integer> cols = tripleIndexesByPredicateId.get(j);
+        return cols != null ? cols : Collections.emptyList();
     }
 }

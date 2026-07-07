@@ -3,14 +3,16 @@ package com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvect
 import com.github.jcodevandamme.semantics.rdf.model.Tuple;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitInterface;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.RoaringBitString;
-import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.TraversalResult;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DynamicBitVector {
 
+    // Root Node of the Tree
     private Node root;
+
+    // Holds min and max Capacity for Internal-/ Leaf-Nodes
     private final DynamicBitVectorConfiguration config;
 
     public DynamicBitVector(Node root, DynamicBitVectorConfiguration config) {
@@ -18,7 +20,10 @@ public class DynamicBitVector {
         this.config = config;
     }
 
-    public Node root() { return root; }
+    public Node root() {
+        return root;
+    }
+
     public int size() {
         int size = 0;
         for (Entry e : ((InternalNode) root).entries()) {
@@ -35,6 +40,7 @@ public class DynamicBitVector {
 
         addK2Bits((LeafNode) firstLeaf, k, 0);
 
+        // Second search necessary in Case firstLeaf was split as a result of additional Bits
         firstLeaf = root;
         while (!(firstLeaf instanceof LeafNode)) {
             firstLeaf = ((InternalNode) firstLeaf).entries().getFirst().p();

@@ -1,9 +1,8 @@
-package com.semantics.bmatrix.dynamicbmatrix;
+package com.semantics.bmatrix;
 
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import com.github.jcodevandamme.semantics.rdf.provider.TestTripleProvider;
-import com.github.jcodevandamme.semantics.rdf.tripleStore.DynamicTripleStore;
-import org.junit.jupiter.api.BeforeAll;
+import com.github.jcodevandamme.semantics.rdf.tripleStore.TripleStore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,14 +11,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DynamicBMatrixQueryTests {
+public class BMatrixQueryTests {
 
-    static DynamicTripleStore tripleStore;
+    static TripleStore tripleStore;
     static List<Triple> none;
 
     @BeforeEach
     void init() {
-        tripleStore = new DynamicTripleStore();
+        tripleStore = new TripleStore();
         tripleStore.init(new TestTripleProvider());
         none = new ArrayList<>();
     }
@@ -143,14 +142,14 @@ public class DynamicBMatrixQueryTests {
 
         List<Triple> results1 = new ArrayList<>();
 
+        // (DCC20, held on, S. Lake City)
+        results1.add(new Triple(s1, p1, o1));
+
         // (DCC20, has topic, S. Text comp.)
         results1.add(new Triple(s1, p2, o2));
 
         // (DCC20, has topic, S. Video cod.)
         results1.add(new Triple(s1, p2, o3));
-
-        // (DCC20, held on, S. Lake City)
-        results1.add(new Triple(s1, p1, o1));
 
         // (DCC20. ?, ?)
         assertEquals(results1, tripleStore.bMatrix().s__Query(s1));
@@ -171,14 +170,14 @@ public class DynamicBMatrixQueryTests {
 
         List<Triple> results1 = new ArrayList<>();
 
+        // (DCC20, has topic, Text comp.)
+        results1.add(new Triple(s3, p2, o1));
+
         // (G. Navarro, expert in, Text comp.)
         results1.add(new Triple(s1, p1, o1));
 
-        // (G. Navarro, expert in, Text comp.)
+        // (T. Gagie, expert in, Text comp.)
         results1.add(new Triple(s2, p1, o1));
-
-        // (DCC20, has topic, Text comp.)
-        results1.add(new Triple(s3, p2, o1));
 
         // (?. ?, Text comp.)
         assertEquals(results1, tripleStore.bMatrix().__oQuery(o1));
@@ -208,11 +207,11 @@ public class DynamicBMatrixQueryTests {
         // (T. Gagie, lives in, Canada)
         results1.add(new Triple(s2, p1, o2));
 
-        // (G. Sullivan, lives in, US)
-        results1.add(new Triple(s4, p1, o3));
-
         // (A. Bovik, lives in, US)
         results1.add(new Triple(s3, p1, o3));
+
+        // (G. Sullivan, lives in, US)
+        results1.add(new Triple(s4, p1, o3));
 
         // (?. lives in, ?)
         assertEquals(results1, tripleStore.bMatrix()._p_Query(p1));

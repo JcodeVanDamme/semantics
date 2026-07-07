@@ -28,6 +28,11 @@ public class DK2Tree implements K2 {
     }
 
     @Override
+    public int matrixSize() {
+        return matrixSize;
+    }
+
+    @Override
     public boolean addEntry(int row, int col) {
         updateCell(row, col, true);
         return true;
@@ -42,25 +47,29 @@ public class DK2Tree implements K2 {
     @Override
     public int getNextAvailableColumnIndex() {
         if (!freedColumns.isEmpty()) {
-            System.out.println("ALERTA");
             return freedColumns.removeFirst();
         } else {
             if (currentColumnIndex == matrixSize - 1) {
-                expandToNextPowerOfK();
+                matrixSize *= k;
+                tTree.expandRoot(k);
             }
             currentColumnIndex += 1;
             return currentColumnIndex;
         }
     }
 
-    private void expandToNextPowerOfK() {
-        matrixSize *= k;
-        tTree.expandRoot(k);
-    }
-
     @Override
-    public int matrixSize() {
-        return matrixSize;
+    public boolean checkCell(int row, int col) {
+        List<PathStep> path = tracePath(row, col);
+        PathStep lastStep = path.getLast();
+
+        // Path ended in upper Levels of the Tree
+        if (!lastStep.isLTree) {
+            return false;
+        }
+
+        // Check Bit Value of Cell using local Index
+        return lastStep.bitValue;
     }
 
 
@@ -120,19 +129,6 @@ public class DK2Tree implements K2 {
         }
     }
 
-    @Override
-    public boolean checkCell(int row, int col) {
-        List<PathStep> path = tracePath(row, col);
-        PathStep lastStep = path.getLast();
-
-        // Path ended in upper Levels of the Tree
-        if (!lastStep.isLTree) {
-            return false;
-        }
-
-        // Check Bit Value of Cell using local Index
-        return lastStep.bitValue;
-    }
     public void updateCell(int row, int col, boolean value) {
         // -> Path ends at the first 0 Bit encountered
         List<PathStep> path = tracePath(row, col);
@@ -170,19 +166,6 @@ public class DK2Tree implements K2 {
             // Siblings empty; Tree needs pruning
             reduceTree(path);
         }
-    }
-
-    private boolean bitSetInK2Siblings(LeafNode leaf, int localIndex) {
-        int blockSize = k*k;
-        int blockStartIdx = (localIndex / blockSize) * blockSize;
-        int blockEndIdx = blockStartIdx + blockSize;
-
-        for (int i = blockStartIdx; i < blockEndIdx; i++) {
-            if (leaf.bits().access(i) == 1) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private void expandTree(int splitGlobalIdx, int targetRow, int targetCol, int currentDepth) {
@@ -239,6 +222,19 @@ public class DK2Tree implements K2 {
             localCol = localCol % childBlockSize;
             currentSubSize /= k;
         }
+    }
+
+    private boolean bitSetInK2Siblings(LeafNode leaf, int localIndex) {
+        int blockSize = k*k;
+        int blockStartIdx = (localIndex / blockSize) * blockSize;
+        int blockEndIdx = blockStartIdx + blockSize;
+
+        for (int i = blockStartIdx; i < blockEndIdx; i++) {
+            if (leaf.bits().access(i) == 1) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void reduceTree(List<PathStep> path) {
