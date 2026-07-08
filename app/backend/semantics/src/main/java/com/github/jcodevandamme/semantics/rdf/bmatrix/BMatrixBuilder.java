@@ -26,7 +26,7 @@ public class BMatrixBuilder {
     private K2Tree st;
     private K2Tree ot;
 
-    public BMatrix build(int k, int t, DynamicBitVectorConfiguration config, TripleDictionary dict, TripleProvider provider) {
+    public BMatrix buildFromStatic(int k, int t, DynamicBitVectorConfiguration config, TripleDictionary dict, TripleProvider provider) {
         this.k = k;
 
         triples = TripleEncoder.encode(provider.getTriples(), dict);
@@ -39,6 +39,19 @@ public class BMatrixBuilder {
         DK2Tree dynOt = DK2Builder.build(ot, config, triples.size());
 
         return new BMatrix(triples, dynSt, dynOt, bp, t);
+    }
+    public BMatrix buildEmpty(int k, int t, DynamicBitVectorConfiguration config) {
+        this.k = k;
+        DynamicPredicateIndex bp = new DynamicPredicateIndex();
+        DK2Tree dynSt = DK2Builder.build(config, k);
+        DK2Tree dynOt = DK2Builder.build(config, k);
+        return new BMatrix(
+                Collections.emptyList(),
+                dynSt,
+                dynOt,
+                bp,
+                t
+        );
     }
 
     public void countValues() {

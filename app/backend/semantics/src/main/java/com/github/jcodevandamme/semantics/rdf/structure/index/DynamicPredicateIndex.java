@@ -18,6 +18,10 @@ public class DynamicPredicateIndex {
             registerTriple(tripleIdx,  pId);
         }
     }
+    public DynamicPredicateIndex() {
+        tripleIndexesByPredicateId = new HashMap<>();
+        predicateByTripleId = new HashMap<>();
+    }
 
     public void registerTriple(int tripleIdx, int pId) {
         tripleIndexesByPredicateId

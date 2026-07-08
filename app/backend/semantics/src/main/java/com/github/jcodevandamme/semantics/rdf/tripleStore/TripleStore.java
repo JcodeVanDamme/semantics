@@ -47,7 +47,23 @@ public class TripleStore {
                 INTERNAL_MAX_CAPACITY
         );
 
-        bMatrix = new BMatrixBuilder().build(K, T, config, dict, tripleProvider);
+        bMatrix = new BMatrixBuilder().buildFromStatic(K, T, config, dict, tripleProvider);
+        factory = new QueryFactory(dict);
+        processor = new QueryProcessor(bMatrix);
+        decoder = new TripleDecoder(dict);
+    }
+
+    public void initEmpty() {
+        dict = new TripleDictionary();
+
+        DynamicBitVectorConfiguration config = new DynamicBitVectorConfiguration(
+                CHUNK_SIZE,
+                LEAF_MIN_CAPACITY,
+                INTERNAL_MIN_CAPACITY,
+                INTERNAL_MAX_CAPACITY
+        );
+
+        bMatrix = new BMatrixBuilder().buildEmpty(K, T, config);
         factory = new QueryFactory(dict);
         processor = new QueryProcessor(bMatrix);
         decoder = new TripleDecoder(dict);

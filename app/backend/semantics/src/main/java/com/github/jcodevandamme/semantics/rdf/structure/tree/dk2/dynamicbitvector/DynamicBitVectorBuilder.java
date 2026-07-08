@@ -22,6 +22,17 @@ public final class DynamicBitVectorBuilder {
         List<Node> leaves = generateLeaves(bitString, config.chunkSize(), config.leafMinimumCapacity());
         return buildTree(leaves, config);
     }
+
+    /**
+     * Initializes an empty dynamic Bit-Vector in Tree Form.
+     *
+     * @param config Configuration Parameters for the Tree
+     * @return the generated DynamicBitVector
+     */
+    public static DynamicBitVector build(DynamicBitVectorConfiguration config) {
+        return generateEmptyTree(config);
+    }
+
     private static List<Node> generateLeaves(BitInterface bitString, int chunkSize, int minCap) {
         // List of Leaf Nodes
         // -> leaf.bits contains respective Chunk of original BitString
