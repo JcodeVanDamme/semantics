@@ -1,10 +1,7 @@
 package com.github.jcodevandamme.semantics.rdf.provider;
 
-import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import com.github.jcodevandamme.semantics.rdf.tripleStore.TripleStore;
 
-import java.util.List;
-
 public interface TripleProvider {
-    List<Triple> getTriples();
+    void initTriples(TripleStore tripleStore);
 }

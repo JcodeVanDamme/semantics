@@ -2,7 +2,6 @@ package com.semantics.triplestore;
 
 import com.github.jcodevandamme.semantics.rdf.dictionary.TripleCodingException;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
-import com.github.jcodevandamme.semantics.rdf.provider.EmptyTripleProvider;
 import com.github.jcodevandamme.semantics.rdf.tripleStore.TripleStore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,14 +11,13 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TripleStoreInitEmptyTest {
+public class TripleStoreEmptyTest {
 
     static TripleStore tripleStore;
 
     @BeforeEach
     void init() {
         tripleStore = new TripleStore();
-        tripleStore.initEmpty();
     }
 
     @Test

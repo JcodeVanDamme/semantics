@@ -14,13 +14,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TripleStoreQueryTests {
 
     static TripleStore tripleStore;
-    static List<Triple> none;
 
     @BeforeAll
     static void init() {
         tripleStore = new TripleStore();
-        tripleStore.init(new StaticTripleProvider());
-        none = new ArrayList<>();
+        StaticTripleProvider provider = new StaticTripleProvider();
+        provider.initTriples(tripleStore);
     }
 
     @Test

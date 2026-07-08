@@ -4,7 +4,9 @@ import com.github.jcodevandamme.semantics.rdf.model.Cell;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import com.github.jcodevandamme.semantics.rdf.structure.index.DynamicPredicateIndex;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.K2;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Builder;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Tree;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorConfiguration;
 
 import java.util.*;
 
@@ -17,19 +19,13 @@ public class BMatrix {
     private final DynamicPredicateIndex bp;
     private final int t;
 
-    public BMatrix(List<Triple> triples, DK2Tree st, DK2Tree ot, DynamicPredicateIndex bp, int t) {
-        this.triples = triples;
-        this.st = st;
-        this.ot = ot;
-        this.bp = bp;
-        this.t = t;
-    }
-    public BMatrix(DK2Tree st, DK2Tree ot, DynamicPredicateIndex bp, int t) {
+    public BMatrix(int k, int t, DynamicBitVectorConfiguration config) {
         this.triples = new ArrayList<>();
-        this.st = st;
-        this.ot = ot;
-        this.bp = bp;
         this.t = t;
+
+        bp = new DynamicPredicateIndex();
+        st = DK2Builder.build(config, k);
+        ot = DK2Builder.build(config, k);
     }
 
     public boolean add(int s, int p, int o) throws TripleAlreadyExistsException {
@@ -41,6 +37,7 @@ public class BMatrix {
         st.addEntry(s, tripleIdx);
         ot.addEntry(o, tripleIdx);
         bp.registerTriple(tripleIdx, p);
+        triples.add(new Triple(s, p, o));
         return true;
     }
 
@@ -62,6 +59,7 @@ public class BMatrix {
         st.removeEntry(s, tripleIdx);
         ot.removeEntry(o, tripleIdx);
         bp.deregisterTriple(tripleIdx, p);
+        triples.remove(new Triple(s, p, o));
         return true;
     }
 

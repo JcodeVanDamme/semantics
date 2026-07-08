@@ -16,7 +16,7 @@ public class ParserTripleProvider implements TripleProvider {
     }
 
     @Override
-    public List<Triple> getTriples() {
-        return TripleParser.loadRdfFile(filePath);
+    public void initTriples(TripleStore tripleStore) {
+        TripleParser.loadRdfFile(filePath, tripleStore);
     }
 }

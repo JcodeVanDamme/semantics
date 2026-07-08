@@ -16,13 +16,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BMatrixOpTests {
 
     static TripleStore tripleStore;
-    static List<Triple> none;
 
     @BeforeEach
     void init() {
         tripleStore = new TripleStore();
-        tripleStore.init(new StaticTripleProvider());
-        none = new ArrayList<>();
+        StaticTripleProvider provider = new StaticTripleProvider();
+        provider.initTriples(tripleStore);
     }
 
     public void assertAll() {

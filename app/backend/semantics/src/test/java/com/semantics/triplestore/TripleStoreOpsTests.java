@@ -17,7 +17,8 @@ public class TripleStoreOpsTests {
     @BeforeEach
     void init() {
         tripleStore = new TripleStore();
-        tripleStore.init(new StaticTripleProvider());
+        StaticTripleProvider provider = new StaticTripleProvider();
+        provider.initTriples(tripleStore);
     }
 
     @Test

@@ -29,7 +29,9 @@ public class StaticTripleProvider implements TripleProvider {
     }
 
     @Override
-    public List<Triple> getTriples() {
-        return triples;
+    public void initTriples(TripleStore tripleStore) {
+        for (Triple t : triples) {
+            tripleStore.create(t);
+        }
     }
 }

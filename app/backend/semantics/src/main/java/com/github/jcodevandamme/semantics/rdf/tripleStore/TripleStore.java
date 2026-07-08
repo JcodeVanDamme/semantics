@@ -1,13 +1,11 @@
 package com.github.jcodevandamme.semantics.rdf.tripleStore;
 
-import com.github.jcodevandamme.semantics.rdf.bmatrix.BMatrixBuilder;
 import com.github.jcodevandamme.semantics.rdf.bmatrix.BMatrix;
 import com.github.jcodevandamme.semantics.rdf.bmatrix.TripleAlreadyExistsException;
 import com.github.jcodevandamme.semantics.rdf.bmatrix.TripleNotFoundException;
 import com.github.jcodevandamme.semantics.rdf.dictionary.TripleDecoder;
 import com.github.jcodevandamme.semantics.rdf.dictionary.TripleDictionary;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
-import com.github.jcodevandamme.semantics.rdf.provider.TripleProvider;
 import com.github.jcodevandamme.semantics.rdf.query.Query;
 import com.github.jcodevandamme.semantics.rdf.query.QueryFactory;
 import com.github.jcodevandamme.semantics.rdf.query.QueryProcessor;
@@ -18,26 +16,25 @@ import java.util.List;
 public class TripleStore {
 
     // Tree Subdivision Factor
-    private final int K = 2;
-
+    private static final int K = 2;
     // Merge / Unsorted Threshold
-    private final int T = 10;
+    private static final int T = 10;
+    private static final int CHUNK_SIZE = 4;
+    private static final int LEAF_MIN_CAPACITY = 1;
+    private static final int INTERNAL_MIN_CAPACITY = 1;
+    private static final int INTERNAL_MAX_CAPACITY = 3;
 
-    private final int CHUNK_SIZE = 4;
-    private final int LEAF_MIN_CAPACITY = 1;
-    private final int INTERNAL_MIN_CAPACITY = 1;
-    private final int INTERNAL_MAX_CAPACITY = 3;
+    private final TripleDictionary dict;
+    private final BMatrix bMatrix;
+    private final QueryFactory factory;
+    private final QueryProcessor processor;
+    private final TripleDecoder decoder;
 
-    private TripleDictionary dict;
-    private BMatrix bMatrix;
-    private QueryFactory factory;
-    private QueryProcessor processor;
-    private TripleDecoder decoder;
-
+    // Exposal necessary for Access to some nested Functions for Tests
     public TripleDictionary dict() { return dict; }
     public BMatrix bMatrix() { return bMatrix; }
 
-    public void init(TripleProvider tripleProvider) {
+    public TripleStore() {
         dict = new TripleDictionary();
 
         DynamicBitVectorConfiguration config = new DynamicBitVectorConfiguration(
@@ -47,23 +44,7 @@ public class TripleStore {
                 INTERNAL_MAX_CAPACITY
         );
 
-        bMatrix = new BMatrixBuilder().buildFromStatic(K, T, config, dict, tripleProvider);
-        factory = new QueryFactory(dict);
-        processor = new QueryProcessor(bMatrix);
-        decoder = new TripleDecoder(dict);
-    }
-
-    public void initEmpty() {
-        dict = new TripleDictionary();
-
-        DynamicBitVectorConfiguration config = new DynamicBitVectorConfiguration(
-                CHUNK_SIZE,
-                LEAF_MIN_CAPACITY,
-                INTERNAL_MIN_CAPACITY,
-                INTERNAL_MAX_CAPACITY
-        );
-
-        bMatrix = new BMatrixBuilder().buildEmpty(K, T, config);
+        bMatrix = new BMatrix(K, T, config);
         factory = new QueryFactory(dict);
         processor = new QueryProcessor(bMatrix);
         decoder = new TripleDecoder(dict);

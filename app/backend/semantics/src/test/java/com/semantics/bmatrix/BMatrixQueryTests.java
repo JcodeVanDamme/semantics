@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,13 +15,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BMatrixQueryTests {
 
     static TripleStore tripleStore;
-    static List<Triple> none;
 
     @BeforeEach
     void init() {
         tripleStore = new TripleStore();
-        tripleStore.init(new StaticTripleProvider());
-        none = new ArrayList<>();
+        StaticTripleProvider provider = new StaticTripleProvider();
+        provider.initTriples(tripleStore);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class BMatrixQueryTests {
         assertEquals(results1, tripleStore.bMatrix().sp_Query(s, p1));
 
         // (DCC20, lives in, ?)
-        assertEquals(none, tripleStore.bMatrix().sp_Query(s, p2));
+        assertEquals(Collections.emptyList(), tripleStore.bMatrix().sp_Query(s, p2));
     }
 
     @Test
@@ -106,7 +106,7 @@ public class BMatrixQueryTests {
         assertEquals(results1, tripleStore.bMatrix()._poQuery(p, o));
 
         // (?, attends, G. Navarro)
-        assertEquals(none, tripleStore.bMatrix()._poQuery(p, s1));
+        assertEquals(Collections.emptyList(), tripleStore.bMatrix()._poQuery(p, s1));
     }
 
     @Test
@@ -126,7 +126,7 @@ public class BMatrixQueryTests {
         assertEquals(results1, tripleStore.bMatrix().s_oQuery(s, o1));
 
         // (G. Navarro, ?, US)
-        assertEquals(none, tripleStore.bMatrix().s_oQuery(s, o2));
+        assertEquals(Collections.emptyList(), tripleStore.bMatrix().s_oQuery(s, o2));
     }
 
     @Test
@@ -155,7 +155,7 @@ public class BMatrixQueryTests {
         assertEquals(results1, tripleStore.bMatrix().s__Query(s1));
 
         // (US, ?, ?)
-        assertEquals(none, tripleStore.bMatrix().s__Query(s2));
+        assertEquals(Collections.emptyList(), tripleStore.bMatrix().s__Query(s2));
     }
 
     @Test
@@ -183,7 +183,7 @@ public class BMatrixQueryTests {
         assertEquals(results1, tripleStore.bMatrix().__oQuery(o1));
 
         // (?, ?, G. Navarro)
-        assertEquals(none, tripleStore.bMatrix().__oQuery(s1));
+        assertEquals(Collections.emptyList(), tripleStore.bMatrix().__oQuery(s1));
     }
 
     @Test

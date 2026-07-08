@@ -10,10 +10,10 @@ import java.util.List;
 
 public class TripleStreamHandler implements StreamRDF {
 
-    private final List<com.github.jcodevandamme.semantics.rdf.model.Triple> triples;
+    private final TripleStore tripleStore;
 
-    public TripleStreamHandler(List<com.github.jcodevandamme.semantics.rdf.model.Triple> triples) {
-        this.triples = triples;
+    public TripleStreamHandler(TripleStore tripleStore) {
+        this.tripleStore = tripleStore;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class TripleStreamHandler implements StreamRDF {
         com.github.jcodevandamme.semantics.rdf.model.Triple parsedTriple =
                 new com.github.jcodevandamme.semantics.rdf.model.Triple(s, p, o);
 
-        triples.add(parsedTriple);
+        tripleStore.create(parsedTriple);
     }
 
     private String extractNodeString(Node node) {

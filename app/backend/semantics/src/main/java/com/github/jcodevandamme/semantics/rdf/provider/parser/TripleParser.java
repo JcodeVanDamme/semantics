@@ -12,9 +12,8 @@ import java.util.List;
 
 public class TripleParser {
 
-    public static List<Triple> loadRdfFile(String filePath) {
-        List<Triple> triples = new ArrayList<>();
-        TripleStreamHandler handler = new TripleStreamHandler(triples);
+    public static void loadRdfFile(String filePath, TripleStore tripleStore) {
+        TripleStreamHandler handler = new TripleStreamHandler(tripleStore);
 
         try {
             RDFParser.create()
@@ -22,15 +21,11 @@ public class TripleParser {
                     .checking(true)
                     .parse(handler);
 
-            return triples;
-
         } catch (RiotException ex) {
             System.err.println("RDF Parse Error: " + ex.getMessage());
-            return Collections.emptyList();
 
         } catch (Exception ex) {
             System.err.println("File System Error: " + ex.getMessage());
-            return Collections.emptyList();
         }
     }
 }
