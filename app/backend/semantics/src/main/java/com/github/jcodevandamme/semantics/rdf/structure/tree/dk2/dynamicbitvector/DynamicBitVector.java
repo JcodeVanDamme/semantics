@@ -26,8 +26,19 @@ public class DynamicBitVector {
 
     public int size() {
         int size = 0;
-        for (Entry e : ((InternalNode) root).entries()) {
-            size += e.b();
+        // Base Case (Tree is Bigger than just a Root)
+        // -> Tree Size corresponds to Sum of Roots B-Counters
+        if (root instanceof InternalNode) {
+            for (Entry e : ((InternalNode) root).entries()) {
+                size += e.b();
+            }
+        } else {
+            // @todo ❤ This is HACKY but WORKS ❤
+            // As long as T is effectively empty (k*k 0-Bits) Tree Size has to be 0 for Indexes to line up
+            // When T is a Leaf But has Bits Set, the BitString-Length needs to be returned
+            if (((LeafNode) root).bits().countSetBits() > 0) {
+                size = ((LeafNode) root).size();
+            }
         }
         return size;
     }
@@ -36,6 +47,14 @@ public class DynamicBitVector {
         Node firstLeaf = root;
         while (!(firstLeaf instanceof LeafNode)) {
             firstLeaf = ((InternalNode) firstLeaf).entries().getFirst().p();
+        }
+
+        // @todo ❤ This is HACKY but WORKS ❤
+        // For an empty Tree T-Root is a Leaf Node with k*k 0-Bits
+        // -> Directly set lefmost bit in L
+        if (((LeafNode) firstLeaf).bits().countSetBits() == 0) {
+            set(true, (LeafNode) firstLeaf, 0);
+            return;
         }
 
         addK2Bits((LeafNode) firstLeaf, k, 0);
@@ -108,7 +127,9 @@ public class DynamicBitVector {
                         config.internalMaximumCapacity()
                 );
                 parent.add(leafs.t1(), 0);
+                reindexChildren(parent);
                 parent.add(leafs.t2(), 1);
+                reindexChildren(parent);
                 root = parent;
                 return;
             }

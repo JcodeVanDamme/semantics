@@ -1,15 +1,17 @@
 package com.github.jcodevandamme.semantics.rdf.provider;
 
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
-import org.apache.el.stream.Stream;
+import com.github.jcodevandamme.semantics.rdf.tripleStore.TripleStore;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestTripleProvider implements TripleProvider{
-    @Override
-    public List<Triple> getTriples() {
-        ArrayList<Triple> triples = new ArrayList<>();
+public class StaticTripleProvider implements TripleProvider {
+
+    List<Triple> triples;
+
+    public StaticTripleProvider() {
+        triples = new ArrayList<>();
         triples.add(new Triple("DCC20", "held on", "S. Lake City"));
         triples.add(new Triple("S. Lake City", "capital of", "Utah"));
         triples.add(new Triple("DCC20", "has topic", "Text comp."));
@@ -24,6 +26,10 @@ public class TestTripleProvider implements TripleProvider{
         triples.add(new Triple("A. Bovik", "lives in", "US"));
         triples.add(new Triple("G. Sullivan", "attends", "DCC20"));
         triples.add(new Triple("G. Sullivan", "lives in", "US"));
+    }
+
+    @Override
+    public List<Triple> getTriples() {
         return triples;
     }
 }

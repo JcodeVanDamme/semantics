@@ -53,13 +53,18 @@ public class DK2Tree implements K2 {
                 matrixSize *= k;
                 tTree.expandRoot(k);
             }
+            int index = currentColumnIndex;
             currentColumnIndex += 1;
-            return currentColumnIndex;
+            return index;
         }
     }
 
     @Override
     public boolean checkCell(int row, int col) {
+        if (row >= this.matrixSize || col >= this.matrixSize) {
+            return false;
+        }
+
         List<PathStep> path = tracePath(row, col);
         PathStep lastStep = path.getLast();
 
@@ -180,7 +185,7 @@ public class DK2Tree implements K2 {
         int localRow = targetRow % currentSubSize;
         int localCol = targetCol % currentSubSize;
 
-        while (currentSubSize > 0) {
+        while (currentSubSize > 1) {
             boolean isNextLevelL = (currentSubSize == k);
             DynamicBitVector targetTree = isNextLevelL ? lTree : tTree;
 
@@ -310,7 +315,7 @@ public class DK2Tree implements K2 {
 
             // Follow the child if 'p' falls inside it, OR if 'p' is exactly at the
             // boundary of the very last entry (meaning we are appending to the end of the tree)
-            if (p < e.b() + bBefore || (i == entries.size() - 1 && p == e.b() + bBefore)) {
+            if (p < e.b() + bBefore || (i == entries.size() - 1)) {
                 return checkNode(
                         p,
                         new FindLeafResult(e.p(), bBefore, oBefore)

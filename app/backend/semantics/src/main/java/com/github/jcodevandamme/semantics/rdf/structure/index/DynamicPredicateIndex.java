@@ -50,4 +50,37 @@ public class DynamicPredicateIndex {
         List<Integer> cols = tripleIndexesByPredicateId.get(j);
         return cols != null ? cols : Collections.emptyList();
     }
+
+    @Override
+    public String toString() {
+        StringBuilder strb = new StringBuilder();
+        strb
+            .append("------------------------- ")
+            .append("Index")
+            .append(" ---------------------------\n");
+
+        strb.append("\nPredicate - {Triples}:\n");
+        for (Map.Entry<Integer, List<Integer>> e : tripleIndexesByPredicateId.entrySet()) {
+            strb
+                .append(e.getKey())
+                .append(" - ")
+                .append("{");
+
+            for (Integer t : e.getValue()) {
+                strb
+                    .append(t)
+                    .append(",");
+            }
+            strb.append("}\n");
+        }
+        strb.append("\nTriple - Predicate:\n");
+        for (Map.Entry<Integer, Integer> e : predicateByTripleId.entrySet()) {
+            strb
+                    .append(e.getKey())
+                    .append(" - ")
+                    .append(e.getValue())
+                    .append("\n");
+        }
+        return strb.toString();
+    }
 }

@@ -81,7 +81,22 @@ public final class DynamicBitVectorBuilder {
             // This Cycles Parent Nodes become next Cycles Child Nodes
             level = nextLevel;
         }
-
+        if (level.isEmpty()) {
+            return generateEmptyTree(config);
+        }
         return new DynamicBitVector(level.getFirst(), config);
+    }
+
+    private static DynamicBitVector generateEmptyTree(DynamicBitVectorConfiguration config) {
+        List<Boolean> emptyRootBits = new ArrayList<>();
+        for (int i = 0; i < config.chunkSize(); i++) {
+            emptyRootBits.add(false);
+        }
+        LeafNode root = new LeafNode(
+                config.leafMinimumCapacity(),
+                config.chunkSize(),
+                new RoaringBitString(emptyRootBits)
+        );
+        return new DynamicBitVector(root, config);
     }
 }

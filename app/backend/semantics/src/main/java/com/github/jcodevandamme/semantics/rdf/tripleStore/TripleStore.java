@@ -48,7 +48,6 @@ public class TripleStore {
         );
 
         bMatrix = new BMatrixBuilder().build(K, T, config, dict, tripleProvider);
-
         factory = new QueryFactory(dict);
         processor = new QueryProcessor(bMatrix);
         decoder = new TripleDecoder(dict);

@@ -1,10 +1,9 @@
 package com.semantics.triplestore;
 
 import com.github.jcodevandamme.semantics.rdf.bmatrix.TripleAlreadyExistsException;
-import com.github.jcodevandamme.semantics.rdf.bmatrix.TripleNotFoundException;
 import com.github.jcodevandamme.semantics.rdf.dictionary.TripleCodingException;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
-import com.github.jcodevandamme.semantics.rdf.provider.TestTripleProvider;
+import com.github.jcodevandamme.semantics.rdf.provider.StaticTripleProvider;
 import com.github.jcodevandamme.semantics.rdf.tripleStore.TripleStore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,7 @@ public class TripleStoreOpsTests {
     @BeforeEach
     void init() {
         tripleStore = new TripleStore();
-        tripleStore.init(new TestTripleProvider());
+        tripleStore.init(new StaticTripleProvider());
     }
 
     @Test

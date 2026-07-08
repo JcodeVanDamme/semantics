@@ -135,12 +135,23 @@ public class TripleDictionary {
         strb.append("Subjects / Objects:\n");
         for (Map.Entry<Integer, String> e : soDecoding.entrySet()) {
             strb
-                    .append(e.getKey()).append(" - ").append(e.getValue()).append("\n");
+                    .append("Id: ")
+                    .append(e.getKey())
+                    .append(" - ")
+                    .append(e.getValue())
+                    .append(" | Ref: ")
+                    .append(soReferences.get(e.getKey()))
+                    .append("\n");
         }
         strb.append("\nPredicates:\n");
         for (Map.Entry<Integer, String> e : pDecoding.entrySet()) {
             strb
-                    .append(e.getKey()).append(" - ").append(e.getValue()).append("\n");
+                    .append(e.getKey())
+                    .append(" - ")
+                    .append(e.getValue())
+                    .append(" | Ref: ")
+                    .append(pReferences.get(e.getKey()))
+                    .append("\n");
         }
         return strb.toString();
     }

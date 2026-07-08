@@ -24,6 +24,13 @@ public class BMatrix {
         this.bp = bp;
         this.t = t;
     }
+    public BMatrix(DK2Tree st, DK2Tree ot, DynamicPredicateIndex bp, int t) {
+        this.triples = new ArrayList<>();
+        this.st = st;
+        this.ot = ot;
+        this.bp = bp;
+        this.t = t;
+    }
 
     public boolean add(int s, int p, int o) throws TripleAlreadyExistsException {
         if (spoQuery(s, p, o)) {

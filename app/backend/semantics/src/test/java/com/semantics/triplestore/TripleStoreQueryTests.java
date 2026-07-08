@@ -1,8 +1,7 @@
 package com.semantics.triplestore;
 
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
-import com.github.jcodevandamme.semantics.rdf.provider.ParserTripleProvider;
-import com.github.jcodevandamme.semantics.rdf.provider.TestTripleProvider;
+import com.github.jcodevandamme.semantics.rdf.provider.StaticTripleProvider;
 import com.github.jcodevandamme.semantics.rdf.tripleStore.TripleStore;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,7 @@ public class TripleStoreQueryTests {
     @BeforeAll
     static void init() {
         tripleStore = new TripleStore();
-        tripleStore.init(new TestTripleProvider());
+        tripleStore.init(new StaticTripleProvider());
         none = new ArrayList<>();
     }
 

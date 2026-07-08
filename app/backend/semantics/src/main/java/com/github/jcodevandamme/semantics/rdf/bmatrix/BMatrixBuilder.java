@@ -72,6 +72,10 @@ public class BMatrixBuilder {
         while (size < max) {
             size *= k;
         }
+        // No Triples provided
+        if (size == 1) {
+            size = k;
+        }
         // Assemble Lists of filled Matrix Cells
         // -> Traverse Matrices sparsely over these instead of looping over all Cells
         List<Cell> stCells = new ArrayList<>();

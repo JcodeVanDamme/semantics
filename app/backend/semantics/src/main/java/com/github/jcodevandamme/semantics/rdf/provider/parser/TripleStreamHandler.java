@@ -1,11 +1,11 @@
-package com.github.jcodevandamme.semantics.rdf.provider;
+package com.github.jcodevandamme.semantics.rdf.provider.parser;
 
+import com.github.jcodevandamme.semantics.rdf.tripleStore.TripleStore;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.graph.Node;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TripleStreamHandler implements StreamRDF {
