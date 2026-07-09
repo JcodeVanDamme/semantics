@@ -21,8 +21,8 @@ public class TripleStoreEmptyTest {
     }
 
     @Test
-    public void query_any_throwsCoding() {
-        assertThrows(TripleCodingException.class, () -> tripleStore.query("Gabba", "und", "Atzen"));
+    public void query_any_returnsEmpty() {
+        assertEquals(Collections.emptyList(), tripleStore.query("Gabba", "und", "Atzen"));
     }
 
     @Test

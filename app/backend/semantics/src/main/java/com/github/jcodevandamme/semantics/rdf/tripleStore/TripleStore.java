@@ -3,14 +3,17 @@ package com.github.jcodevandamme.semantics.rdf.tripleStore;
 import com.github.jcodevandamme.semantics.rdf.bmatrix.BMatrix;
 import com.github.jcodevandamme.semantics.rdf.bmatrix.TripleAlreadyExistsException;
 import com.github.jcodevandamme.semantics.rdf.bmatrix.TripleNotFoundException;
+import com.github.jcodevandamme.semantics.rdf.dictionary.TripleCodingException;
 import com.github.jcodevandamme.semantics.rdf.dictionary.TripleDecoder;
 import com.github.jcodevandamme.semantics.rdf.dictionary.TripleDictionary;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
+import com.github.jcodevandamme.semantics.rdf.provider.TripleProvider;
 import com.github.jcodevandamme.semantics.rdf.query.Query;
 import com.github.jcodevandamme.semantics.rdf.query.QueryFactory;
 import com.github.jcodevandamme.semantics.rdf.query.QueryProcessor;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorConfiguration;
 
+import java.util.Collections;
 import java.util.List;
 
 public class TripleStore {
@@ -50,15 +53,25 @@ public class TripleStore {
     }
 
     public List<Triple> query(String s, String p, String o) {
-        Query tripleQuery = factory.fromTriple(s, p, o);
-        List<Triple> queryResults = processor.process(tripleQuery);
-        return TripleDecoder.decode(queryResults, dict);
+        try {
+            Query tripleQuery = factory.fromTriple(s, p, o);
+            List<Triple> queryResults = processor.process(tripleQuery);
+            return TripleDecoder.decode(queryResults, dict);
+
+        } catch (TripleCodingException ex) {
+            return Collections.emptyList();
+        }
     }
 
     public List<Triple> query(String query) {
-        Query sparqlQuery = factory.fromSparql(query);
-        List<Triple> queryResults = processor.process(sparqlQuery);
-        return TripleDecoder.decode(queryResults, dict);
+        try {
+            Query sparqlQuery = factory.fromSparql(query);
+            List<Triple> queryResults = processor.process(sparqlQuery);
+            return TripleDecoder.decode(queryResults, dict);
+
+        } catch (TripleCodingException ex) {
+            return Collections.emptyList();
+        }
     }
 
     public boolean create(Triple t) throws TripleAlreadyExistsException {
@@ -89,7 +102,7 @@ public class TripleStore {
         return true;
     }
 
-    public Boolean update(Triple oldT, Triple newT) {
+    public Boolean update(Triple oldT, Triple newT) throws  TripleNotFoundException, TripleAlreadyExistsException {
         try {
             Triple encodedOld = encode(oldT);
             register(newT);
@@ -111,7 +124,7 @@ public class TripleStore {
         }
     }
 
-    private Triple encode(Triple t) {
+    private Triple encode(Triple t) throws TripleCodingException {
         return new Triple(
                 dict.encodeSO((String) t.s()),
                 dict.encodeP((String) t.p()),

@@ -30,6 +30,7 @@ public class TripleStreamHandler implements StreamRDF {
         com.github.jcodevandamme.semantics.rdf.model.Triple parsedTriple =
                 new com.github.jcodevandamme.semantics.rdf.model.Triple(s, p, o);
 
+        System.out.println(parsedTriple);
         tripleStore.create(parsedTriple);
     }
 

@@ -45,7 +45,7 @@ public class BMatrix {
         int nextOtCol = ot.getNextAvailableColumnIndex();
 
         if (nextStCol != nextOtCol) {
-            throw new RuntimeException();
+            throw new RuntimeException("BMatrix Error: ST and OT Column Indexes have diverged.");
         }
         return nextStCol;
     }
@@ -68,7 +68,7 @@ public class BMatrix {
                 return col;
             }
         }
-        throw new RuntimeException();
+        throw new RuntimeException("BMatrix Error: Index of Triple not found.");
     }
 
     public void update(int oldS, int oldP, int oldO, int newS, int newP, int newO) throws TripleNotFoundException, TripleAlreadyExistsException {
