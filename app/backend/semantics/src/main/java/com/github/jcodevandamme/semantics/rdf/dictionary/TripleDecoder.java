@@ -7,11 +7,7 @@ import java.util.List;
 
 public class TripleDecoder {
 
-    private final TripleDictionary dict;
-    public TripleDecoder(TripleDictionary dict) {
-        this.dict = dict;
-    }
-    public List<Triple> decode(List<Triple> triples) {
+    public static List<Triple> decode(List<Triple> triples, TripleDictionary dict) {
         List<Triple> results = new ArrayList<>();
         for (Triple t : triples) {
             results.add(

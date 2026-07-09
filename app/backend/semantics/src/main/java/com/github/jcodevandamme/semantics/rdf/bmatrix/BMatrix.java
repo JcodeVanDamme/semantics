@@ -5,7 +5,6 @@ import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import com.github.jcodevandamme.semantics.rdf.structure.index.DynamicPredicateIndex;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.K2;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Builder;
-import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Tree;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorConfiguration;
 
 import java.util.*;
@@ -51,7 +50,7 @@ public class BMatrix {
         return nextStCol;
     }
 
-    public boolean delete(int s, int p, int o) throws TripleNotFoundException {
+    public void delete(int s, int p, int o) throws TripleNotFoundException {
         if (!spoQuery(s, p, o)) {
             throw new TripleNotFoundException();
         }
@@ -60,7 +59,6 @@ public class BMatrix {
         ot.removeEntry(o, tripleIdx);
         bp.deregisterTriple(tripleIdx, p);
         triples.remove(new Triple(s, p, o));
-        return true;
     }
 
     private int getIndexOfTriple(int s, int p, int o) {
@@ -73,7 +71,7 @@ public class BMatrix {
         throw new RuntimeException();
     }
 
-    public boolean update(int oldS, int oldP, int oldO, int newS, int newP, int newO) throws TripleNotFoundException, TripleAlreadyExistsException {
+    public void update(int oldS, int oldP, int oldO, int newS, int newP, int newO) throws TripleNotFoundException, TripleAlreadyExistsException {
         if (!spoQuery(oldS, oldP, oldO)) {
             throw new TripleNotFoundException();
         } else if (spoQuery(newS, newP, newO)) {
@@ -82,8 +80,6 @@ public class BMatrix {
 
         delete(oldS, oldP, oldO);
         add(newS, newP, newO);
-
-        return true;
     }
 
     public boolean spoQuery(int s, int p, int o) {
@@ -274,10 +270,7 @@ public class BMatrix {
             .append(" ---------------------------\n")
             .append(ot).append("\n");
 
-        strb.append("---------------------------- ")
-            .append("BP")
-            .append(" ---------------------------\n")
-            .append(bp).append("\n");
+        strb.append(bp).append("\n");
 
         return strb.toString();
     }

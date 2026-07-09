@@ -1,4 +1,4 @@
-package com.semantics.bitstring.roaringbitstring;
+package com.semantics.roaringbitstring;
 
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.BitInterface;
 import com.github.jcodevandamme.semantics.rdf.structure.bitstring.RoaringBitString;

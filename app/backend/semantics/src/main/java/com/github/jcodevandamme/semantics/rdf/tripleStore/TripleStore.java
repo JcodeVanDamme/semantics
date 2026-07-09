@@ -15,119 +15,85 @@ import java.util.List;
 
 public class TripleStore {
 
-    // Tree Subdivision Factor
-    private static final int K = 2;
-    // Merge / Unsorted Threshold
-    private static final int T = 10;
-    private static final int CHUNK_SIZE = 4;
-    private static final int LEAF_MIN_CAPACITY = 1;
-    private static final int INTERNAL_MIN_CAPACITY = 1;
-    private static final int INTERNAL_MAX_CAPACITY = 3;
+    private static final int DEFAULT_K = 2;
+    private static final int DEFAULT_T = 10;
+    private static final int DEFAULT_BITVECTOR_CHUNKSIZE = 4;
+    private static final int DEFAULT_BITVECTOR_LEAF_MAX = 1;
+    private static final int DEFAULT_BITVECTOR_INT_MIN = 1;
+    private static final int DEFAULT_BITVECTOR_INT_MAX = 4;
 
     private final TripleDictionary dict;
     private final BMatrix bMatrix;
     private final QueryFactory factory;
     private final QueryProcessor processor;
-    private final TripleDecoder decoder;
 
-    // Exposal necessary for Access to some nested Functions for Tests
-    public TripleDictionary dict() { return dict; }
-    public BMatrix bMatrix() { return bMatrix; }
 
     public TripleStore() {
         dict = new TripleDictionary();
-
-        DynamicBitVectorConfiguration config = new DynamicBitVectorConfiguration(
-                CHUNK_SIZE,
-                LEAF_MIN_CAPACITY,
-                INTERNAL_MIN_CAPACITY,
-                INTERNAL_MAX_CAPACITY
-        );
-
-        bMatrix = new BMatrix(K, T, config);
+        bMatrix = new BMatrix(
+                DEFAULT_K,
+                DEFAULT_T,
+                new DynamicBitVectorConfiguration(
+                        DEFAULT_BITVECTOR_CHUNKSIZE,
+                        DEFAULT_BITVECTOR_LEAF_MAX,
+                        DEFAULT_BITVECTOR_INT_MIN,
+                        DEFAULT_BITVECTOR_INT_MAX
+                ));
         factory = new QueryFactory(dict);
         processor = new QueryProcessor(bMatrix);
-        decoder = new TripleDecoder(dict);
+    }
+    public TripleStore(int k, int t, DynamicBitVectorConfiguration config) {
+        dict = new TripleDictionary();
+        bMatrix = new BMatrix(k, t, config);
+        factory = new QueryFactory(dict);
+        processor = new QueryProcessor(bMatrix);
     }
 
     public List<Triple> query(String s, String p, String o) {
         Query tripleQuery = factory.fromTriple(s, p, o);
         List<Triple> queryResults = processor.process(tripleQuery);
-        return decoder.decode(queryResults);
+        return TripleDecoder.decode(queryResults, dict);
     }
 
     public List<Triple> query(String query) {
         Query sparqlQuery = factory.fromSparql(query);
         List<Triple> queryResults = processor.process(sparqlQuery);
-        return decoder.decode(queryResults);
+        return TripleDecoder.decode(queryResults, dict);
     }
 
     public boolean create(Triple t) throws TripleAlreadyExistsException {
         try {
-            dict.registerSO((String) t.s());
-            dict.registerP((String) t.p());
-            dict.registerSO((String) t.o());
-
-            Triple encoded = new Triple(
-                    dict.encodeSO((String) t.s()),
-                    dict.encodeP((String) t.p()),
-                    dict.encodeSO((String) t.o())
-            );
-
+            register(t);
+            Triple encoded = encode(t);
             bMatrix.add(
                     (int) encoded.s(),
                     (int) encoded.p(),
                     (int) encoded.o()
             );
-
             return true;
 
         } catch (Exception ex) {
-            dict.unregisterSO((String) t.s());
-            dict.unregisterP((String) t.p());
-            dict.unregisterSO((String) t.o());
+            unregister(t);
             throw ex;
         }
     }
 
     public Boolean delete(Triple t) throws TripleNotFoundException {
-        Triple encoded = new Triple(
-                dict.encodeSO((String) t.s()),
-                dict.encodeP((String) t.p()),
-                dict.encodeSO((String) t.o())
-        );
-
+        Triple encoded = encode(t);
         bMatrix.delete(
                 (int) encoded.s(),
                 (int) encoded.p(),
                 (int) encoded.o()
         );
-
-        dict.unregisterSO((String) t.s());
-        dict.unregisterP((String) t.p());
-        dict.unregisterSO((String) t.o());
-
+        unregister(t);
         return true;
     }
 
     public Boolean update(Triple oldT, Triple newT) {
         try {
-            Triple encodedOld = new Triple(
-                    dict.encodeSO((String) oldT.s()),
-                    dict.encodeP((String) oldT.p()),
-                    dict.encodeSO((String) oldT.o())
-            );
-
-            dict.registerSO((String) newT.s());
-            dict.registerP((String) newT.p());
-            dict.registerSO((String) newT.o());
-
-            Triple encodedNew = new Triple(
-                    dict.encodeSO((String) newT.s()),
-                    dict.encodeP((String) newT.p()),
-                    dict.encodeSO((String) newT.o())
-            );
-
+            Triple encodedOld = encode(oldT);
+            register(newT);
+            Triple encodedNew = encode(newT);
             bMatrix.update(
                     (int) encodedOld.s(),
                     (int) encodedOld.p(),
@@ -136,19 +102,33 @@ public class TripleStore {
                     (int) encodedNew.p(),
                     (int) encodedNew.o()
             );
-
-            dict.unregisterSO((String) oldT.s());
-            dict.unregisterP((String) oldT.p());
-            dict.unregisterSO((String) oldT.o());
-
+            unregister(oldT);
             return true;
 
         } catch (Exception ex) {
-            dict.unregisterSO((String) newT.s());
-            dict.unregisterP((String) newT.p());
-            dict.unregisterSO((String) newT.o());
+            unregister(newT);
             throw ex;
         }
+    }
+
+    private Triple encode(Triple t) {
+        return new Triple(
+                dict.encodeSO((String) t.s()),
+                dict.encodeP((String) t.p()),
+                dict.encodeSO((String) t.o())
+        );
+    }
+
+    private void register(Triple t) {
+        dict.registerSO((String) t.s());
+        dict.registerP((String) t.p());
+        dict.registerSO((String) t.o());
+    }
+
+    private void unregister(Triple t) {
+        dict.unregisterSO((String) t.s());
+        dict.unregisterP((String) t.p());
+        dict.unregisterSO((String) t.o());
     }
 
     @Override

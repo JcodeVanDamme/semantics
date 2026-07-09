@@ -1,5 +1,6 @@
-package com.semantics.bitstring;
-import com.github.jcodevandamme.semantics.rdf.structure.bitstring.NaiveBitString;
+package com.semantics.roaringbitstring;
+
+import com.github.jcodevandamme.semantics.rdf.structure.bitstring.RoaringBitString;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -8,8 +9,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-
-public class NaiveBitStringTests {
+public class RankAccessSelectSetTests {
     @Test
     void rankTests() {
         List<Boolean> bits1 = new ArrayList<>();
@@ -29,7 +29,7 @@ public class NaiveBitStringTests {
         bits1.add(true);
 
         // [0 1 0 0 1 0 0 1 1 1 0 0 0 1]
-        NaiveBitString b1 = new NaiveBitString(bits1);
+        RoaringBitString b1 = new RoaringBitString(bits1);
 
         assertEquals(0, b1.rank1(0));
 
@@ -47,7 +47,7 @@ public class NaiveBitStringTests {
 
         // []
         List<Boolean> bits2 = new ArrayList<>();
-        NaiveBitString b2 = new NaiveBitString(bits2);
+        RoaringBitString b2 = new RoaringBitString(bits2);
 
         assertEquals(0, b2.rank1(bits2.size()));
     }
@@ -70,7 +70,7 @@ public class NaiveBitStringTests {
         bits1.add(true);
 
         // [0 0 1 0 0 1 0 0 1 0 0 1]
-        NaiveBitString b1 = new NaiveBitString(bits1);
+        RoaringBitString b1 = new RoaringBitString(bits1);
 
         assertEquals(2, b1.select1(1));
         assertEquals(11, b1.select1(4));
@@ -87,7 +87,7 @@ public class NaiveBitStringTests {
         bits.add(true);
 
         // [0 0 1]
-        NaiveBitString b = new NaiveBitString(bits);
+        RoaringBitString b = new RoaringBitString(bits);
 
         // gets the bit value at b[i]
 
@@ -97,5 +97,41 @@ public class NaiveBitStringTests {
         // Exceeding Bounds
         assertThrows(IndexOutOfBoundsException.class, () -> b.access(-1));
         assertThrows(IndexOutOfBoundsException.class, () -> b.access(69));
+    }
+
+    @Test
+    public void setTests() {
+        List<Boolean> bits = new ArrayList<>();
+
+        bits.add(false);
+        bits.add(false);
+        bits.add(true);
+
+        // [0 0 1]
+        RoaringBitString b = new RoaringBitString(bits);
+
+        b.setBit(true, 0);
+        b.setBit(true, 1);
+
+        assertEquals(1, b.access(0));
+        assertEquals(1, b.access(1));
+        assertEquals(1, b.access(2));
+
+        List<Boolean> bits2 = new ArrayList<>();
+
+        bits2.add(true);
+        bits2.add(true);
+        bits2.add(true);
+
+        // [1 1 1]
+        RoaringBitString b2 = new RoaringBitString(bits2);
+
+        b2.setBit(false, 0);
+        b2.setBit(false, 1);
+        b2.setBit(false, 2);
+
+        assertEquals(0, b2.access(0));
+        assertEquals(0, b2.access(1));
+        assertEquals(0, b2.access(2));
     }
 }

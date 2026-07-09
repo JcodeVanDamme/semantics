@@ -6,18 +6,20 @@ import java.util.List;
 import java.util.Map;
 
 public class TripleDictionary {
-    private final HashMap<Integer, String> soDecoding;
-    private final HashMap<String, Integer> soEncoding;
-    private final List<Integer> soReferences;
 
+    private final HashMap<Integer, String> soDecoding;
     private final HashMap<Integer, String> pDecoding;
+
+    private final HashMap<String, Integer> soEncoding;
     private final HashMap<String, Integer> pEncoding;
+
+    private final List<Integer> soReferences;
     private final List<Integer> pReferences;
 
     private int currentSoID;
-    private final List<Integer> freedSoIDs;
-
     private int currentPID;
+
+    private final List<Integer> freedSoIDs;
     private final List<Integer> freedPIDs;
 
     public TripleDictionary() {
