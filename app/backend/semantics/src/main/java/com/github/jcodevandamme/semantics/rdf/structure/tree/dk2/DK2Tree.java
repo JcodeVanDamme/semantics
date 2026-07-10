@@ -34,6 +34,10 @@ public class DK2Tree implements K2 {
 
     @Override
     public boolean addEntry(int row, int col) {
+        while (row >= this.matrixSize || col >= this.matrixSize) {
+            this.matrixSize *= k;
+            tTree.expandRoot(k);
+        }
         updateCell(row, col, true);
         return true;
     }
@@ -49,10 +53,6 @@ public class DK2Tree implements K2 {
         if (!freedColumns.isEmpty()) {
             return freedColumns.removeFirst();
         } else {
-            if (currentColumnIndex == matrixSize - 1) {
-                matrixSize *= k;
-                tTree.expandRoot(k);
-            }
             int index = currentColumnIndex;
             currentColumnIndex += 1;
             return index;

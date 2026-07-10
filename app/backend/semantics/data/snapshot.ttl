@@ -1,0 +1,17 @@
+<http://example.org/s10>
+        <http://example.org/p10>  <http://example.org/o10> .
+
+<http://example.org/s9>
+        <http://example.org/p9>  <http://example.org/o9> .
+
+<http://example.org/s7>
+        <http://example.org/p7>  <http://example.org/o7> .
+
+<http://example.org/s6>
+        <http://example.org/p6>  <http://example.org/o6> .
+
+<http://example.org/s1>
+        <http://example.org/p1>  <http://example.org/o1> .
+
+<http://example.org/s5>
+        <http://example.org/p5>  <http://example.org/o5> .

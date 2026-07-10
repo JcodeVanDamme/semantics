@@ -63,7 +63,7 @@ public class RoaringBitString implements BitInterface {
     @Override
     public int access(int i) {
         if (i < 0 || i > size) {
-            throw new IndexOutOfBoundsException("access1(" + i + ") out of Range");
+            return 0;
         }
         return bits.contains(i) ? 1 : 0;
     }

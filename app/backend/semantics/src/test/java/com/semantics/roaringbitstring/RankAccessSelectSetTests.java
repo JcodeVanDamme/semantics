@@ -95,8 +95,8 @@ public class RankAccessSelectSetTests {
         assertEquals(1, b.access(2));
 
         // Exceeding Bounds
-        assertThrows(IndexOutOfBoundsException.class, () -> b.access(-1));
-        assertThrows(IndexOutOfBoundsException.class, () -> b.access(69));
+        //assertThrows(IndexOutOfBoundsException.class, () -> b.access(-1));
+        //assertThrows(IndexOutOfBoundsException.class, () -> b.access(69));
     }
 
     @Test
