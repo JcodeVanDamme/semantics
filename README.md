@@ -66,9 +66,9 @@ POST
 ```json
 
 {
-    "s": "gabba",
-    "p": "gabba",
-    "o": "gabba"
+  "s": { "value": "gabba" },
+  "p": { "value": "gabba" },
+  "o": { "value": "gabba", "isLiteral": false }
 }
 
 ```
@@ -76,10 +76,14 @@ POST
 ### Request Schema
 
 | Field | Type | Description |
-|------|------|------|
-| `s` | string | Subject of the new Triple |
-| `p` | string | Predicate of the new Triple |
-| `o` | string | Object of the new Triple |
+|:---|:---|:---|
+| `s` | object | Subject of the Triple to be created. |
+| `s.value` | String | The value of the subject (**Must always be a URI**). |
+| `p` | object | Predicate of the Triple to be created. |
+| `p.value` | String | The value of the predicate (**Must always be a URI**). |
+| `o` | object | Object of the Triple to be created. |
+| `o.value` | String | The value of the object (can be a URI or a literal text/number). |
+| `o.isLiteral` | Boolean | `true` if the object value is a literal; `false` if it is a URI. |
 
 ### Response Body
 ```json
@@ -95,7 +99,7 @@ POST
 
 ### Endpoint
 ```
-/triples/?s=&p=&o=
+/triples?s=&p=&o=
 ```
 
 ### Method
@@ -127,9 +131,9 @@ GET
   "count": 1,
   "triples": [
     {
-      "s": "gabba",
-      "p": "gabba",
-      "o": "gabba"
+      "s": { "value": "gabba" },
+      "p": { "value": "gabba" },
+      "o": { "value": "gabba", "isLiteral": false }
     }
   ]
 }
@@ -189,9 +193,9 @@ POST
   "count": 1,
     "triples": [
       {
-        "s": "gabba",
-        "p": "gabba",
-        "o": "gabba"
+        "s": { "value": "gabba" },
+        "p": { "value": "gabba" },
+        "o": { "value": "gabba", "isLiteral": false }
       }
     ]
 }
@@ -237,14 +241,14 @@ PUT
 ```json
 {
   "original": {
-    "s": "gabba",
-    "p": "gabba",
-    "o": "gabba"
+    "s": { "value": "gabba"},
+    "p": { "value": "gabba"},
+    "o": { "value": "gabba", "isLiteral": false }
   },
   "update": {
-    "s": "gabba",
-    "p": "gabba",
-    "o": "gabba"
+    "s": { "value": "gabba"},
+    "p": { "value": "gabba"},
+    "o": { "value": "gabba", "isLiteral": false }
   }
 }
 ```
@@ -252,15 +256,23 @@ PUT
 ### Request Schema
 
 | Field | Type | Description |
-|------|------|------|
-| `original` | object | Triple to replace |
-| `original.s` | string | Original Subject |
-| `original.p` | string | Original Predicate |
-| `original.o` | string | Original Object |
-| `update` | object | New Triple |
-| `update.s` | string | Updated Subject |
-| `update.p` | string | Updated Predicate |
-| `update.o` | string | Updated Object |
+|:---|:---|:---|
+| **`original`** | object | The existing triple to be removed from the matrix. |
+| `original.s` | object | The original subject. |
+| `original.s.value` | String | The value of the subject (**Must always be a URI**). |
+| `original.p` | object | The original predicate. |
+| `original.p.value` | String | The value of the predicate (**Must always be a URI**). |
+| `original.o` | object | The original object. |
+| `original.o.value` | String | The value of the object (can be a URI or a literal text/number). |
+| `original.o.isLiteral` | Boolean | `true` if the object value is a literal; `false` if it is a URI. |
+| **`update`** | object | The new triple that will replace the original one. |
+| `update.s` | object | The new subject. |
+| `update.s.value` | String | The value of the new subject (**Must always be a URI**). |
+| `update.p` | object | The new predicate. |
+| `update.p.value` | String | The value of the new predicate (**Must always be a URI**). |
+| `update.o` | object | The new object. |
+| `update.o.value` | String | The value of the new object. |
+| `update.o.isLiteral` | Boolean | `true` if the new object value is a literal; `false` if it is a URI. |
 
 ### Response Body
 ```json
@@ -295,19 +307,23 @@ DELETE
 ### Request Body
 ```json
 {
-  "s": "gabba",
-  "p": "gabba",
-  "o": "gabba"
+  "s": { "value": "gabba"},
+  "p": { "value": "gabba"},
+  "o": { "value": "gabba", "isLiteral": false }
 }
 ```
 
 ### Request Schema
 
 | Field | Type | Description |
-|------|------|------|
-| `s` | string | Triple Subject |
-| `p` | string | Triple Predicate |
-| `o` | string | Triple Object |
+|:---|:---|:---|
+| `s` | object | Subject of the Triple to be deleted. |
+| `s.value` | String | The value of the subject (**Must always be a URI**). |
+| `p` | object | Predicate of the Triple to be deleted. |
+| `p.value` | String | The value of the predicate (**Must always be a URI**). |
+| `o` | object | Object of the Triple to be deleted. |
+| `o.value` | String | The value of the object (can be a URI or a literal text/number). |
+| `o.isLiteral` | Boolean | `true` if the object value is a literal; `false` if it is a URI. |
 
 ### Response Body
 ```json
@@ -562,7 +578,7 @@ POST
 
 | Code | Meaning |
 |------|------|
-| `200 OK` | State mediatizated successfully |
+| `200 OK` | Ruler changed successfully |
 | `400 Bad Request` | Invalid request body |
 | `404 Not Found` | Referenced State or Ruler does not exist |
 | `500 Internal Server Error` | Server-side processing error |
