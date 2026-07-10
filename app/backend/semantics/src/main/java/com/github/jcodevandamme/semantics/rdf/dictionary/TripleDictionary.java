@@ -7,8 +7,8 @@ import java.util.Map;
 
 public class TripleDictionary {
 
-    private final HashMap<Integer, String> soDecoding;
-    private final HashMap<Integer, String> pDecoding;
+    private final HashMap<Integer, DictEntry> soDecoding;
+    private final HashMap<Integer, DictEntry> pDecoding;
 
     private final HashMap<String, Integer> soEncoding;
     private final HashMap<String, Integer> pEncoding;
@@ -38,7 +38,7 @@ public class TripleDictionary {
         freedPIDs = new ArrayList<>();
     }
 
-    public void registerSO(String value) {
+    public void registerSO(String value, boolean isLiteral) {
         Integer id = soEncoding.get(value);
         if (id != null) {
             int currentRefCount = soReferences.get(id);
@@ -52,8 +52,9 @@ public class TripleDictionary {
             id = currentSoID++;
             soReferences.add(1);
         }
+        DictEntry entry = new DictEntry(value, isLiteral);
         soEncoding.put(value, id);
-        soDecoding.put(id, value);
+        soDecoding.put(id, entry);
     }
 
     public void registerP(String value) {
@@ -70,8 +71,9 @@ public class TripleDictionary {
             id = currentPID++;
             pReferences.add(1);
         }
+        DictEntry entry = new DictEntry(value, false);
         pEncoding.put(value, id);
-        pDecoding.put(id, value);
+        pDecoding.put(id, entry);
     }
 
     public void unregisterSO(String value) {
@@ -111,7 +113,7 @@ public class TripleDictionary {
         return id;
     }
     public String decodeSO(int id) throws TripleCodingException {
-        String string = soDecoding.get(id);
+        String string = soDecoding.get(id).value();
         if (string == null) throw new TripleCodingException("Unknown SO ID: " + id);
         return string;
     }
@@ -121,7 +123,7 @@ public class TripleDictionary {
         return id;
     }
     public String decodeP(int id) throws TripleCodingException {
-        String string = pDecoding.get(id);
+        String string = pDecoding.get(id).value();
         if (string == null) throw new TripleCodingException("Unknown P ID: " + id);
         return string;
     }
@@ -135,22 +137,22 @@ public class TripleDictionary {
             .append(" ------------------------\n");
 
         strb.append("Subjects / Objects:\n");
-        for (Map.Entry<Integer, String> e : soDecoding.entrySet()) {
+        for (Map.Entry<Integer, DictEntry> e : soDecoding.entrySet()) {
             strb
                     .append("Id: ")
                     .append(e.getKey())
                     .append(" - ")
-                    .append(e.getValue())
+                    .append(e.getValue().value())
                     .append(" | Ref: ")
                     .append(soReferences.get(e.getKey()))
                     .append("\n");
         }
         strb.append("\nPredicates:\n");
-        for (Map.Entry<Integer, String> e : pDecoding.entrySet()) {
+        for (Map.Entry<Integer, DictEntry> e : pDecoding.entrySet()) {
             strb
                     .append(e.getKey())
                     .append(" - ")
-                    .append(e.getValue())
+                    .append(e.getValue().value())
                     .append(" | Ref: ")
                     .append(pReferences.get(e.getKey()))
                     .append("\n");

@@ -7,7 +7,6 @@ import com.github.jcodevandamme.semantics.rdf.dictionary.TripleCodingException;
 import com.github.jcodevandamme.semantics.rdf.dictionary.TripleDecoder;
 import com.github.jcodevandamme.semantics.rdf.dictionary.TripleDictionary;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
-import com.github.jcodevandamme.semantics.rdf.provider.TripleProvider;
 import com.github.jcodevandamme.semantics.rdf.query.Query;
 import com.github.jcodevandamme.semantics.rdf.query.QueryFactory;
 import com.github.jcodevandamme.semantics.rdf.query.QueryProcessor;
@@ -29,7 +28,6 @@ public class TripleStore {
     private final BMatrix bMatrix;
     private final QueryFactory factory;
     private final QueryProcessor processor;
-
 
     public TripleStore() {
         dict = new TripleDictionary();
@@ -133,15 +131,19 @@ public class TripleStore {
     }
 
     private void register(Triple t) {
-        dict.registerSO((String) t.s());
+        dict.registerSO((String) t.s(), false);
         dict.registerP((String) t.p());
-        dict.registerSO((String) t.o());
+        dict.registerSO((String) t.o(), checkObjectType((String) t.o()));
     }
 
     private void unregister(Triple t) {
         dict.unregisterSO((String) t.s());
         dict.unregisterP((String) t.p());
         dict.unregisterSO((String) t.o());
+    }
+
+    private boolean checkObjectType(String o) {
+        return true;
     }
 
     @Override

@@ -1,19 +1,14 @@
-package com.github.jcodevandamme.semantics.rdf.provider.parser;
+package com.github.jcodevandamme.semantics.rdf.serialization;
 
-import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import com.github.jcodevandamme.semantics.rdf.tripleStore.TripleStore;
 import org.apache.jena.riot.RDFParser;
 import org.apache.jena.riot.RiotException;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 
 public class TripleParser {
 
     public static void loadRdfFile(String filePath, TripleStore tripleStore) {
-        TripleStreamHandler handler = new TripleStreamHandler(tripleStore);
+        TripleStreamParser handler = new TripleStreamParser(tripleStore);
 
         try {
             RDFParser.create()

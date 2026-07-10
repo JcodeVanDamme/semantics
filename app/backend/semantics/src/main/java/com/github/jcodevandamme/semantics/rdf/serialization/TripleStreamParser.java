@@ -1,4 +1,4 @@
-package com.github.jcodevandamme.semantics.rdf.provider.parser;
+package com.github.jcodevandamme.semantics.rdf.serialization;
 
 import com.github.jcodevandamme.semantics.rdf.tripleStore.TripleStore;
 import org.apache.jena.graph.Triple;
@@ -6,13 +6,11 @@ import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.graph.Node;
 
-import java.util.List;
-
-public class TripleStreamHandler implements StreamRDF {
+public class TripleStreamParser implements StreamRDF {
 
     private final TripleStore tripleStore;
 
-    public TripleStreamHandler(TripleStore tripleStore) {
+    public TripleStreamParser(TripleStore tripleStore) {
         this.tripleStore = tripleStore;
     }
 
@@ -36,7 +34,7 @@ public class TripleStreamHandler implements StreamRDF {
 
     private String extractNodeString(Node node) {
         if (node.isURI()) {
-            return node.getLocalName();
+            return node.getURI();
         } else if (node.isLiteral()) {
             return node.getLiteralLexicalForm();
         } else if (node.isBlank()) {

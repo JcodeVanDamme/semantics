@@ -5,6 +5,8 @@ import com.github.jcodevandamme.semantics.app.dto.response.*;
 import com.github.jcodevandamme.semantics.app.dto.util.*;
 
 import com.github.jcodevandamme.semantics.app.services.TripleService;
+import com.github.jcodevandamme.semantics.rdf.bmatrix.TripleAlreadyExistsException;
+import com.github.jcodevandamme.semantics.rdf.bmatrix.TripleNotFoundException;
 import com.github.jcodevandamme.semantics.rdf.dictionary.TripleCodingException;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -25,7 +28,7 @@ public class TriplesController {
     }
 
     @PostMapping
-    public HttpStatus createTriple(@Validated @RequestBody TripleDto triple) {
+    public HttpStatus createTriple(@Validated @RequestBody TripleDto triple) throws TripleAlreadyExistsException, IOException {
         service.addTriple(triple);
         return HttpStatus.CREATED;
     }
@@ -34,7 +37,7 @@ public class TriplesController {
             @RequestParam(required = false) String s,
             @RequestParam(required = false) String p,
             @RequestParam(required = false) String o
-    ) {
+            ) {
         TripleDto[] res = service.queryTriples(s, p, o);
         TripleQueryResponse response = new TripleQueryResponse(
                 res.length,
@@ -54,13 +57,13 @@ public class TriplesController {
     }
 
     @PutMapping
-    public HttpStatus updateTriple(@Validated @RequestBody PutTriplesRequest request) {
+    public HttpStatus updateTriple(@Validated @RequestBody PutTriplesRequest request) throws TripleNotFoundException, TripleAlreadyExistsException, IOException {
         service.updateTriple(request);
         return HttpStatus.OK;
     }
 
     @DeleteMapping
-    public HttpStatus deleteTriple(@Validated @RequestBody TripleDto triple) {
+    public HttpStatus deleteTriple(@Validated @RequestBody TripleDto triple) throws TripleNotFoundException, IOException {
         service.deleteTriple(triple);
         return HttpStatus.OK;
     }

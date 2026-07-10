@@ -1,5 +1,6 @@
 package com.github.jcodevandamme.semantics.rdf.serialization;
 
+import com.github.jcodevandamme.semantics.rdf.tripleStore.TripleStore;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
@@ -7,22 +8,51 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.StreamRDFWriter;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public class TripleStreamSerializer {
 
-    public static void serialize() {
-        StreamRDF writer = StreamRDFWriter.getWriterStream(System.out, Lang.TURTLE);
+    public static void serialize(String filePath, TripleStore tripleStore) throws IOException {
+        Path path = Paths.get(filePath);
 
-        writer.prefix("ex", "http://example.org/");
+        if (path.getParent() != null) {
+            Files.createDirectories(path.getParent());
+        }
+
+        System.out.println("Starting Serialization to file: " + filePath);
+        try (OutputStream out = Files.newOutputStream(path)) {
+            serialize(out, tripleStore);
+        }
+        System.out.println("Serialization finished.");
+    }
+
+    public static void serialize(OutputStream out, TripleStore tripleStore) {
+        StreamRDF writer = StreamRDFWriter.getWriterStream(out, Lang.TURTLE);
 
         writer.start();
+        for (com.github.jcodevandamme.semantics.rdf.model.Triple t : tripleStore.query(null, null, null)) {
 
-        Node subject = NodeFactory.createURI("http://example.org/DCC20");
-        Node predicate = NodeFactory.createURI("http://example.org/hasTopic");
-        Node object = NodeFactory.createLiteralString("Text comp.");
+            Node s = NodeFactory.createURI((String) t.s());
+            Node p = NodeFactory.createURI((String) t.p());
 
-        Triple triple = Triple.create(subject, predicate, object);
-        writer.triple(triple);
+            Node o;
+            if (isLiteral((String) t.o())) {
+                o = NodeFactory.createLiteralString((String) t.o());
+            } else {
+                o = NodeFactory.createURI((String) t.o());
+            }
 
+            Triple jenaTriple = Triple.create(s, p, o);
+            writer.triple(jenaTriple);
+        }
         writer.finish();
+    }
+
+    public static boolean isLiteral(String node) {
+        return !node.startsWith("http");
     }
 }
