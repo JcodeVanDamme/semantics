@@ -36,14 +36,13 @@ public class TripleStreamSerializer {
         writer.start();
         for (com.github.jcodevandamme.semantics.rdf.model.Triple t : tripleStore.query(null, null, null)) {
 
-            Node s = NodeFactory.createURI((String) t.s());
-            Node p = NodeFactory.createURI((String) t.p());
-
+            Node s = NodeFactory.createURI((String) t.s().value());
+            Node p = NodeFactory.createURI((String) t.p().value());
             Node o;
-            if (isLiteral((String) t.o())) {
-                o = NodeFactory.createLiteralString((String) t.o());
+            if (t.o().isLiteral()) {
+                o = NodeFactory.createLiteralString((String) t.o().value());
             } else {
-                o = NodeFactory.createURI((String) t.o());
+                o = NodeFactory.createURI((String) t.o().value());
             }
 
             Triple jenaTriple = Triple.create(s, p, o);

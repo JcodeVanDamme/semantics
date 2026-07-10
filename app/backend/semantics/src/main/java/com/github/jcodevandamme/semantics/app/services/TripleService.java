@@ -32,7 +32,12 @@ public class TripleService {
     }
 
     public void addTriple(TripleDto dto) throws TripleAlreadyExistsException, IOException {
-        Triple triple = new Triple(dto.s(), dto.p(), dto.o());
+        Triple triple = new Triple(
+                dto.s().value(),
+                dto.p().value(),
+                dto.o().value(),
+                dto.o().isLiteral()
+        );
         boolean created = tripleStore.create(triple);
         if (created) {
             logger.registerUpdate(UpdateType.ADD, triple);
@@ -50,8 +55,20 @@ public class TripleService {
     }
 
     public void updateTriple(PutTriplesRequest request) throws TripleNotFoundException, TripleAlreadyExistsException, IOException {
-        Triple oldT = new Triple(request.original().s(), request.original().p(), request.original().o());
-        Triple newT = new Triple(request.update().s(), request.update().p(), request.update().o());
+        TripleDto original = request.original();
+        Triple oldT = new Triple(
+                original.s().value(),
+                original.p().value(),
+                original.o().value(),
+                original.o().isLiteral()
+        );
+        TripleDto update = request.original();
+        Triple newT = new Triple(
+                update.s().value(),
+                update.p().value(),
+                update.o().value(),
+                update.o().isLiteral()
+        );
         boolean updated = tripleStore.update(oldT, newT);
         if (updated) {
             logger.registerUpdate(UpdateType.DELETE, oldT);
@@ -60,7 +77,12 @@ public class TripleService {
     }
 
     public void deleteTriple(TripleDto dto) throws TripleNotFoundException, IOException {
-        Triple triple = new Triple(dto.s(), dto.p(), dto.o());
+        Triple triple = new Triple(
+                dto.s().value(),
+                dto.p().value(),
+                dto.o().value(),
+                dto.o().isLiteral()
+        );
         boolean deleted = tripleStore.delete(triple);
         if (deleted) {
             logger.registerUpdate(UpdateType.DELETE, triple);

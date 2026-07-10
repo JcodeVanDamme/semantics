@@ -28,12 +28,12 @@ public class TriplesController {
     }
 
     @PostMapping
-    public HttpStatus createTriple(@Validated @RequestBody TripleDto triple) throws TripleAlreadyExistsException, IOException {
+    public synchronized HttpStatus createTriple(@Validated @RequestBody TripleDto triple) throws TripleAlreadyExistsException, IOException {
         service.addTriple(triple);
         return HttpStatus.CREATED;
     }
     @GetMapping
-    public ResponseEntity<TripleQueryResponse> tripleQuery(
+    public synchronized ResponseEntity<TripleQueryResponse> tripleQuery(
             @RequestParam(required = false) String s,
             @RequestParam(required = false) String p,
             @RequestParam(required = false) String o
@@ -47,7 +47,7 @@ public class TriplesController {
     }
 
     @PostMapping("/sparql")
-    public ResponseEntity<TripleQueryResponse> sparqlQuery(@Validated @RequestBody String query) {
+    public synchronized ResponseEntity<TripleQueryResponse> sparqlQuery(@Validated @RequestBody String query) {
         TripleDto[] res = service.querySparql(query);
         TripleQueryResponse response = new TripleQueryResponse(
                 res.length,
@@ -57,13 +57,13 @@ public class TriplesController {
     }
 
     @PutMapping
-    public HttpStatus updateTriple(@Validated @RequestBody PutTriplesRequest request) throws TripleNotFoundException, TripleAlreadyExistsException, IOException {
+    public synchronized HttpStatus updateTriple(@Validated @RequestBody PutTriplesRequest request) throws TripleNotFoundException, TripleAlreadyExistsException, IOException {
         service.updateTriple(request);
         return HttpStatus.OK;
     }
 
     @DeleteMapping
-    public HttpStatus deleteTriple(@Validated @RequestBody TripleDto triple) throws TripleNotFoundException, IOException {
+    public synchronized HttpStatus deleteTriple(@Validated @RequestBody TripleDto triple) throws TripleNotFoundException, IOException {
         service.deleteTriple(triple);
         return HttpStatus.OK;
     }

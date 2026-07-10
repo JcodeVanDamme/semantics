@@ -1,5 +1,6 @@
 package com.github.jcodevandamme.semantics.app.dto;
 
+import com.github.jcodevandamme.semantics.app.dto.util.RDFObjectDTO;
 import com.github.jcodevandamme.semantics.app.dto.util.TripleDto;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 
@@ -18,9 +19,9 @@ public class DTOFactory {
 
     public static TripleDto triple(Triple t) {
         return new TripleDto(
-                (String) t.s(),
-                (String) t.p(),
-                (String) t.o()
+                new RDFObjectDTO((String) t.s().value(), false),
+                new RDFObjectDTO((String) t.p().value(), false),
+                new RDFObjectDTO((String) t.o().value(), t.o().isLiteral())
         );
     }
 }

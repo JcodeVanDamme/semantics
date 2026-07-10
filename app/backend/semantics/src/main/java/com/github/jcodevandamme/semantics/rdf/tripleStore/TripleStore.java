@@ -6,6 +6,7 @@ import com.github.jcodevandamme.semantics.rdf.bmatrix.TripleNotFoundException;
 import com.github.jcodevandamme.semantics.rdf.dictionary.TripleCodingException;
 import com.github.jcodevandamme.semantics.rdf.dictionary.TripleDecoder;
 import com.github.jcodevandamme.semantics.rdf.dictionary.TripleDictionary;
+import com.github.jcodevandamme.semantics.rdf.model.EncodedTriple;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import com.github.jcodevandamme.semantics.rdf.query.Query;
 import com.github.jcodevandamme.semantics.rdf.query.QueryFactory;
@@ -53,7 +54,7 @@ public class TripleStore {
     public List<Triple> query(String s, String p, String o) {
         try {
             Query tripleQuery = factory.fromTriple(s, p, o);
-            List<Triple> queryResults = processor.process(tripleQuery);
+            List<EncodedTriple> queryResults = processor.process(tripleQuery);
             return TripleDecoder.decode(queryResults, dict);
 
         } catch (TripleCodingException ex) {
@@ -64,7 +65,7 @@ public class TripleStore {
     public List<Triple> query(String query) {
         try {
             Query sparqlQuery = factory.fromSparql(query);
-            List<Triple> queryResults = processor.process(sparqlQuery);
+            List<EncodedTriple> queryResults = processor.process(sparqlQuery);
             return TripleDecoder.decode(queryResults, dict);
 
         } catch (TripleCodingException ex) {
@@ -75,7 +76,7 @@ public class TripleStore {
     public boolean create(Triple t) throws TripleAlreadyExistsException {
         try {
             register(t);
-            Triple encoded = encode(t);
+            EncodedTriple encoded = encode(t);
             bMatrix.add(
                     (int) encoded.s(),
                     (int) encoded.p(),
@@ -90,7 +91,7 @@ public class TripleStore {
     }
 
     public Boolean delete(Triple t) throws TripleNotFoundException {
-        Triple encoded = encode(t);
+        EncodedTriple encoded = encode(t);
         bMatrix.delete(
                 (int) encoded.s(),
                 (int) encoded.p(),
@@ -102,9 +103,9 @@ public class TripleStore {
 
     public Boolean update(Triple oldT, Triple newT) throws  TripleNotFoundException, TripleAlreadyExistsException {
         try {
-            Triple encodedOld = encode(oldT);
+            EncodedTriple encodedOld = encode(oldT);
             register(newT);
-            Triple encodedNew = encode(newT);
+            EncodedTriple encodedNew = encode(newT);
             bMatrix.update(
                     (int) encodedOld.s(),
                     (int) encodedOld.p(),
@@ -122,28 +123,25 @@ public class TripleStore {
         }
     }
 
-    private Triple encode(Triple t) throws TripleCodingException {
-        return new Triple(
-                dict.encodeSO((String) t.s()),
-                dict.encodeP((String) t.p()),
-                dict.encodeSO((String) t.o())
+    private EncodedTriple encode(Triple t) throws TripleCodingException {
+        return new EncodedTriple(
+                dict.encodeSO((String) t.s().value()),
+                dict.encodeP((String) t.p().value()),
+                dict.encodeSO((String) t.o().value())
         );
     }
 
     private void register(Triple t) {
-        dict.registerSO((String) t.s(), false);
-        dict.registerP((String) t.p());
-        dict.registerSO((String) t.o(), checkObjectType((String) t.o()));
+        System.out.println("Registering " + t);
+        dict.registerSO((String) t.s().value(), false);
+        dict.registerP((String) t.p().value());
+        dict.registerSO((String) t.o().value(), t.o().isLiteral());
     }
 
     private void unregister(Triple t) {
-        dict.unregisterSO((String) t.s());
-        dict.unregisterP((String) t.p());
-        dict.unregisterSO((String) t.o());
-    }
-
-    private boolean checkObjectType(String o) {
-        return true;
+        dict.unregisterSO((String) t.s().value());
+        dict.unregisterP((String) t.p().value());
+        dict.unregisterSO((String) t.o().value());
     }
 
     @Override

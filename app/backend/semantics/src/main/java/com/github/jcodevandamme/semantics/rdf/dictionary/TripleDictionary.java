@@ -127,6 +127,11 @@ public class TripleDictionary {
         if (string == null) throw new TripleCodingException("Unknown P ID: " + id);
         return string;
     }
+    public boolean isLiteral(int id) {
+        DictEntry entry = soDecoding.get(id);
+        if (entry == null) throw new TripleCodingException("Unknown SO ID: " + id);
+        return entry.isLiteral();
+    }
 
     @Override
     public String toString() {
@@ -141,20 +146,23 @@ public class TripleDictionary {
             strb
                     .append("Id: ")
                     .append(e.getKey())
-                    .append(" - ")
-                    .append(e.getValue().value())
                     .append(" | Ref: ")
                     .append(soReferences.get(e.getKey()))
+                    .append(" | Literal: ")
+                    .append(e.getValue().isLiteral().toString())
+                    .append("\n")
+                    .append(e.getValue().value())
                     .append("\n");
         }
         strb.append("\nPredicates:\n");
         for (Map.Entry<Integer, DictEntry> e : pDecoding.entrySet()) {
             strb
+                    .append("Id: ")
                     .append(e.getKey())
-                    .append(" - ")
-                    .append(e.getValue().value())
                     .append(" | Ref: ")
-                    .append(pReferences.get(e.getKey()))
+                    .append(soReferences.get(e.getKey()))
+                    .append("\n")
+                    .append(e.getValue().value())
                     .append("\n");
         }
         return strb.toString();

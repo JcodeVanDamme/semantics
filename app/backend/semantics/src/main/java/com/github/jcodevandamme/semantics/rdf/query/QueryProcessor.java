@@ -1,6 +1,7 @@
 package com.github.jcodevandamme.semantics.rdf.query;
 
 import com.github.jcodevandamme.semantics.rdf.bmatrix.BMatrix;
+import com.github.jcodevandamme.semantics.rdf.model.EncodedTriple;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 
 import java.util.ArrayList;
@@ -14,18 +15,18 @@ public class QueryProcessor {
         this.bMatrix = bMatrix;
     }
 
-    public List<Triple> process(Query query) {
+    public List<EncodedTriple> process(Query query) {
         if (query instanceof TripleQuery) {
             return processTripleQuery((TripleQuery) query);
         }
         throw new IllegalStateException("Unhandled Query Type: " + query.toString());
     }
 
-    private List<Triple> processTripleQuery(TripleQuery q) {
+    private List<EncodedTriple> processTripleQuery(TripleQuery q) {
         switch (type(q)) {
             case SPO:
                 if (bMatrix.spoQuery(q.s(), q.p(), q.o())) {
-                    return new ArrayList<>(List.of(new Triple(q.s(), q.p(), q.o())));
+                    return new ArrayList<>(List.of(new EncodedTriple(q.s(), q.p(), q.o())));
                 } else {
                     return new ArrayList<>();
                 }

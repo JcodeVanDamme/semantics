@@ -41,7 +41,7 @@ public class DK2Builder {
                 DynamicBitVectorBuilder.build(config),
                 DynamicBitVectorBuilder.build(config),
                 k,
-                k,
+                k*k,
                 0);
     }
 }

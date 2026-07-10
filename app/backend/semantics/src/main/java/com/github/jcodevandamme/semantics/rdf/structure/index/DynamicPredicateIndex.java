@@ -9,15 +9,6 @@ public class DynamicPredicateIndex {
     Map<Integer, List<Integer>> tripleIndexesByPredicateId;
     Map<Integer, Integer> predicateByTripleId;
 
-    public DynamicPredicateIndex(List<Triple> triples) {
-        tripleIndexesByPredicateId = new HashMap<>();
-        predicateByTripleId = new HashMap<>();
-
-        for (int tripleIdx = 0; tripleIdx < triples.size(); tripleIdx++) {
-            int pId = (int) triples.get(tripleIdx).p();
-            registerTriple(tripleIdx,  pId);
-        }
-    }
     public DynamicPredicateIndex() {
         tripleIndexesByPredicateId = new HashMap<>();
         predicateByTripleId = new HashMap<>();

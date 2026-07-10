@@ -39,11 +39,13 @@ public class TripleLogger  {
 
             // ⚠️ WICHTIGER FIX für deinen Parser (siehe Erklärung unten):
             writer.write(" ");
-            writer.write((String) t.s());
+            writer.write((String) t.s().value());
             writer.write(",");
-            writer.write((String) t.p());
+            writer.write((String) t.p().value());
             writer.write(",");
-            writer.write((String) t.o());
+            writer.write((String) t.o().value());
+            writer.write(",");
+            writer.write(String.valueOf(t.o().isLiteral()));
             writer.newLine();
         }
     }

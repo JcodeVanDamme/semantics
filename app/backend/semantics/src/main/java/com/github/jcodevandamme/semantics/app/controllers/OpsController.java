@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/ops")
 public class OpsController {
 
-    @GetMapping("/activeStates")
+    /*@GetMapping("/activeStates")
     public ResponseEntity<CountResponse> getActiveStateCount() {
 
         CountResponse response = new CountResponse(0);
@@ -146,5 +146,5 @@ public class OpsController {
         );
 
         return ResponseEntity.ok(response);
-    }
+    }*/
 }
