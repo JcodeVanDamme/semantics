@@ -19,6 +19,20 @@ public class K2Tree implements K2 {
     public int k() { return k; }
     public BitInterface t() { return t; }
     public BitInterface l() { return l; }
+
+    @Override
+    public boolean addEntry(int row, int col) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean removeEntry(int row, int col) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int getNextAvailableColumnIndex() { throw new UnsupportedOperationException(); }
+
     @Override
     public int matrixSize() {
         return matrixSize;
@@ -40,7 +54,7 @@ public class K2Tree implements K2 {
             // Obtain Base Offset for the continuous Block of currentBitIndex`s Children
             int base;
             if (matrixSize < this.matrixSize) {
-                // Call rank with + 1 to counter its exclusive Upper Bound
+                // Call rank1 with + 1 to counter its exclusive Upper Bound
                 base = t.rank1(currentBitIndex + 1) * (k * k);
             } else {
                 // Base Offset needs to be 0 for first Cycle

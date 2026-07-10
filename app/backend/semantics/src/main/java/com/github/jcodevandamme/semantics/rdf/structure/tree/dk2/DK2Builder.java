@@ -1,5 +1,6 @@
 package com.github.jcodevandamme.semantics.rdf.structure.tree.dk2;
 
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorConfiguration;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.k2.K2Tree;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVector;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorBuilder;
@@ -16,21 +17,31 @@ public class DK2Builder {
      * @param config Configuration Parameters for the Tree
      * @return the generated DK2-tree
      */
-    public static DK2Tree build(K2Tree staticTree, DK2Configuration config) {
+    public static DK2Tree build(K2Tree staticTree, DynamicBitVectorConfiguration config, int numberOfSetColumns) {
         DynamicBitVector tTree = DynamicBitVectorBuilder.build(
                 staticTree.t(),
-                config.chunkSize(),
-                config.leafMinimumCapacity(),
-                config.internalMinimumCapacity(),
-                config.internalMaximumCapacity()
+                config
         );
         DynamicBitVector lTree = DynamicBitVectorBuilder.build(
                 staticTree.l(),
-                config.chunkSize(),
-                config.leafMinimumCapacity(),
-                config.internalMinimumCapacity(),
-                config.internalMaximumCapacity()
+                config
         );
-        return new DK2Tree(tTree, lTree, staticTree.k(), staticTree.matrixSize());
+        return new DK2Tree(tTree, lTree, staticTree.k(), staticTree.matrixSize(), numberOfSetColumns);
+    }
+
+    /**
+     * Initializes an empty dynamic DK2-tree.
+     *
+     * @param config Configuration Parameters for the Tree
+     * @param k Subdivision Factor of the Conceptual Matrix
+     * @return the generated DK2-tree
+     */
+    public static DK2Tree build(DynamicBitVectorConfiguration config, int k) {
+        return new DK2Tree(
+                DynamicBitVectorBuilder.build(config),
+                DynamicBitVectorBuilder.build(config),
+                k,
+                k,
+                0);
     }
 }

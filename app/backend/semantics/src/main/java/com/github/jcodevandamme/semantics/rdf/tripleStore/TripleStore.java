@@ -1,81 +1,147 @@
 package com.github.jcodevandamme.semantics.rdf.tripleStore;
 
+import com.github.jcodevandamme.semantics.rdf.bmatrix.BMatrix;
+import com.github.jcodevandamme.semantics.rdf.bmatrix.TripleAlreadyExistsException;
+import com.github.jcodevandamme.semantics.rdf.bmatrix.TripleNotFoundException;
+import com.github.jcodevandamme.semantics.rdf.dictionary.TripleCodingException;
 import com.github.jcodevandamme.semantics.rdf.dictionary.TripleDecoder;
 import com.github.jcodevandamme.semantics.rdf.dictionary.TripleDictionary;
+import com.github.jcodevandamme.semantics.rdf.model.EncodedTriple;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
-import com.github.jcodevandamme.semantics.rdf.bmatrix.BMatrix;
-import com.github.jcodevandamme.semantics.rdf.bmatrix.BMatrixBuilder;
-import com.github.jcodevandamme.semantics.rdf.provider.TripleProvider;
+import com.github.jcodevandamme.semantics.rdf.query.Query;
 import com.github.jcodevandamme.semantics.rdf.query.QueryFactory;
 import com.github.jcodevandamme.semantics.rdf.query.QueryProcessor;
-import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Configuration;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorConfiguration;
 
+import java.util.Collections;
 import java.util.List;
 
 public class TripleStore {
 
-    // Tree Subdivision Factor
-    private final int K = 2;
-    // Predicate Sampling Rate
-    private final int D = 10;
-    // Merge / Unsorted Threshold
-    private final int T = 10;
+    private static final int DEFAULT_K = 2;
+    private static final int DEFAULT_T = 10;
+    private static final int DEFAULT_BITVECTOR_CHUNKSIZE = 4;
+    private static final int DEFAULT_BITVECTOR_LEAF_MAX = 1;
+    private static final int DEFAULT_BITVECTOR_INT_MIN = 1;
+    private static final int DEFAULT_BITVECTOR_INT_MAX = 4;
 
-    // DYNAMIC
+    private final TripleDictionary dict;
+    private final BMatrix bMatrix;
+    private final QueryFactory factory;
+    private final QueryProcessor processor;
 
-    private final int CHUNK_SIZE = 4;
-    private final int LEAF_MIN_CAPACITY = 1;
-    private final int INTERNAL_MIN_CAPACITY = 1;
-    private final int INTERNAL_MAX_CAPACITY = 3;
-
-    private TripleDictionary dict;
-    private BMatrix bMatrix;
-    private QueryFactory factory;
-    private QueryProcessor processor;
-    private TripleDecoder decoder;
-
-    public TripleDictionary dict() { return dict; }
-    public BMatrix bMatrix() { return bMatrix; }
-
-    public void initStatic(TripleProvider tripleProvider) {
+    public TripleStore() {
         dict = new TripleDictionary();
-        bMatrix = new BMatrixBuilder().buildStatic(K, D, T, dict, tripleProvider);
-
+        bMatrix = new BMatrix(
+                DEFAULT_K,
+                DEFAULT_T,
+                new DynamicBitVectorConfiguration(
+                        DEFAULT_BITVECTOR_CHUNKSIZE,
+                        DEFAULT_BITVECTOR_LEAF_MAX,
+                        DEFAULT_BITVECTOR_INT_MIN,
+                        DEFAULT_BITVECTOR_INT_MAX
+                ));
         factory = new QueryFactory(dict);
         processor = new QueryProcessor(bMatrix);
-        decoder = new TripleDecoder(dict);
     }
-    public void initDynamic(TripleProvider tripleProvider) {
+    public TripleStore(int k, int t, DynamicBitVectorConfiguration config) {
         dict = new TripleDictionary();
-
-        DK2Configuration config = new DK2Configuration(
-                CHUNK_SIZE,
-                LEAF_MIN_CAPACITY,
-                INTERNAL_MIN_CAPACITY,
-                INTERNAL_MAX_CAPACITY
-        );
-
-        bMatrix = new BMatrixBuilder().buildDynamic(K, D, T, config, dict, tripleProvider);
-
+        bMatrix = new BMatrix(k, t, config);
         factory = new QueryFactory(dict);
         processor = new QueryProcessor(bMatrix);
-        decoder = new TripleDecoder(dict);
     }
 
     public List<Triple> query(String s, String p, String o) {
-        return decoder.decode(processor.process(factory.fromTriple(s, p, o)));
+        try {
+            Query tripleQuery = factory.fromTriple(s, p, o);
+            List<EncodedTriple> queryResults = processor.process(tripleQuery);
+            return TripleDecoder.decode(queryResults, dict);
+
+        } catch (TripleCodingException ex) {
+            return Collections.emptyList();
+        }
     }
+
     public List<Triple> query(String query) {
-        return decoder.decode(processor.process(factory.fromSparql(query)));
+        try {
+            Query sparqlQuery = factory.fromSparql(query);
+            List<EncodedTriple> queryResults = processor.process(sparqlQuery);
+            return TripleDecoder.decode(queryResults, dict);
+
+        } catch (TripleCodingException ex) {
+            return Collections.emptyList();
+        }
     }
-    public Boolean create(Triple t) {
+
+    public boolean create(Triple t) throws TripleAlreadyExistsException {
+        try {
+            register(t);
+            EncodedTriple encoded = encode(t);
+            bMatrix.add(
+                    (int) encoded.s(),
+                    (int) encoded.p(),
+                    (int) encoded.o()
+            );
+            return true;
+
+        } catch (Exception ex) {
+            unregister(t);
+            throw ex;
+        }
+    }
+
+    public Boolean delete(Triple t) throws TripleNotFoundException {
+        EncodedTriple encoded = encode(t);
+        bMatrix.delete(
+                (int) encoded.s(),
+                (int) encoded.p(),
+                (int) encoded.o()
+        );
+        unregister(t);
         return true;
     }
-    public Boolean update(Triple t) {
-        return true;
+
+    public Boolean update(Triple oldT, Triple newT) throws  TripleNotFoundException, TripleAlreadyExistsException {
+        try {
+            EncodedTriple encodedOld = encode(oldT);
+            register(newT);
+            EncodedTriple encodedNew = encode(newT);
+            bMatrix.update(
+                    (int) encodedOld.s(),
+                    (int) encodedOld.p(),
+                    (int) encodedOld.o(),
+                    (int) encodedNew.s(),
+                    (int) encodedNew.p(),
+                    (int) encodedNew.o()
+            );
+            unregister(oldT);
+            return true;
+
+        } catch (Exception ex) {
+            unregister(newT);
+            throw ex;
+        }
     }
-    public Boolean delete(Triple t) {
-        return true;
+
+    private EncodedTriple encode(Triple t) throws TripleCodingException {
+        return new EncodedTriple(
+                dict.encodeSO((String) t.s().value()),
+                dict.encodeP((String) t.p().value()),
+                dict.encodeSO((String) t.o().value())
+        );
+    }
+
+    private void register(Triple t) {
+        System.out.println("Registering " + t);
+        dict.registerSO((String) t.s().value(), false);
+        dict.registerP((String) t.p().value());
+        dict.registerSO((String) t.o().value(), t.o().isLiteral());
+    }
+
+    private void unregister(Triple t) {
+        dict.unregisterSO((String) t.s().value());
+        dict.unregisterP((String) t.p().value());
+        dict.unregisterSO((String) t.o().value());
     }
 
     @Override

@@ -16,8 +16,10 @@ public class InternalNode extends Node {
         return entries.size();
     }
     public List<Entry> entries() { return entries; }
-    public void add(Node node) {
-        assert size() < maxCapacity();
-        entries.add(new Entry(node));
+    public void add(Node node, int index) {
+        entries.add(index, new Entry(node));
+    }
+    public void remove(Node node) {
+        entries.remove(node.indexInParent());
     }
 }

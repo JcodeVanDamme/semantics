@@ -1,35 +1,99 @@
 package com.github.jcodevandamme.semantics.rdf.bmatrix;
 
 import com.github.jcodevandamme.semantics.rdf.model.Cell;
+import com.github.jcodevandamme.semantics.rdf.model.EncodedTriple;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
-import com.github.jcodevandamme.semantics.rdf.structure.index.PredicateIndex;
+import com.github.jcodevandamme.semantics.rdf.structure.index.DynamicPredicateIndex;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.K2;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.DK2Builder;
+import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorConfiguration;
 
 import java.util.*;
 
 public class BMatrix {
 
-    private final List<Triple> triples;
-    private final PredicateIndex bp;
+    private final List<EncodedTriple> triples;
+
+    private final K2 st;
+    private final K2 ot;
+    private final DynamicPredicateIndex bp;
     private final int t;
 
-    private K2 st;
-    private K2 ot;
-
-    public BMatrix(List<Triple> triples, K2 st, K2 ot, PredicateIndex bp, int t) {
-        this.triples = triples;
-        this.st = st;
-        this.ot = ot;
-        this.bp = bp;
+    public BMatrix(int k, int t, DynamicBitVectorConfiguration config) {
+        this.triples = new ArrayList<>();
         this.t = t;
+
+        bp = new DynamicPredicateIndex();
+        st = DK2Builder.build(config, k);
+        ot = DK2Builder.build(config, k);
     }
 
-    public boolean spo(int s, int p, int o) {
-        int lPredicateBound = bp.select(true, p);
-        int uPredicateBound = bp.select(true, p + 1) - 1;
+    public boolean add(int s, int p, int o) throws TripleAlreadyExistsException {
+        System.out.println("BMATRIX ADD");
+        if (spoQuery(s, p, o)) {
+            throw new TripleAlreadyExistsException();
+        }
 
-        List<Integer> triples = st.boundedRowQuery(s, lPredicateBound, uPredicateBound);
+        int tripleIdx = getNewTripleIdx();
+        st.addEntry(s, tripleIdx);
+        ot.addEntry(o, tripleIdx);
+        bp.registerTriple(tripleIdx, p);
+        triples.add(new EncodedTriple(s, p, o));
+        return true;
+    }
 
+    private int getNewTripleIdx() {
+        int nextStCol = st.getNextAvailableColumnIndex();
+        int nextOtCol = ot.getNextAvailableColumnIndex();
+
+        if (nextStCol != nextOtCol) {
+            throw new RuntimeException("BMatrix Error: ST and OT Column Indexes have diverged.");
+        }
+        return nextStCol;
+    }
+
+    public void delete(int s, int p, int o) throws TripleNotFoundException {
+        System.out.println("BMATRIX DEL");
+        if (!spoQuery(s, p, o)) {
+            throw new TripleNotFoundException();
+        }
+        int tripleIdx = getIndexOfTriple(s, p, o);
+        st.removeEntry(s, tripleIdx);
+        ot.removeEntry(o, tripleIdx);
+        bp.deregisterTriple(tripleIdx, p);
+        triples.remove(new EncodedTriple(s, p, o));
+    }
+
+    private int getIndexOfTriple(int s, int p, int o) {
+        List<Integer> triples = bp.select1(p);
+        for (int col : triples) {
+            if (st.checkCell(s, col) && ot.checkCell(o, col)) {
+                return col;
+            }
+        }
+        throw new RuntimeException("BMatrix Error: Index of Triple not found.");
+    }
+
+    public void update(int oldS, int oldP, int oldO, int newS, int newP, int newO) throws TripleNotFoundException, TripleAlreadyExistsException {
+        if (!spoQuery(oldS, oldP, oldO)) {
+            throw new TripleNotFoundException();
+        } else if (spoQuery(newS, newP, newO)) {
+            throw new TripleAlreadyExistsException();
+        }
+
+        delete(oldS, oldP, oldO);
+        add(newS, newP, newO);
+    }
+
+    public boolean spoQuery(int s, int p, int o) {
+        List<Integer> cols = bp.select1(p);
+
+        List<Integer> triples = new ArrayList<>();
+        for (int col : cols) {
+            if (st.checkCell(s, col)) {
+                triples.add(col);
+            }
+        }
         for (int t : triples) {
             if (ot.checkCell(o, t)) {
                 return true;
@@ -37,13 +101,16 @@ public class BMatrix {
         }
         return false;
     }
-    public List<Triple> sp_(int s, int p) {
-        List<Triple> results = new ArrayList<>();
+    public List<EncodedTriple> sp_Query(int s, int p) {
+        List<EncodedTriple> results = new ArrayList<>();
 
-        int lPredicateBound = bp.select(true, p);
-        int uPredicateBound = bp.select(true, p + 1) - 1;
-
-        List<Integer> triples = st.boundedRowQuery(s, lPredicateBound, uPredicateBound);
+        List<Integer> cols = bp.select1(p);
+        List<Integer> triples = new ArrayList<>();
+        for (int col : cols) {
+            if (st.checkCell(s, col)) {
+                triples.add(col);
+            }
+        }
 
         for (int t : triples) {
             Integer res = ot.columnQuery(t);
@@ -53,14 +120,16 @@ public class BMatrix {
         }
         return results;
     }
+    public List<EncodedTriple> _poQuery(int p, int o) {
+        List<EncodedTriple> results = new ArrayList<>();
 
-    public List<Triple> _po(int p, int o) {
-        List<Triple> results = new ArrayList<>();
-
-        int lPredicateBound = bp.select(true, p);
-        int uPredicateBound = bp.select(true, p + 1) - 1;
-
-        List<Integer> triples = ot.boundedRowQuery(o, lPredicateBound, uPredicateBound);
+        List<Integer> cols = bp.select1(p);
+        List<Integer> triples = new ArrayList<>();
+        for (int col : cols) {
+            if (ot.checkCell(o, col)) {
+                triples.add(col);
+            }
+        }
 
         for (int t : triples) {
             Integer res = st.columnQuery(t);
@@ -70,9 +139,8 @@ public class BMatrix {
         }
         return results;
     }
-
-    public List<Triple> s_o(int s, int o) {
-        List<Triple> results = new ArrayList<>();
+    public List<EncodedTriple> s_oQuery(int s, int o) {
+        List<EncodedTriple> results = new ArrayList<>();
 
         List<Integer> objects = ot.rowQuery(o);
 
@@ -94,44 +162,42 @@ public class BMatrix {
         }
         return results;
     }
-
-    public List<Triple> s__(int s) {
-        List<Triple> results = new ArrayList<>();
+    public List<EncodedTriple> s__Query(int s) {
+        List<EncodedTriple> results = new ArrayList<>();
 
         List<Integer> subjectMatches = st.rowQuery(s);
 
         for (int t : subjectMatches) {
             Integer o = ot.columnQuery(t);
             if (o != null) {
-                int p = bp.rank(true, t);
-                results.add(new Triple(s, p, o));
+                int p = bp.rank1(t);
+                results.add(new EncodedTriple(s, p, o));
             }
         }
         return results;
     }
-
-    public List<Triple> __o(int o) {
-        List<Triple> results = new ArrayList<>();
+    public List<EncodedTriple> __oQuery(int o) {
+        List<EncodedTriple> results = new ArrayList<>();
 
         List<Integer> objectMatches = ot.rowQuery(o);
 
         for (int t : objectMatches) {
             Integer s = st.columnQuery(t);
             if (s != null) {
-                int p = bp.rank(true, t);
-                results.add(new Triple(s, p, o));
+                int p = bp.rank1(t);
+                results.add(new EncodedTriple(s, p, o));
             }
         }
         return results;
     }
+    public List<EncodedTriple> _p_Query(int p) {
+        List<EncodedTriple> results = new ArrayList<>();
+        List<Integer> cols = bp.select1(p);
 
-    public List<Triple> _p_(int p) {
-        List<Triple> results = new ArrayList<>();
-
-        int lPredicateBound = bp.select(true, p);
-        int uPredicateBound = bp.select(true, p + 1) - 1;
-
-        List<Cell> subjects = st.boundedRangeQuery(lPredicateBound, uPredicateBound);
+        List<Cell> subjects = new ArrayList<>();
+        for (int col : cols) {
+            subjects.addAll(st.wholeRowQuery(col));
+        }
 
         if (subjects.size() <= t) {
 
@@ -142,7 +208,12 @@ public class BMatrix {
                 }
             }
         } else {
-            List<Cell> objects = ot.boundedRangeQuery(lPredicateBound, uPredicateBound);
+            List<Cell> objects = new ArrayList<>();
+            for (int col : cols) {
+                objects.addAll(ot.wholeRowQuery(col));
+            }
+
+
             subjects.sort(Comparator.comparingInt(Cell::col));
             objects.sort(Comparator.comparingInt(Cell::col));
 
@@ -153,7 +224,7 @@ public class BMatrix {
                 Cell oCell = objects.get(oi);
 
                 if (sCell.col() == oCell.col()) {
-                    results.add(new Triple(sCell.row(), p, oCell.row()));
+                    results.add(new EncodedTriple(sCell.row(), p, oCell.row()));
                     si++;
                     oi++;
 
@@ -165,10 +236,10 @@ public class BMatrix {
                 }
             }
         }
+        results.sort(Comparator.comparingInt(t -> (int) t.s()));
         return results;
     }
-
-    public List<Triple> ___() {
+    public List<EncodedTriple> ___Query() {
         return triples;
     }
 
@@ -180,7 +251,7 @@ public class BMatrix {
             .append("Triples")
             .append(" -------------------------\n");
 
-        for (Triple t : triples) {
+        for (EncodedTriple t : triples) {
             int s = (int) t.s();
             int p = (int) t.p();
             int o = (int) t.o();
@@ -202,10 +273,7 @@ public class BMatrix {
             .append(" ---------------------------\n")
             .append(ot).append("\n");
 
-        strb.append("---------------------------- ")
-            .append("BP")
-            .append(" ---------------------------\n")
-            .append(bp).append("\n");
+        strb.append(bp).append("\n");
 
         return strb.toString();
     }

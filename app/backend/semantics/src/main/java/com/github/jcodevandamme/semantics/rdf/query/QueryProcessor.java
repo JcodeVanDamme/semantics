@@ -1,6 +1,7 @@
 package com.github.jcodevandamme.semantics.rdf.query;
 
 import com.github.jcodevandamme.semantics.rdf.bmatrix.BMatrix;
+import com.github.jcodevandamme.semantics.rdf.model.EncodedTriple;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 
 import java.util.ArrayList;
@@ -9,38 +10,40 @@ import java.util.List;
 public class QueryProcessor {
 
     private final BMatrix bMatrix;
+
     public QueryProcessor(BMatrix bMatrix) {
         this.bMatrix = bMatrix;
     }
-    public List<Triple> process(Query query) {
+
+    public List<EncodedTriple> process(Query query) {
         if (query instanceof TripleQuery) {
             return processTripleQuery((TripleQuery) query);
         }
         throw new IllegalStateException("Unhandled Query Type: " + query.toString());
     }
 
-    private List<Triple> processTripleQuery(TripleQuery q) {
+    private List<EncodedTriple> processTripleQuery(TripleQuery q) {
         switch (type(q)) {
             case SPO:
-                if (bMatrix.spo(q.s(), q.p(), q.o())) {
-                    return new ArrayList<>(List.of(new Triple(q.s(), q.p(), q.o())));
+                if (bMatrix.spoQuery(q.s(), q.p(), q.o())) {
+                    return new ArrayList<>(List.of(new EncodedTriple(q.s(), q.p(), q.o())));
                 } else {
                     return new ArrayList<>();
                 }
             case SP_:
-                return bMatrix.sp_(q.s(), q.p());
+                return bMatrix.sp_Query(q.s(), q.p());
             case S_O:
-                return bMatrix.s_o(q.s(), q.o());
+                return bMatrix.s_oQuery(q.s(), q.o());
             case _PO:
-                return bMatrix._po(q.p(), q.o());
+                return bMatrix._poQuery(q.p(), q.o());
             case S__:
-                return bMatrix.s__(q.s());
+                return bMatrix.s__Query(q.s());
             case _P_:
-                return bMatrix._p_(q.p());
+                return bMatrix._p_Query(q.p());
             case __O:
-                return bMatrix.__o(q.o());
+                return bMatrix.__oQuery(q.o());
             case ___:
-                return bMatrix.___();
+                return bMatrix.___Query();
             default:
                 throw new IllegalStateException("Unknown Query Type: " + type(q));
         }

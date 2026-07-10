@@ -1,0 +1,24 @@
+<http://place.org/DCC20>
+    <http://place.org/heldOn> <http://place.org/SLakeCity> ;
+    <http://place.org/hasTopic> "Text comp." , "Video cod." .
+
+<http://place.org/SLakeCity>
+    <http://place.org/capitalOf> <http://place.org/Utah> .
+
+<http://person.org/GNavarro>
+    <http://person.org/attends> <http://place.org/DCC20> ;
+    <http://person.org/livesIn> <http://place.org/Chile> ;
+    <http://person.org/expertIn> "Text comp." .
+
+<http://person.org/TGagie>
+    <http://person.org/attends> <http://place.org/DCC20> ;
+    <http://person.org/livesIn> <http://place.org/Canada> ;
+    <http://person.org/expertIn> "Text comp." .
+
+<http://person.org/ABovik>
+    <http://person.org/attends> <http://place.org/DCC20> ;
+    <http://person.org/livesIn> <http://place.org/US> .
+
+<http://person.org/GSullivan>
+    <http://person.org/attends> <http://place.org/DCC20> ;
+    <http://person.org/livesIn> <http://place.org/US> .

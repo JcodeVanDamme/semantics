@@ -1,59 +1,136 @@
 package com.github.jcodevandamme.semantics.rdf.dictionary;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TripleDictionary {
 
-    private final HashMap<Integer, String> soDecoding;
-    private final HashMap<String, Integer> soEncoding;
+    private final HashMap<Integer, DictEntry> soDecoding;
+    private final HashMap<Integer, DictEntry> pDecoding;
 
-    private final HashMap<Integer, String> pDecoding;
+    private final HashMap<String, Integer> soEncoding;
     private final HashMap<String, Integer> pEncoding;
 
-    private int soID;
-    private int pID;
+    private final List<Integer> soReferences;
+    private final List<Integer> pReferences;
+
+    private int currentSoID;
+    private int currentPID;
+
+    private final List<Integer> freedSoIDs;
+    private final List<Integer> freedPIDs;
+
     public TripleDictionary() {
         soDecoding = new HashMap<>();
         soEncoding = new HashMap<>();
         pDecoding = new HashMap<>();
         pEncoding = new HashMap<>();
 
-        soID = 0;
-        pID = 0;
+        soReferences = new ArrayList<>();
+        pReferences = new ArrayList<>();
+
+        currentSoID = 0;
+        freedSoIDs = new ArrayList<>();
+
+        currentPID = 0;
+        freedPIDs = new ArrayList<>();
     }
 
-    public void registerSO(String value) {
-        int id = soID++;
+    public void registerSO(String value, boolean isLiteral) {
+        Integer id = soEncoding.get(value);
+        if (id != null) {
+            int currentRefCount = soReferences.get(id);
+            soReferences.set(id, currentRefCount + 1);
+            return;
+        }
+        if (!freedSoIDs.isEmpty()) {
+            id = freedSoIDs.removeFirst();
+            soReferences.set(id, 1);
+        } else {
+            id = currentSoID++;
+            soReferences.add(1);
+        }
+        DictEntry entry = new DictEntry(value, isLiteral);
         soEncoding.put(value, id);
-        soDecoding.put(id, value);
+        soDecoding.put(id, entry);
     }
 
     public void registerP(String value) {
-        int id = pID++;
+        Integer id = pEncoding.get(value);
+        if (id != null) {
+            int currentRefCount = pReferences.get(id);
+            pReferences.set(id, currentRefCount + 1);
+            return;
+        }
+        if (!freedPIDs.isEmpty()) {
+            id = freedPIDs.removeFirst();
+            pReferences.set(id, 1);
+        } else {
+            id = currentPID++;
+            pReferences.add(1);
+        }
+        DictEntry entry = new DictEntry(value, false);
         pEncoding.put(value, id);
-        pDecoding.put(id, value);
+        pDecoding.put(id, entry);
     }
 
-    public int encodeSO(String string) {
+    public void unregisterSO(String value) {
+        Integer id = soEncoding.get(value);
+        if (id == null) {
+            return;
+        }
+
+        int currentRefCount = soReferences.get(id) - 1;
+
+        if (currentRefCount <= 0) {
+            soEncoding.remove(value);
+            soDecoding.remove(id);
+            freedSoIDs.add(id);
+        }
+        soReferences.set(id, currentRefCount);
+    }
+    public void unregisterP(String value) {
+        Integer id = pEncoding.get(value);
+        if (id == null) {
+            return;
+        }
+
+        int currentRefCount = pReferences.get(id) - 1;
+
+        if (currentRefCount <= 0) {
+            pEncoding.remove(value);
+            pDecoding.remove(id);
+            freedPIDs.add(id);
+        }
+        pReferences.set(id, currentRefCount);
+    }
+
+    public int encodeSO(String string) throws TripleCodingException {
         Integer id = soEncoding.get(string);
-        if (id == null) throw new IllegalStateException("Unknown SO String: " + string);
+        if (id == null) throw new TripleCodingException("Unknown SO String: " + string);
         return id;
     }
-    public String decodeSO(int id) {
-        String string = soDecoding.get(id);
-        if (string == null) throw new IllegalStateException("Unknown SO ID: " + id);
+    public String decodeSO(int id) throws TripleCodingException {
+        String string = soDecoding.get(id).value();
+        if (string == null) throw new TripleCodingException("Unknown SO ID: " + id);
         return string;
     }
-    public int encodeP(String string) {
+    public int encodeP(String string) throws TripleCodingException {
         Integer id = pEncoding.get(string);
-        if (id == null) throw new IllegalStateException("Unknown P String: " + string);
+        if (id == null) throw new TripleCodingException("Unknown P String: " + string);
         return id;
     }
-    public String decodeP(int id) {
-        String string = pDecoding.get(id);
-        if (string == null) throw new IllegalStateException("Unknown P ID: " + id);
+    public String decodeP(int id) throws TripleCodingException {
+        String string = pDecoding.get(id).value();
+        if (string == null) throw new TripleCodingException("Unknown P ID: " + id);
         return string;
+    }
+    public boolean isLiteral(int id) {
+        DictEntry entry = soDecoding.get(id);
+        if (entry == null) throw new TripleCodingException("Unknown SO ID: " + id);
+        return entry.isLiteral();
     }
 
     @Override
@@ -65,14 +142,28 @@ public class TripleDictionary {
             .append(" ------------------------\n");
 
         strb.append("Subjects / Objects:\n");
-        for (Map.Entry<Integer, String> e : soDecoding.entrySet()) {
+        for (Map.Entry<Integer, DictEntry> e : soDecoding.entrySet()) {
             strb
-                    .append(e.getKey()).append(" - ").append(e.getValue()).append("\n");
+                    .append("Id: ")
+                    .append(e.getKey())
+                    .append(" | Ref: ")
+                    .append(soReferences.get(e.getKey()))
+                    .append(" | Literal: ")
+                    .append(e.getValue().isLiteral().toString())
+                    .append("\n")
+                    .append(e.getValue().value())
+                    .append("\n");
         }
         strb.append("\nPredicates:\n");
-        for (Map.Entry<Integer, String> e : pDecoding.entrySet()) {
+        for (Map.Entry<Integer, DictEntry> e : pDecoding.entrySet()) {
             strb
-                    .append(e.getKey()).append(" - ").append(e.getValue()).append("\n");
+                    .append("Id: ")
+                    .append(e.getKey())
+                    .append(" | Ref: ")
+                    .append(soReferences.get(e.getKey()))
+                    .append("\n")
+                    .append(e.getValue().value())
+                    .append("\n");
         }
         return strb.toString();
     }

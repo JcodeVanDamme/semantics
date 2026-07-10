@@ -1,7 +1,7 @@
 package com.github.jcodevandamme.semantics.rdf.structure.tree.k2;
 
 import com.github.jcodevandamme.semantics.rdf.model.Cell;
-import com.github.jcodevandamme.semantics.rdf.structure.bitstring.SuxBitString;
+import com.github.jcodevandamme.semantics.rdf.structure.bitstring.RoaringBitString;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,7 +61,7 @@ public class K2TreeBuilder {
         }
         // Skip Addition for the Root Node
         if (!skipBit) {
-            // Set next Bit in T to 1 if a matching Cell was found; else set Bit to 0
+            // Set next Bit in T to 1 if a matching Cell was found; else setBit Bit to 0
             setT(matrixSize, match);
         }
         // Break Subdivision Process for Empty Matrices
@@ -112,8 +112,8 @@ public class K2TreeBuilder {
                 tTemp.addAll(bits);
             }
         }
-        SuxBitString t = new SuxBitString(tTemp);
-        SuxBitString l = new SuxBitString(lTemp);
+        RoaringBitString t = new RoaringBitString(tTemp);
+        RoaringBitString l = new RoaringBitString(lTemp);
         return new K2Tree(k,matrixSize, t, l);
     }
 

@@ -1,0 +1,28 @@
+@prefix ex: <http://example.org/> .
+
+# --- Places & Conferences ---
+ex:DCC20
+    ex:heldOn ex:SLakeCity ;
+    ex:hasTopic "Text comp." , "Video cod." .
+
+ex:SLakeCity
+    ex:capitalOf ex:Utah .
+
+# --- People ---
+ex:GNavarro
+    ex:attends ex:DCC20 ;
+    ex:livesIn ex:Chile ;
+    ex:expertIn "Text comp." .
+
+ex:TGagie
+    ex:attends ex:DCC20 ;
+    ex:livesIn ex:Canada ;
+    ex:expertIn "Text comp." .
+
+ex:ABovik
+    ex:attends ex:DCC20 ;
+    ex:livesIn ex:US .
+
+ex:GSullivan
+    ex:attends ex:DCC20 ;
+    ex:livesIn ex:US .
