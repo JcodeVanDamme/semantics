@@ -1,6 +1,3 @@
-<http://example.org/s10>
-        <http://example.org/p10>  <http://example.org/o10> .
-
 <http://example.org/s9>
         <http://example.org/p9>  <http://example.org/o9> .
 

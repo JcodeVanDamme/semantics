@@ -78,6 +78,7 @@ public class BMatrix {
         if (!spoQuery(oldS, oldP, oldO)) {
             throw new TripleNotFoundException();
         } else if (spoQuery(newS, newP, newO)) {
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             throw new TripleAlreadyExistsException();
         }
 

@@ -62,7 +62,7 @@ public class TripleService {
                 original.o().value(),
                 original.o().isLiteral()
         );
-        TripleDto update = request.original();
+        TripleDto update = request.update();
         Triple newT = new Triple(
                 update.s().value(),
                 update.p().value(),
