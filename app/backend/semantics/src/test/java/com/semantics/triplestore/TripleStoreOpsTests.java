@@ -39,7 +39,7 @@ public class TripleStoreOpsTests {
     @Test
     public void create_invalid_none() {
         Triple t = new Triple("DCC20", "has topic", "Text comp.");
-        assertThrows(TripleAlreadyExistsException.class, () -> tripleStore.create(t));
+        assertFalse(tripleStore.create(t));
     }
     @Test
     public void update_valid_tripleUpdated() {

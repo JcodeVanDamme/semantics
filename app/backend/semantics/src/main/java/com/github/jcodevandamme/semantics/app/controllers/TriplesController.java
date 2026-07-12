@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/triples")
 public class TriplesController {
@@ -29,7 +30,9 @@ public class TriplesController {
 
     @PostMapping
     public synchronized HttpStatus createTriple(@Validated @RequestBody TripleDto triple) throws TripleAlreadyExistsException, IOException {
-        service.addTriple(triple);
+        if (!service.addTriple(triple)) {
+            throw new TripleAlreadyExistsException();
+        };
         return HttpStatus.CREATED;
     }
     @GetMapping
@@ -58,13 +61,17 @@ public class TriplesController {
 
     @PutMapping
     public synchronized HttpStatus updateTriple(@Validated @RequestBody PutTriplesRequest request) throws TripleNotFoundException, TripleAlreadyExistsException, IOException {
-        service.updateTriple(request);
+        if (!service.updateTriple(request)) {
+            throw new TripleNotFoundException();
+        }
         return HttpStatus.OK;
     }
 
     @DeleteMapping
     public synchronized HttpStatus deleteTriple(@Validated @RequestBody TripleDto triple) throws TripleNotFoundException, IOException {
-        service.deleteTriple(triple);
+       if (!service.deleteTriple(triple)) {
+           throw new TripleNotFoundException();
+       }
         return HttpStatus.OK;
     }
 }

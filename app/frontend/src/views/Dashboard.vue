@@ -1,657 +1,261 @@
 <template>
   <MainLayout>
-    <!-- HEADER -->
-    <div class="overview-section">
+    <HeaderOverview title="Regional Overview" description="Gabba" />
 
-      <h1>Regional Overview</h1>
-      <p>
-        Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
-        sed diam nonumy eirmod tempor invidunt ut labore et dolore.
-      </p>
-
-    </div>
-
-    <!-- TOP SECTION -->
-    <div class="dashboard-top">
-
-      <!-- STATES TABLE -->
-      <div class="states-table">
-        
-        <div class="section-title">
-          STATES
+    <div class="dashboard-top flex">
+      <div class="table-header card flex">
+        <div class="space-below">
+          <h2>States</h2>
+          <div class="divider accent"></div>
         </div>
+        <StateTable :states="states" :selected-state="selectedState" @select-state="selectState" />
+        <div class="spacer"></div>
+      </div>
 
-        <table>
+      <div v-if="!selectedState" class="dashboard-side-cards">
+        <div class="stats-card card">
+          <h3>TOTAL STATES</h3>
+          <span>{{ states.length }}</span>
+        </div>
+        <div class="stats-card card">
+          <h3>STATE CHANGES</h3>
+          <div class="delta">
+            <span>-00</span>
+            <TrendingUp />
+          </div>
+        </div>
+        <button class="button accent" @click="showFoundModal = true">
+          <Flag :size="18" /> FOUND STATE
+        </button>
+      </div>
+
+      <div v-if="selectedState" class="state-details-panel">
+        <div class="details-header">
+          <span>{{ selectedState.name }}</span>
+          <button @click="closePanel"><X :size="16" /></button>
+        </div>
+        <div class="mediatized-title">MEDIATIZATED STATES</div>
+        <table class="mini-table">
           <thead>
             <tr>
               <th>NAME</th>
-              <th>RULER</th>
-              <th>MED. STATES</th>
-              <th>REGIONS</th>
-              <th>POPULATION</th>
               <th>STATE TYPE</th>
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="(state, index) in states"
-              :key="index"
-              @click="selectState(state)"
-              :class="{ selected: selectedState?.name === state.name }">
-
-              <td>{{ state.name }}</td>
-              <td>
-                <div>{{ state.ruler }}</div>
-                <small>{{ state.title }}</small>
-              </td>
-              <td>{{ state.mediatizedStates }}</td>
-              <td>{{ state.regions }}</td>
-              <td>{{ state.population }}</td>
-              <td>{{ state.type }}</td>
-
+            <tr v-for="(item, index) in selectedState.mediatizedList" :key="index">
+              <td>{{ item.name }}</td>
+              <td>{{ item.type }}</td>
             </tr>
           </tbody>
         </table>
-      </div>
-
-      <!-- RIGHT SIDE PANEL -->
-    <div v-if="!selectedState" class="dashboard-side-cards">
-      
-      <div class="stats-card">
-        <h3>TOTAL STATES</h3>
-        <span>{{ states.length }}</span>
-      </div>
-
-      <div class="stats-card">
-        <h3>STATE CHANGES</h3>
-        <span>-00 ↘</span>
-      </div>
-
-      <button class="found-btn" @click="showFoundModal = true" >
-        <Flag :size="18" />
-        FOUND STATE
-      </button>
-    </div>
-
-    <div v-if="selectedState" class="state-details-panel">
-      
-      <!-- HEADER -->
-      <div class="details-header">
-          <span>{{ selectedState.name }}</span>
-          <button @click="closePanel">
-            <X :size="16" />
-          </button>
-      </div>
-
-      <!-- CONTENT -->
-      <div class="mediatized-title">
-        MEDIATIZATED STATES
-      </div>
-      
-      <table class="mini-table">
-        <thead>
-          <tr>
-            <th>NAME</th>
-            <th>STATE TYPE</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(item, index) in selectedState.mediatizedList" :key="index">
-            <td>{{ item.name }}</td>
-            <td>{{ item.type }}</td>
-          </tr>
-        </tbody>
-      </table>
-      
-      <!-- BUTTONS -->
-      <button class="action-btn" @click="changeRuler">
-        <Crown :size="18" />
-        CHANGE RULER
-      </button>
-      <button class="action-btn" @click="mediatizate">
-        <Flag :size="18" />
-        MEDIATIZATE
-      </button>
-    </div></div>
-
-    <!-- LATEST EVENT -->
-    <div class="latest-event">
-      <div class="event-header">
-        
-        <div class="section-title">
-          LATEST EVENT
-        </div>
-        <button class="history-btn" @click="showHistoryModal = true">
-          VIEW HISTORY
-        </button>
-
-      </div>
-      <p class="event-description">
-        {{ latestEvent }}
-      </p>
-
-      <table>
-        <thead>
-          <tr>
-            <th>SUBJECT</th>
-            <th>PREDICATE</th>
-            <th>OBJECT</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(event, index) in eventTriples" :key="index">
-            <td>{{ event.subject }}</td>
-            <td>{{ event.predicate }}</td>
-            <td>{{ event.object }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- =====================================
-     FOUND MODAL
-===================================== -->
-    <div v-if="showFoundModal" class="modal-overlay">
-      <div class="modal-box found-modal">
-        <div class="modal-header">
-          
-          <div>
-            <h2>STATE FOUNDING:</h2>
-            <p>
-              Fill out the Fields below in order
-              for your new State to be created
-            </p>
-          </div>
-
-          <button @click="showFoundModal = false">
-            <X :size="18" />
-          </button>
-        
-        </div>
-        <div class="modal-form">
-          
-          <input v-model="newState.name" placeholder="Statename"/>
-          <input v-model="newState.ruler" placeholder="Ruler"/>
-          <input v-model="newState.population" placeholder="Population"/>
-          <input v-model="newState.type" placeholder="Statetype"/>
-          <button class="modal-action-btn" @click="foundState">
-            <Flag :size="18" />
-            FOUND STATE
-          </button>
-        
-        </div>
+        <button class="action-btn" @click="changeRuler"><Crown :size="18" /> CHANGE RULER</button>
+        <button class="action-btn" @click="mediatizate"><Flag :size="18" /> MEDIATIZATE</button>
       </div>
     </div>
 
-    <!-- =====================================
-        RULER MODAL
-    ===================================== -->
-
-    <div v-if="showRulerModal" class="modal-overlay">
-      <div class="modal-box">
-        <div class="modal-header">
-          
-          <div>
-            <h2>RULER CHANGE:</h2>
-            <p>
-              Select the new Ruler
-              for your selected State
-            </p>
-          </div>
-
-          <button @click="showRulerModal = false">
-            <X :size="18" />
+    <div class="table-header card">
+      <div>
+        <div class="event-header">
+          <h2>Latest Event</h2>
+          <button class="button accent minimize" @click="showHistoryModal = true">
+            View History
           </button>
-
         </div>
-        
-        <input v-model="rulerSearch" class="modal-search" placeholder="Search by Name or Title"/>
-        
-        <div class="modal-list">
-         
-          <div
-            v-for="(ruler, index) in filteredRulers"
-            :key="index"
-            class="modal-row"
-            :class="{
-              selected:
-              selectedRuler?.name === ruler.name
-            }"
-            @click="selectedRuler = ruler"
-          >
-            <div>{{ ruler.name }}</div>
-            <small>{{ ruler.title }}</small>
-          </div>
-
-        </div>
-        
-        <button class="modal-action-btn" @click="applyRulerChange">
-          <Crown :size="18" />
-          CHANGE RULER
-        </button>
+        <div class="divider accent"></div>
+        <p class="event-description">{{ latestEvent }}</p>
       </div>
+      <!-- TRIPLES TABLE COMPONENT -->
+      <TriplesTable :triples="eventTriples" @select-row="handleTripleSelect" />
     </div>
 
-    <!-- =====================================
-        MEDIATIZE MODAL
-    ===================================== -->
-    <div v-if="showMediatizeModal" class="modal-overlay">
-      <div class="modal-box large-modal">
-        <div class="modal-header">
-          
-          <div>
-            <h2>MEDIATIZATION:</h2>
-            <p>
-              Select the target State
-              this one will be mediatized into
-            </p>
-          </div>
+    <!-- MODAL OVERLAYS -->
+    <FoundStateModal
+      v-if="showFoundModal"
+      @close="showFoundModal = false"
+      @submit="handleFoundStateSubmit"
+    />
 
-          <button @click="showMediatizeModal = false">
-            <X :size="18" />
-          </button>
+    <ChangeRulerModal
+      v-if="showRulerModal"
+      :rulers="rulers"
+      @close="showRulerModal = false"
+      @submit="handleChangeRulerSubmit"
+    />
 
-        </div>
+    <MediatizeModal
+      v-if="showMediatizeModal"
+      :states="states"
+      @close="showMediatizeModal = false"
+      @submit="handleMediatizeSubmit"
+    />
 
-      <input v-model="mediatizeSearch" class="modal-search" placeholder="Search by Statename, Ruler or Statetype"/>
-
-      <table class="modal-table">
-        <thead>
-          <tr>
-            <th>NAME</th>
-            <th>RULER</th>
-            <th>MED. STATES</th>
-            <th>REGIONS</th>
-            <th>POPULATION</th>
-            <th>STATE TYPE</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="(state, index) in filteredStates"
-            :key="index"
-            @click="selectedMediatizeTarget = state"
-            :class="{
-              selected:
-              selectedMediatizeTarget?.name === state.name
-            }"
-          >
-            <td>{{ state.name }}</td>
-            <td>{{ state.ruler }}</td>
-            <td>{{ state.mediatizedStates }}</td>
-            <td>{{ state.regions }}</td>
-            <td>{{ state.population }}</td>
-            <td>{{ state.type }}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <button class="modal-action-btn" @click="applyMediatization">
-        <Flag :size="18" />
-        MEDIATIZATE
-      </button>
-    </div>
-  </div>
-</MainLayout>
-<HistoryModal v-if="showHistoryModal" @close="showHistoryModal = false"/>
+    <HistoryModal v-if="showHistoryModal" @close="showHistoryModal = false" />
+  </MainLayout>
 </template>
 
 <script setup lang="ts">
-
-/* =========================================
-   IMPORTS
-========================================= */
-
-import {
-  ref,
-  computed
-} from 'vue'
-
+import { ref } from 'vue'
 import MainLayout from '../layouts/MainLayout.vue'
-
 import HistoryModal from '../components/HistoryModal.vue'
-
-import {
-  Crown,
-  Flag,
-  X
-} from 'lucide-vue-next'
-
+import FoundStateModal from '../components/new/FoundStateModal.vue'
+import ChangeRulerModal from '../components/new/ChangeRulerModal.vue'
+import MediatizeModal from '../components/new/MediatizeModal.vue'
+import TriplesTable from '@/components/new/TripleTable.vue'
+import StateTable from '@/components/new/StateTable.vue'
+import { Crown, Flag, X, TrendingUp, TrendingDown } from 'lucide-vue-next'
 import { api } from '../services/api'
-
-import {
-  useSemanticStore
-} from '../store/semanticStore'
-
-/* =========================================
-   STORE
-========================================= */
+import { useSemanticStore } from '../store/semanticStore'
+import HeaderOverview from '@/components/HeaderOverview.vue'
 
 const store = useSemanticStore()
-
 const states = store.states
 
-const history = store.history
-
-/* =========================================
-   MODALS
-========================================= */
-
 const showHistoryModal = ref(false)
-
 const showFoundModal = ref(false)
-
 const showRulerModal = ref(false)
-
 const showMediatizeModal = ref(false)
-
-/* =========================================
-   SELECTION
-========================================= */
 
 const selectedState = ref<any>(null)
 
-/* =========================================
-   SEARCH
-========================================= */
-
-const rulerSearch = ref('')
-
-const mediatizeSearch = ref('')
-
-/* =========================================
-   FOUND STATE FORM
-========================================= */
-
-const newState = ref({
-
-  name: '',
-
-  ruler: '',
-
-  population: '',
-
-  type: ''
-})
-
-/* =========================================
-   RULERS
-========================================= */
-
 const rulers = ref([
-
-  {
-    name: 'Napoleon',
-    title: 'EMPEROR'
-  },
-
-  {
-    name: 'Frederick Augustus',
-    title: 'KING'
-  },
-
-  {
-    name: 'Alexander I',
-    title: 'TSAR'
-  },
-
-  {
-    name: 'Francis II',
-    title: 'EMPEROR'
-  }
+  { name: 'Napoleon', title: 'EMPEROR' },
+  { name: 'Frederick Augustus', title: 'KING' },
+  { name: 'Alexander I', title: 'TSAR' },
+  { name: 'Francis II', title: 'EMPEROR' },
 ])
 
-const selectedRuler = ref<any>(null)
-
-/* =========================================
-   MEDIATIZATION
-========================================= */
-
-const selectedMediatizeTarget = ref<any>(null)
-
-/* =========================================
-   EVENTS
-========================================= */
-
-const latestEvent = ref(
-  'Select a state to view events.'
-)
-
-const eventTriples = ref([
-
-  {
-    subject: 'Subject',
-    predicate: 'Predicate',
-    object: 'Object'
-  }
+const latestEvent = ref('Select a state to view events.')
+const eventTriples = ref<Array<{ subject: string; predicate: string; object: string }>>([
+  { subject: 'Subject', predicate: 'Predicate', object: 'Object' },
 ])
-
-/* =========================================
-   SELECT STATE
-========================================= */
 
 function selectState(state: any) {
-
   selectedState.value = state
-
-  latestEvent.value =
-    `${state.ruler} currently rules ${state.name}.`
-
+  latestEvent.value = `${state.ruler} currently rules ${state.name}.`
   eventTriples.value = [
-
-    {
-      subject: state.ruler,
-      predicate: 'rules',
-      object: state.name
-    },
-
-    {
-      subject: state.name,
-      predicate: 'hasPopulation',
-      object: state.population
-    }
+    { subject: state.ruler, predicate: 'rules', object: state.name },
+    { subject: state.name, predicate: 'hasPopulation', object: state.population },
   ]
 }
 
-/* =========================================
-   CLOSE PANEL
-========================================= */
-
 function closePanel() {
-
   selectedState.value = null
 }
 
-/* =========================================
-   CHANGE RULER
-========================================= */
-
 function changeRuler() {
-
-  if (!selectedState.value) {
-    return
-  }
-
-  showRulerModal.value = true
+  if (selectedState.value) showRulerModal.value = true
 }
 
-/* =========================================
-   APPLY RULER CHANGE
-========================================= */
-
-function applyRulerChange() {
-
-  if (
-    !selectedState.value ||
-    !selectedRuler.value
-  ) {
-    return
-  }
-
-  api.changeRuler(
-
-    selectedState.value.id,
-
-    selectedRuler.value.name,
-
-    selectedRuler.value.title
-  )
-
-  latestEvent.value =
-    `${selectedRuler.value.name} became ruler of ${selectedState.value.name}.`
-
+function handleChangeRulerSubmit(ruler: any) {
+  api.changeRuler(selectedState.value.id, ruler.name, ruler.title)
+  latestEvent.value = `${ruler.name} became ruler of ${selectedState.value.name}.`
   eventTriples.value = [
-
-    {
-      subject: selectedRuler.value.name,
-      predicate: 'rules',
-      object: selectedState.value.name
-    }
+    { subject: ruler.name, predicate: 'rules', object: selectedState.value.name },
   ]
-
   showRulerModal.value = false
 }
 
-/* =========================================
-   MEDIATIZE
-========================================= */
-
 function mediatizate() {
-
-  if (!selectedState.value) {
-    return
-  }
-
-  showMediatizeModal.value = true
+  if (selectedState.value) showMediatizeModal.value = true
 }
 
-/* =========================================
-   APPLY MEDIATIZATION
-========================================= */
-
-function applyMediatization() {
-
-  if (
-    !selectedState.value ||
-    !selectedMediatizeTarget.value
-  ) {
-    return
-  }
-
-  api.mediatizate(
-
-    selectedState.value.id,
-
-    {
-      name:
-        selectedMediatizeTarget.value.name,
-
-      type:
-        selectedMediatizeTarget.value.type
-    }
-  )
-
-  latestEvent.value =
-    `${selectedState.value.name} mediatized ${selectedMediatizeTarget.value.name}.`
-
+function handleMediatizeSubmit(targetState: any) {
+  api.mediatizate(selectedState.value.id, { name: targetState.name, type: targetState.type })
+  latestEvent.value = `${selectedState.value.name} mediatized ${targetState.name}.`
   eventTriples.value = [
-
-    {
-      subject: selectedState.value.name,
-      predicate: 'mediatizedInto',
-      object: selectedMediatizeTarget.value.name
-    }
+    { subject: selectedState.value.name, predicate: 'mediatizedInto', object: targetState.name },
   ]
-
   showMediatizeModal.value = false
 }
 
-/* =========================================
-   FOUND STATE
-========================================= */
-
-function foundState() {
-
-  if (
-
-    !newState.value.name ||
-
-    !newState.value.ruler ||
-
-    !newState.value.population ||
-
-    !newState.value.type
-  ) {
-    return
-  }
-
-  api.foundState(
-
-    newState.value.name,
-
-    newState.value.ruler,
-
-    newState.value.population,
-
-    newState.value.type
-  )
-
-  latestEvent.value =
-    `${newState.value.name} was founded.`
-
-  eventTriples.value = [
-
-    {
-      subject: newState.value.name,
-      predicate: 'ruler',
-      object: newState.value.ruler
-    }
-  ]
-
+function handleFoundStateSubmit(payload: any) {
+  api.foundState(payload.name, payload.ruler, payload.population, payload.type)
+  latestEvent.value = `${payload.name} was founded.`
+  eventTriples.value = [{ subject: payload.name, predicate: 'ruler', object: payload.ruler }]
   showFoundModal.value = false
+}
 
-  newState.value = {
+function handleTripleSelect(triple: any) {
+  console.log('Selected semantic statement:', triple)
+}
+</script>
 
-    name: '',
+<style scoped>
+.dashboard-top {
+  display: flex;
+  flex-direction: row;
+  gap: var(--padding);
+}
 
-    ruler: '',
-
-    population: '',
-
-    type: ''
+@media (max-width: 900px) {
+  .dashboard-top {
+    flex-direction: column;
   }
 }
 
-/* =========================================
-   FILTERED RULERS
-========================================= */
+.table-header {
+  display: flex;
+  gap: 0;
+}
 
-const filteredRulers = computed(() => {
+.event-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
 
-  return rulers.value.filter((ruler) => {
+.minimize {
+  font-size: var(--base-size);
+  height: fit-content;
+  padding: 5px var(--padding);
+}
 
-    return ruler.name
-      .toLowerCase()
-      .includes(
-        rulerSearch.value.toLowerCase()
-      )
-  })
-})
+.space-below {
+  padding-bottom: var(--paddingHalf);
+}
 
-/* =========================================
-   FILTERED STATES
-========================================= */
+.stats-card {
+  gap: 0;
+  padding: var(--paddingHalf) 60px;
+  justify-content: center;
+  text-align: center;
+}
 
-const filteredStates = computed(() => {
+.stats-card h3 {
+  font-family: var(--fancyFontStyle);
+  color: var(--accentColor);
+  margin: 0;
+}
+.stats-card span {
+  font-family: var(--baseFontStyle);
+  color: var(--mainFontColor);
+  font-size: var(--text-h1);
+  font-weight: lighter;
+}
 
-  return states.value.filter((state) => {
+.dashboard-side-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--padding);
+}
 
-    return state.name
-      .toLowerCase()
-      .includes(
-        mediatizeSearch.value.toLowerCase()
-      )
-  })
-})
+.delta {
+  display: flex;
+  justify-content: center;
+}
 
-</script>
+.delta svg {
+  color: var(--accentColor);
+  width: 40px;
+  height: 40px;
+  align-self: flex-end;
+}
+
+.flex {
+  display: flex;
+  flex: 1; /* Spreads out horizontally */
+  align-self: stretch; /* Stretches vertically */
+}
+</style>

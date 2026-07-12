@@ -1,269 +1,263 @@
 <template>
-
   <MainLayout>
+    <HeaderOverview
+      title="Triple Explorer"
+      description="Query your compact RDF tree store using real-time parameter scanning."
+    />
 
-    <!-- HEADER -->
+    <div class="card">
+      <CollapsiblePanel
+        >-
 
-    <div class="overview-section">
+        <template #header>
+          <div class="icon-title accent">
+            <Search />
+            <h2 class="accent">Triple Query</h2>
+          </div>
+        </template>
 
-      <h1>Triple Explorer</h1>
+        <template #info>
+          <div class="info-content">
+            <p><strong>How Queries Work (S, P, O)</strong></p>
+            <p>
+              You can query the RDF triple store using the input fields for
+              <strong>Subject</strong>, <strong>Predicate</strong>, and <strong>Object</strong>. If
+              you leave a field completely empty, it will automatically be treated as a
+              <strong>wildcard</strong>. The system will then scan and return all available entries
+              matching that position.
+            </p>
 
-      <p>
-        Explore and filter semantic triples
-        from the shared semantic knowledge graph.
-      </p>
+            <p><strong>Handling URIs and Namespaces</strong></p>
+            <p>
+              Entering a custom URI is entirely <strong>optional</strong>. If you leave the URI
+              field blank, the system automatically falls back to our default namespace
+              <strong><i>http://semantics.rdf.system/</i></strong
+              >. However, if you choose to provide a custom URI, it must be valid (meaning it
+              requires a correctly formatted protocol like (<strong><i>http://</i></strong> or
+              <strong><i>urn:</i></strong
+              >).
+            </p>
 
-    </div>
+            <p><strong>Composition of the Final Query</strong></p>
+            <p>
+              The final URI sent to the triple store in the background is formed by automatically
+              <strong>concatenating</strong> the chosen namespace (URI field) and the actual search
+              term (input value).
+            </p>
 
-    <!-- QUERY CARD -->
+            <p><strong>Concrete Example of URI Generation:</strong></p>
+            <ul>
+              <li class="info-row">
+                <div class="info-label">Entered / Default URI:</div>
+                <div class="info-value">
+                  <strong><i>http://semantics.rdf.system/</i></strong>
+                </div>
+                <p></p>
+              </li>
 
-    <div class="query-card">
+              <li class="info-row">
+                <div class="info-label">Entered Value (Input Value):</div>
+                <div class="info-value">
+                  <strong><i>Bavaria</i></strong>
+                </div>
+                <p></p>
+              </li>
 
-      <div class="query-title">
+              <li class="info-row">
+                <div class="info-label">Resulting Final URI:</div>
+                <div class="info-value">
+                  <strong><i>http://semantics.rdf.system/Bavaria</i></strong>
+                </div>
+              </li>
+            </ul>
 
-        <Search :size="20" />
+            <p>
+              <em>Note on the Object field:</em> For the Object, you can use the toggle switch to
+              choose whether it should be treated as a <strong>URI</strong> (which follows the
+              concatenation rule above) or a <strong>Literal</strong>. Literals represent raw data
+              values like text strings or numbers and are transmitted directly to the store as-is,
+              without any namespace modifications.
+            </p>
+          </div>
+        </template>
+      </CollapsiblePanel>
 
-        TRIPLE QUERY
-
+      <div v-if="validationNote" class="note-banner">
+        {{ validationNote }}
       </div>
 
-      <!-- INPUT GRID -->
+      <div v-if="validationError || error" class="error-banner">
+        {{ validationError || error }}
+      </div>
 
       <div class="triple-grid">
+        <TripleInputGroup
+          v-model:value="subject"
+          v-model:uri="subjectUri"
+          label="Subject"
+          placeholderValue="e.g. Napoleon"
+          placeholderUri="URI"
+        />
 
-        <!-- SUBJECT -->
+        <TripleInputGroup
+          v-model:value="predicate"
+          v-model:uri="predicateUri"
+          label="Predicate"
+          placeholderValue="e.g. rules"
+          placeholderUri="URI"
+        />
 
-        <div class="query-input-group">
-
-          <div class="input-header">
-
-            <span>Subject</span>
-
-            <small>
-
-              <CircleQuestionMark :size="14" />
-
-              Insert Variable
-
-            </small>
-
-          </div>
-
-          <input
-            v-model="subject"
-            type="text"
-            placeholder="e.g. Napoleon"
-          />
-
-        </div>
-
-        <!-- PREDICATE -->
-
-        <div class="query-input-group">
-
-          <div class="input-header">
-
-            <span>Predicate</span>
-
-            <small>
-
-              <CircleQuestionMark :size="14" />
-
-              Insert Variable
-
-            </small>
-
-          </div>
-
-          <input
-            v-model="predicate"
-            type="text"
-            placeholder="e.g. rules"
-          />
-
-        </div>
-
-        <!-- OBJECT -->
-
-        <div class="query-input-group">
-
-          <div class="input-header">
-
-            <span>Object</span>
-
-            <small>
-
-              <CircleQuestionMark :size="14" />
-
-              Insert Variable
-
-            </small>
-
-          </div>
-
-          <input
-            v-model="object"
-            type="text"
-            placeholder="e.g. France"
-          />
-
-        </div>
-
+        <TripleInputGroup
+          v-model:value="object"
+          v-model:uri="objectUri"
+          v-model:mode="objectMode"
+          label="Object"
+          :hasToggle="true"
+          placeholderValue="e.g. France or '1804'"
+          placeholderUri="URI"
+        />
       </div>
-
-      <!-- BUTTON -->
 
       <div class="query-button-wrapper">
-
         <button
-          class="execute-btn"
+          class="button accent"
+          :disabled="isLoading || !!validationError"
           @click="executeQuery"
         >
-
           <ArrowDown :size="18" />
-
-          EXECUTE INQUIRY
-
+          {{ isLoading ? 'Processing...' : 'Execute Inquiry' }}
         </button>
-
       </div>
-
     </div>
 
-    <!-- RESULTS -->
-
-    <div class="results-card">
-
-      <div class="results-header">
-
-        <div class="results-title">
-
-          QUERY RESULTS:
-
-        </div>
-
-        <div class="results-count">
-
-          {{ results.length }}
-          TRIPLES
-
-        </div>
-
-      </div>
-
-      <!-- TABLE -->
-
-      <table>
-
-        <thead>
-
-          <tr>
-
-            <th>SUBJECT</th>
-
-            <th>PREDICATE</th>
-
-            <th>OBJECT</th>
-
-          </tr>
-
-        </thead>
-
-        <tbody>
-
-          <!-- RESULTS -->
-
-          <tr
-            v-for="triple in results"
-            :key="triple.id"
-          >
-
-            <td>
-              {{ triple.subject }}
-            </td>
-
-            <td>
-              {{ triple.predicate }}
-            </td>
-
-            <td>
-              {{ triple.object }}
-            </td>
-
-          </tr>
-
-          <!-- EMPTY -->
-
-          <tr v-if="results.length === 0">
-
-            <td colspan="3">
-
-              No matching triples found.
-
-            </td>
-
-          </tr>
-
-        </tbody>
-
-      </table>
-
+    <div class="card">
+      <TriplesResultsCard :triples="results" />
+      <TriplesTable :triples="results" disable-selection />
     </div>
-
   </MainLayout>
-
 </template>
 
 <script setup lang="ts">
-
-import {
-  ref
-} from 'vue'
-
-import {
-  Search,
-  CircleQuestionMark,
-  ArrowDown
-} from 'lucide-vue-next'
+import { ref, onMounted } from 'vue'
+import { Search, ArrowDown } from 'lucide-vue-next'
 
 import MainLayout from '../layouts/MainLayout.vue'
+import HeaderOverview from '../components/HeaderOverview.vue'
+import TriplesResultsCard from '../components/new/TripleResults.vue'
+import TriplesTable from '@/components/new/TripleTable.vue'
+import TripleInputGroup from '../components/new/TripleInput.vue'
+import CollapsiblePanel from '../components/new/CollapsiblePanel.vue'
 
 import { api } from '../services/api'
+import { cleanTripleForDisplay, concatUri } from '../utils/util.ts'
+import { useRdfFormValidation } from '../composables/useRdfFormValidation.ts'
 
-import {
-  type Triple
-} from '../store/semanticStore'
-
-/* =========================================
-   QUERY INPUTS
-========================================= */
-
+// Form Structural States
 const subject = ref('')
+const subjectUri = ref('')
 
 const predicate = ref('')
+const predicateUri = ref('')
 
 const object = ref('')
+const objectUri = ref('')
+const objectMode = ref<'literal' | 'uri'>('literal')
 
-/* =========================================
-   RESULTS
-========================================= */
+// Asynchronous Request UI State Handlers
+const results = ref<any[]>([])
+const isLoading = ref(false)
+const error = ref<string | null>(null)
 
-const results = ref<Triple[]>([])
+const { validationError, validationNote } = useRdfFormValidation({
+  subject,
+  subjectUri,
+  predicate,
+  predicateUri,
+  object,
+  objectUri,
+  objectMode,
+})
 
-/* =========================================
-   EXECUTE QUERY
-========================================= */
+async function executeQuery() {
+  if (validationError.value) return
 
-function executeQuery() {
+  isLoading.value = true
+  error.value = null
 
-  results.value = api.getTriples({
+  try {
+    const DEFAULT_NS = 'http://semantics.rdf.system/'
 
-    s: subject.value,
+    // Sanitize any remaining value spaces directly during parameter resolution
+    const cleanSubjectVal = subject.value.replace(/\s+/g, '')
+    const cleanPredicateVal = predicate.value.replace(/\s+/g, '')
+    const cleanObjectVal = object.value.replace(/\s+/g, '')
 
-    p: predicate.value,
+    const baseSubject = subjectUri.value.trim() || DEFAULT_NS
+    const finalSubject = concatUri(baseSubject, cleanSubjectVal)
 
-    o: object.value
-  })
+    const basePredicate = predicateUri.value.trim() || DEFAULT_NS
+    const finalPredicate = concatUri(basePredicate, cleanPredicateVal)
+
+    let finalObject = ''
+    if (objectMode.value === 'uri') {
+      const baseObject = objectUri.value.trim() || DEFAULT_NS
+      finalObject = concatUri(baseObject, cleanObjectVal)
+    } else {
+      finalObject = object.value.trim() // Keep literal spaces intact if desired, or use cleanObjectVal
+    }
+
+    const response = await api.getTriples({
+      s: finalSubject || undefined,
+      p: finalPredicate || undefined,
+      o: finalObject || undefined,
+    })
+
+    results.value = response.triples.map((triple: any, index: number) => {
+      const rawTriple = {
+        id: index,
+        subject: triple.s.value,
+        predicate: triple.p.value,
+        object: triple.o.value,
+        isLiteral: triple.o.isLiteral,
+      }
+      return cleanTripleForDisplay(rawTriple)
+    })
+  } catch (err: any) {
+    error.value = err.message || 'An error occurred while scanning the remote RDF matrix store.'
+    console.error('Query execution failed:', err)
+  } finally {
+    isLoading.value = false
+  }
 }
 
+onMounted(() => {
+  executeQuery()
+})
 </script>
+
+<style scoped>
+.triple-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  align-items: start;
+}
+
+.query-button-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 30px;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 1200px) {
+  .triple-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+</style>

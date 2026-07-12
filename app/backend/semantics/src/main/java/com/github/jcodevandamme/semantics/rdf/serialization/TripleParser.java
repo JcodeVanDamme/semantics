@@ -21,6 +21,7 @@ public class TripleParser {
 
         } catch (Exception ex) {
             System.err.println("File System Error: " + ex.getMessage());
+            ex.printStackTrace();
         }
     }
 }

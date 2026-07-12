@@ -530,15 +530,24 @@ POST
 #### Response Body
 ```json
 {
-  "count": 0,
-  "triples": [
+  "count": 1,
+  "history": [
     {
-      "action": "gabba",
-      "triple": {
-        "s": "gabba",
-        "p": "gabba",
-        "o": "gabba"
-      }
+      "action": "update",
+      "triples": [
+        {
+          "s": { "value": "gabba" },
+          "p": { "value": "rules" },
+          "o": { "value": "Anhalt", "isLiteral": false },
+          "type": "deleted"
+        },
+        {
+          "s": { "value": "gabba" },
+          "p": { "value": "rules" },
+          "o": { "value": "Saxony", "isLiteral": false },
+          "type": "added"
+        }
+      ]
     }
   ]
 }
@@ -547,14 +556,19 @@ POST
 #### Response Schema
 
 | Field | Type | Description |
-|------|------|------|
-| `count` | integer | Number of resulting Triple-Store-Actions |
-| `triples` | array | List of resulting Triple-Store-Actions |
-| `triples[].action` | string | Type of Triple-Store-Action |
-| `triples[].triple` | object | Triple affected by the Action |
-| `triples[].triple.s` | string | Triple Subject |
-| `triples[].triple.p` | string | Triple Predicate |
-| `triples[].triple.o` | string | Triple Object |
+| :--- | :--- | :--- |
+| `count` | integer | Number of logged Triple-Store-Actions |
+| `history` | array | List of logged Triple-Store-Actions |
+| `history[].action` | string | Type of Triple-Store-Action (e.g., `"update"`) |
+| `history[].triples` | array | List of Triples modified by this action |
+| `history[].triples[].s` | object | Subject of the Action Triple|
+| `history[].triples[].s.value` | string | The Value of the Subject |
+| `history[].triples[].p` | object | Predicate of the Action Triple |
+| `history[].triples[].p.value` | string | The Value of the Predicate |
+| `history[].triples[].o` | object | Object of the Action Triple |
+| `history[].triples[].o.value` | string | TThe Value of the Object (can be a URI or a literal text/number) |
+| `history[].triples[].o.isLiteral` | boolean | `true` if the object value is a literal; `false` if it is a URI|
+| `history[].triples[].type` | string | Mutation tracking direction: `"added"` or `"deleted"` |
 
 ---
 
@@ -601,15 +615,24 @@ POST
 #### Response Body
 ```json
 {
-  "count": 0,
-  "triples": [
+  "count": 1,
+  "history": [
     {
-      "action": "gabba",
-      "triple": {
-        "s": "gabba",
-        "p": "gabba",
-        "o": "gabba"
-      }
+      "action": "update",
+      "triples": [
+        {
+          "s": { "value": "gabba" },
+          "p": { "value": "rules" },
+          "o": { "value": "Anhalt", "isLiteral": false },
+          "type": "deleted"
+        },
+        {
+          "s": { "value": "gabba" },
+          "p": { "value": "rules" },
+          "o": { "value": "Saxony", "isLiteral": false },
+          "type": "added"
+        }
+      ]
     }
   ]
 }
@@ -618,14 +641,19 @@ POST
 #### Response Schema
 
 | Field | Type | Description |
-|------|------|------|
-| `count` | integer | Number of resulting Triple-Store-Actions |
-| `triples` | array | List of resulting Triple-Store-Actions |
-| `triples[].action` | string | Type of Triple-Store-Action |
-| `triples[].triple` | object | Triple affected by the Action |
-| `triples[].triple.s` | string | Triple Subject |
-| `triples[].triple.p` | string | Triple Predicate |
-| `triples[].triple.o` | string | Triple Object |
+| :--- | :--- | :--- |
+| `count` | integer | Number of logged Triple-Store-Actions |
+| `history` | array | List of logged Triple-Store-Actions |
+| `history[].action` | string | Type of Triple-Store-Action (e.g., `"update"`) |
+| `history[].triples` | array | List of Triples modified by this action |
+| `history[].triples[].s` | object | Subject of the Action Triple|
+| `history[].triples[].s.value` | string | The Value of the Subject |
+| `history[].triples[].p` | object | Predicate of the Action Triple |
+| `history[].triples[].p.value` | string | The Value of the Predicate |
+| `history[].triples[].o` | object | Object of the Action Triple |
+| `history[].triples[].o.value` | string | TThe Value of the Object (can be a URI or a literal text/number) |
+| `history[].triples[].o.isLiteral` | boolean | `true` if the object value is a literal; `false` if it is a URI|
+| `history[].triples[].type` | string | Mutation tracking direction: `"added"` or `"deleted"` |
 
 ---
 
@@ -675,15 +703,24 @@ POST
 #### Response Body
 ```json
 {
-  "count": 0,
-  "triples": [
+  "count": 1,
+  "history": [
     {
-      "action": "gabba",
-      "triple": {
-        "s": "gabba",
-        "p": "gabba",
-        "o": "gabba"
-      }
+      "action": "update",
+      "triples": [
+        {
+          "s": { "value": "gabba" },
+          "p": { "value": "rules" },
+          "o": { "value": "Anhalt", "isLiteral": false },
+          "type": "deleted"
+        },
+        {
+          "s": { "value": "gabba" },
+          "p": { "value": "rules" },
+          "o": { "value": "Saxony", "isLiteral": false },
+          "type": "added"
+        }
+      ]
     }
   ]
 }
@@ -692,20 +729,25 @@ POST
 #### Response Schema
 
 | Field | Type | Description |
-|------|------|------|
-| `count` | integer | Number of resulting Triple-Store-Actions |
-| `triples` | array | List of resulting Triple-Store-Actions |
-| `triples[].action` | string | Type of Triple-Store-Action |
-| `triples[].triple` | object | Triple affected by the Action |
-| `triples[].triple.s` | string | Triple Subject |
-| `triples[].triple.p` | string | Triple Predicate |
-| `triples[].triple.o` | string | Triple Object |
+| :--- | :--- | :--- |
+| `count` | integer | Number of logged Triple-Store-Actions |
+| `history` | array | List of logged Triple-Store-Actions |
+| `history[].action` | string | Type of Triple-Store-Action (e.g., `"update"`) |
+| `history[].triples` | array | List of Triples modified by this action |
+| `history[].triples[].s` | object | Subject of the Action Triple|
+| `history[].triples[].s.value` | string | The Value of the Subject |
+| `history[].triples[].p` | object | Predicate of the Action Triple |
+| `history[].triples[].p.value` | string | The Value of the Predicate |
+| `history[].triples[].o` | object | Object of the Action Triple |
+| `history[].triples[].o.value` | string | TThe Value of the Object (can be a URI or a literal text/number) |
+| `history[].triples[].o.isLiteral` | boolean | `true` if the object value is a literal; `false` if it is a URI|
+| `history[].triples[].type` | string | Mutation tracking direction: `"added"` or `"deleted"` |
 
 ---
 
 ## Get State-Action-History
 
-- Returns a List of all State-Relevant-Triple-Store-Actions resulting from calls to **/ops/mediatizate**, **/ops/changeRuler** and **/ops/foundState**
+- Returns a complete List of all State-Relevant-Triple-Store-Actions resulting from calls to **/ops/mediatizate**, **/ops/changeRuler** and **/ops/foundState**
 
 #### Endpoint
 ```
@@ -720,15 +762,24 @@ GET
 #### Response Body
 ```json
 {
-  "count": 0,
-  "triples": [
+  "count": 1,
+  "history": [
     {
-      "action": "gabba",
-      "triple": {
-        "s": "gabba",
-        "p": "gabba",
-        "o": "gabba"
-      }
+      "action": "update",
+      "triples": [
+        {
+          "s": { "value": "gabba" },
+          "p": { "value": "rules" },
+          "o": { "value": "Anhalt", "isLiteral": false },
+          "type": "deleted"
+        },
+        {
+          "s": { "value": "gabba" },
+          "p": { "value": "rules" },
+          "o": { "value": "Saxony", "isLiteral": false },
+          "type": "added"
+        }
+      ]
     }
   ]
 }
@@ -737,14 +788,19 @@ GET
 #### Response Schema
 
 | Field | Type | Description |
-|------|------|------|
+| :--- | :--- | :--- |
 | `count` | integer | Number of logged Triple-Store-Actions |
-| `triples` | array | List of logged Triple-Store-Actions |
-| `triples[].action` | string | Type of Triple-Store-Action |
-| `triples[].triple` | object | Logged Triple|
-| `triples[].triple.s` | string | Triple Subject |
-| `triples[].triple.p` | string | Triple Predicate |
-| `triples[].triple.o` | string | Triple Object |
+| `history` | array | List of logged Triple-Store-Actions |
+| `history[].action` | string | Type of Triple-Store-Action (e.g., `"update"`) |
+| `history[].triples` | array | List of Triples modified by this action |
+| `history[].triples[].s` | object | Subject of the Action Triple|
+| `history[].triples[].s.value` | string | The Value of the Subject |
+| `history[].triples[].p` | object | Predicate of the Action Triple |
+| `history[].triples[].p.value` | string | The Value of the Predicate |
+| `history[].triples[].o` | object | Object of the Action Triple |
+| `history[].triples[].o.value` | string | TThe Value of the Object (can be a URI or a literal text/number) |
+| `history[].triples[].o.isLiteral` | boolean | `true` if the object value is a literal; `false` if it is a URI|
+| `history[].triples[].type` | string | Mutation tracking direction: `"added"` or `"deleted"` |
 
 ---
 

@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({TripleNotFoundException.class, TripleCodingException.class})
-    public ResponseEntity<String> handleMissingTriple(TripleNotFoundException ex) {
+    public ResponseEntity<String> handleMissingTriple(Exception ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body("Triple not found.");
     }

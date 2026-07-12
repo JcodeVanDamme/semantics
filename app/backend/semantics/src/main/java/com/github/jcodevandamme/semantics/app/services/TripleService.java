@@ -3,15 +3,12 @@ package com.github.jcodevandamme.semantics.app.services;
 import com.github.jcodevandamme.semantics.app.dto.DTOFactory;
 import com.github.jcodevandamme.semantics.app.dto.request.PutTriplesRequest;
 import com.github.jcodevandamme.semantics.app.dto.util.TripleDto;
-import com.github.jcodevandamme.semantics.app.persistence.StorageInitializer;
 import com.github.jcodevandamme.semantics.app.persistence.TripleLogger;
 import com.github.jcodevandamme.semantics.rdf.bmatrix.TripleAlreadyExistsException;
 import com.github.jcodevandamme.semantics.rdf.bmatrix.TripleNotFoundException;
 import com.github.jcodevandamme.semantics.rdf.dictionary.TripleCodingException;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import com.github.jcodevandamme.semantics.app.persistence.UpdateType;
-import com.github.jcodevandamme.semantics.rdf.tripleStore.TripleStore;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -31,7 +28,7 @@ public class TripleService {
         this.logger = logger;
     }
 
-    public void addTriple(TripleDto dto) throws TripleAlreadyExistsException, IOException {
+    public boolean addTriple(TripleDto dto) throws IOException {
         Triple triple = new Triple(
                 dto.s().value(),
                 dto.p().value(),
@@ -42,6 +39,7 @@ public class TripleService {
         if (created) {
             logger.registerUpdate(UpdateType.ADD, triple);
         }
+        return created;
     }
 
     public TripleDto[] queryTriples(String s, String p, String o) throws TripleCodingException {
@@ -54,7 +52,7 @@ public class TripleService {
         return DTOFactory.tripleArr(results);
     }
 
-    public void updateTriple(PutTriplesRequest request) throws TripleNotFoundException, TripleAlreadyExistsException, IOException {
+    public boolean updateTriple(PutTriplesRequest request) throws TripleNotFoundException, IOException {
         TripleDto original = request.original();
         Triple oldT = new Triple(
                 original.s().value(),
@@ -74,9 +72,10 @@ public class TripleService {
             logger.registerUpdate(UpdateType.DELETE, oldT);
             logger.registerUpdate(UpdateType.ADD, newT);
         }
+        return updated;
     }
 
-    public void deleteTriple(TripleDto dto) throws TripleNotFoundException, IOException {
+    public boolean deleteTriple(TripleDto dto) throws IOException {
         Triple triple = new Triple(
                 dto.s().value(),
                 dto.p().value(),
@@ -87,5 +86,6 @@ public class TripleService {
         if (deleted) {
             logger.registerUpdate(UpdateType.DELETE, triple);
         }
+        return deleted;
     }
 }

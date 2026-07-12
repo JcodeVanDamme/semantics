@@ -73,32 +73,35 @@ public class TripleStore {
         }
     }
 
-    public boolean create(Triple t) throws TripleAlreadyExistsException {
-        try {
-            register(t);
-            EncodedTriple encoded = encode(t);
-            bMatrix.add(
-                    (int) encoded.s(),
-                    (int) encoded.p(),
-                    (int) encoded.o()
-            );
-            return true;
-
-        } catch (Exception ex) {
-            unregister(t);
-            throw ex;
-        }
-    }
-
-    public Boolean delete(Triple t) throws TripleNotFoundException {
+    public boolean create(Triple t) {
+        register(t);
         EncodedTriple encoded = encode(t);
-        bMatrix.delete(
+        boolean added =  bMatrix.add(
                 (int) encoded.s(),
                 (int) encoded.p(),
                 (int) encoded.o()
         );
-        unregister(t);
-        return true;
+        if (added) {
+            return true;
+        } else {
+            unregister(t);
+            return false;
+        }
+    }
+
+    public Boolean delete(Triple t) {
+        EncodedTriple encoded = encode(t);
+        boolean deleted = bMatrix.delete(
+                (int) encoded.s(),
+                (int) encoded.p(),
+                (int) encoded.o()
+        );
+        if (deleted) {
+            unregister(t);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public Boolean update(Triple oldT, Triple newT) throws  TripleNotFoundException, TripleAlreadyExistsException {
@@ -106,7 +109,7 @@ public class TripleStore {
             EncodedTriple encodedOld = encode(oldT);
             register(newT);
             EncodedTriple encodedNew = encode(newT);
-            bMatrix.update(
+            boolean updated = bMatrix.update(
                     (int) encodedOld.s(),
                     (int) encodedOld.p(),
                     (int) encodedOld.o(),
@@ -114,9 +117,13 @@ public class TripleStore {
                     (int) encodedNew.p(),
                     (int) encodedNew.o()
             );
-            unregister(oldT);
-            return true;
-
+            if (updated) {
+                unregister(oldT);
+                return true;
+            } else {
+                unregister(newT);
+                return false;
+            }
         } catch (Exception ex) {
             unregister(newT);
             throw ex;

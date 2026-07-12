@@ -1,14 +1,32 @@
 <template>
-  
   <div class="overview-section">
-    <h1>Regional Overview</h1>
-    <p>
-      Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
-      sed diam nonumy eirmod tempor.
-    </p>
+    <h1 class="fancy">{{ title }}</h1>
+    <p>{{ description }}</p>
+    <div class="divider accent"></div>
   </div>
-  
 </template>
 
 <script setup>
+// defineProps is a built-in macro in <script setup>, no import needed!
+defineProps({
+  title: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+})
 </script>
+
+<style scoped>
+.overview-section h1 {
+  margin: var(--padding);
+  margin-left: 0;
+  margin-bottom: var(--paddingHalf);
+}
+.overview-section p {
+  color: var(--darkFontColor);
+}
+</style>

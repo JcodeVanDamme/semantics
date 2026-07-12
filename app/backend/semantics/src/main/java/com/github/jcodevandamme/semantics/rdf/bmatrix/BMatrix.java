@@ -28,10 +28,10 @@ public class BMatrix {
         ot = DK2Builder.build(config, k);
     }
 
-    public boolean add(int s, int p, int o) throws TripleAlreadyExistsException {
+    public boolean add(int s, int p, int o) {
         System.out.println("BMATRIX ADD");
         if (spoQuery(s, p, o)) {
-            throw new TripleAlreadyExistsException();
+            return false;
         }
 
         int tripleIdx = getNewTripleIdx();
@@ -52,16 +52,17 @@ public class BMatrix {
         return nextStCol;
     }
 
-    public void delete(int s, int p, int o) throws TripleNotFoundException {
+    public boolean delete(int s, int p, int o) {
         System.out.println("BMATRIX DEL");
         if (!spoQuery(s, p, o)) {
-            throw new TripleNotFoundException();
+            return false;
         }
         int tripleIdx = getIndexOfTriple(s, p, o);
         st.removeEntry(s, tripleIdx);
         ot.removeEntry(o, tripleIdx);
         bp.deregisterTriple(tripleIdx, p);
         triples.remove(new EncodedTriple(s, p, o));
+        return true;
     }
 
     private int getIndexOfTriple(int s, int p, int o) {
@@ -74,16 +75,18 @@ public class BMatrix {
         throw new RuntimeException("BMatrix Error: Index of Triple not found.");
     }
 
-    public void update(int oldS, int oldP, int oldO, int newS, int newP, int newO) throws TripleNotFoundException, TripleAlreadyExistsException {
+    public boolean update(int oldS, int oldP, int oldO, int newS, int newP, int newO) throws TripleNotFoundException, TripleAlreadyExistsException {
         if (!spoQuery(oldS, oldP, oldO)) {
+            System.out.println("UPDATE ORIGINAL NOT FOUND");
             throw new TripleNotFoundException();
         } else if (spoQuery(newS, newP, newO)) {
-            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            System.out.println("UPDATE NEW EXISTS");
             throw new TripleAlreadyExistsException();
         }
 
         delete(oldS, oldP, oldO);
         add(newS, newP, newO);
+        return true;
     }
 
     public boolean spoQuery(int s, int p, int o) {

@@ -1,14 +1,81 @@
+<http://example.org/historical-states#ontology>
+        a       <http://www.w3.org/2002/07/owl#Ontology> ;
+        <http://www.w3.org/2000/01/rdf-schema#label>  "Historical States Ontology" ;
+        <http://www.w3.org/2000/01/rdf-schema#comment>  "Eine semantische Ontologie zur Abbildung von Staaten, deren Territorien, Herrschern und Mediatisierungsprozessen." .
+
+<http://example.org/historical-states#State>
+        a       <http://www.w3.org/2002/07/owl#Class> ;
+        <http://www.w3.org/2000/01/rdf-schema#label>  "State" ;
+        <http://www.w3.org/2000/01/rdf-schema#comment>  "Basisklasse für alle historischen Staaten im System." .
+
+<http://example.org/historical-states#OriginalState>
+        a       <http://www.w3.org/2002/07/owl#Class> ;
+        <http://www.w3.org/2000/01/rdf-schema#subClassOf>  <http://example.org/historical-states#State> ;
+        <http://www.w3.org/2000/01/rdf-schema#label>  "Ursprünglicher Staat" ;
+        <http://www.w3.org/2000/01/rdf-schema#label>  "Original State" ;
+        <http://www.w3.org/2000/01/rdf-schema#comment>  "Spezialklasse/Markierung für Staaten, die von Beginn an im Original-Datensatz existierten." .
+
+<http://example.org/historical-states#Ruler>
+        a       <http://www.w3.org/2002/07/owl#Class> ;
+        <http://www.w3.org/2000/01/rdf-schema#label>  "Herrscher" ;
+        <http://www.w3.org/2000/01/rdf-schema#label>  "Ruler" ;
+        <http://www.w3.org/2000/01/rdf-schema#comment>  "Repräsentiert eine historische Herrscherperson." .
+
+<http://example.org/historical-states#Region>
+        a       <http://www.w3.org/2002/07/owl#Class> ;
+        <http://www.w3.org/2000/01/rdf-schema#label>  "Region" ;
+        <http://www.w3.org/2000/01/rdf-schema#comment>  "Repräsentiert eine geografische Region oder ein zugeordnetes Territorium." .
+
+<http://example.org/historical-states#hasRuler>
+        a       <http://www.w3.org/2002/07/owl#ObjectProperty> ;
+        <http://www.w3.org/2000/01/rdf-schema#domain>  <http://example.org/historical-states#State> ;
+        <http://www.w3.org/2000/01/rdf-schema#range>  <http://example.org/historical-states#Ruler> ;
+        <http://www.w3.org/2000/01/rdf-schema#label>  "hat Herrscher" ;
+        <http://www.w3.org/2000/01/rdf-schema#label>  "has ruler" ;
+        <http://www.w3.org/2000/01/rdf-schema#comment>  "Verknüpft einen Staat mit seinem aktuell aktiven Herrscher." .
+
+<http://example.org/historical-states#hasRegion>
+        a       <http://www.w3.org/2002/07/owl#ObjectProperty> ;
+        <http://www.w3.org/2000/01/rdf-schema#domain>  <http://example.org/historical-states#State> ;
+        <http://www.w3.org/2000/01/rdf-schema#range>  <http://example.org/historical-states#Region> ;
+        <http://www.w3.org/2000/01/rdf-schema#label>  "hat Region" ;
+        <http://www.w3.org/2000/01/rdf-schema#label>  "has region" ;
+        <http://www.w3.org/2000/01/rdf-schema#comment>  "Ordnet einem Staat ein physisches Territorium zu." .
+
+<http://example.org/historical-states#mediatizedState>
+        a       <http://www.w3.org/2002/07/owl#ObjectProperty> ;
+        <http://www.w3.org/2000/01/rdf-schema#domain>  <http://example.org/historical-states#State> ;
+        <http://www.w3.org/2000/01/rdf-schema#range>  <http://example.org/historical-states#State> ;
+        <http://www.w3.org/2000/01/rdf-schema#label>  "mediatisierte Staat" ;
+        <http://www.w3.org/2000/01/rdf-schema#label>  "mediatized state" ;
+        <http://www.w3.org/2000/01/rdf-schema#comment>  "Kennzeichnet, dass das Subjekt (Staat A) das Objekt (Staat B) mediatisiert/geschluckt hat." .
+
+<http://example.org/historical-states#population>
+        a       <http://www.w3.org/2002/07/owl#DatatypeProperty> ;
+        <http://www.w3.org/2000/01/rdf-schema#domain>  <http://example.org/historical-states#State> ;
+        <http://www.w3.org/2000/01/rdf-schema#range>  <http://www.w3.org/2001/XMLSchema#integer> ;
+        <http://www.w3.org/2000/01/rdf-schema#label>  "Einwohnerzahl" ;
+        <http://www.w3.org/2000/01/rdf-schema#label>  "population" ;
+        <http://www.w3.org/2000/01/rdf-schema#comment>  "Die gemessene Bevölkerungszahl des Staates." .
+
+<http://example.org/historical-states#stateType>
+        a       <http://www.w3.org/2002/07/owl#DatatypeProperty> ;
+        <http://www.w3.org/2000/01/rdf-schema#domain>  <http://example.org/historical-states#State> ;
+        <http://www.w3.org/2000/01/rdf-schema#range>  <http://www.w3.org/2001/XMLSchema#string> ;
+        <http://www.w3.org/2000/01/rdf-schema#label>  "Staatstyp" ;
+        <http://www.w3.org/2000/01/rdf-schema#label>  "state type" ;
+        <http://www.w3.org/2000/01/rdf-schema#comment>  "Der strukturelle Typ des Staates." .
+
+<http://example.org/historical-states#rulerTitle>
+        a       <http://www.w3.org/2002/07/owl#DatatypeProperty> ;
+        <http://www.w3.org/2000/01/rdf-schema#domain>  <http://example.org/historical-states#Ruler> ;
+        <http://www.w3.org/2000/01/rdf-schema#range>  <http://www.w3.org/2001/XMLSchema#string> .
+
+<http://semantics.rdf.system/s1>
+        <http://semantics.rdf.system/s2>  <http://semantics.rdf.system/s3> .
+
+<http://example.org/s10>
+        <http://example.org/p10>  <http://example.org/o10> .
+
 <http://example.org/s9>
         <http://example.org/p9>  <http://example.org/o9> .
-
-<http://example.org/s7>
-        <http://example.org/p7>  <http://example.org/o7> .
-
-<http://example.org/s6>
-        <http://example.org/p6>  <http://example.org/o6> .
-
-<http://example.org/s1>
-        <http://example.org/p1>  <http://example.org/o1> .
-
-<http://example.org/s5>
-        <http://example.org/p5>  <http://example.org/o5> .

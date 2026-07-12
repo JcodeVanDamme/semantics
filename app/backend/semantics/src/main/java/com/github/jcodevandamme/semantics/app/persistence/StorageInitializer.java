@@ -51,9 +51,9 @@ public class StorageInitializer {
         Files.createDirectories(storagePath.getParent());
 
         if (Files.exists(storagePath)) {
+            System.out.println("Snapshot found, begin Parsing.");
             ParserTripleProvider provider = new ParserTripleProvider(storagePath.toString());
             provider.initTriples(tripleStore);
-            System.out.println("Snapshot found, begin Parsing.");
 
         } else {
             System.out.println("No existing Snapshot found. Starting with an empty TripleStore.");

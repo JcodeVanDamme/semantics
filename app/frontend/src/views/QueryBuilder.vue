@@ -1,230 +1,173 @@
 <template>
-
   <MainLayout>
+    <HeaderOverview
+      title="Query Builder"
+      description="Compose complex Triple-Queries in SPARQL-Syntax to precisely scan your RDF Tree."
+    />
 
-    <!-- HEADER -->
+    <div class="card">
+      <CollapsiblePanel
+        >-
 
-    <div class="overview-section">
+        <template #header>
+          <div class="icon-title accent">
+            <Search />
+            <h2 class="accent">Triple Query</h2>
+          </div>
+        </template>
 
-      <h1>Query Builder</h1>
+        <template #info>
+          <div class="info-content">
+            <p><strong>How Queries Work (S, P, O)</strong></p>
+            <p>
+              You can query the RDF triple store using the input fields for
+              <strong>Subject</strong>, <strong>Predicate</strong>, and <strong>Object</strong>. If
+              you leave a field completely empty, it will automatically be treated as a
+              <strong>wildcard</strong>. The system will then scan and return all available entries
+              matching that position.
+            </p>
 
-      <p>
-        Execute SPARQL-like semantic queries
-        on the shared semantic graph database.
-      </p>
+            <p><strong>Handling URIs and Namespaces</strong></p>
+            <p>
+              Entering a custom URI is entirely <strong>optional</strong>. If you leave the URI
+              field blank, the system automatically falls back to our default namespace
+              <strong><i>http://semantics.rdf.system/</i></strong
+              >. However, if you choose to provide a custom URI, it must be valid (meaning it
+              requires a correctly formatted protocol like (<strong><i>http://</i></strong> or
+              <strong><i>urn:</i></strong
+              >).
+            </p>
 
-    </div>
+            <p><strong>Composition of the Final Query</strong></p>
+            <p>
+              The final URI sent to the triple store in the background is formed by automatically
+              <strong>concatenating</strong> the chosen namespace (URI field) and the actual search
+              term (input value).
+            </p>
 
-    <!-- QUERY CARD -->
+            <p><strong>Concrete Example of URI Generation:</strong></p>
+            <ul>
+              <li class="info-row">
+                <div class="info-label">Entered / Default URI:</div>
+                <div class="info-value">
+                  <strong><i>http://semantics.rdf.system/</i></strong>
+                </div>
+                <p></p>
+              </li>
 
-    <div class="query-card">
+              <li class="info-row">
+                <div class="info-label">Entered Value (Input Value):</div>
+                <div class="info-value">
+                  <strong><i>Bavaria</i></strong>
+                </div>
+                <p></p>
+              </li>
 
-      <div class="query-title">
+              <li class="info-row">
+                <div class="info-label">Resulting Final URI:</div>
+                <div class="info-value">
+                  <strong><i>http://semantics.rdf.system/Bavaria</i></strong>
+                </div>
+              </li>
+            </ul>
 
-        <Search :size="20" />
-
-        SPARQL QUERY
-
-      </div>
-
-      <!-- TEXTAREA -->
+            <p>
+              <em>Note on the Object field:</em> For the Object, you can use the toggle switch to
+              choose whether it should be treated as a <strong>URI</strong> (which follows the
+              concatenation rule above) or a <strong>Literal</strong>. Literals represent raw data
+              values like text strings or numbers and are transmitted directly to the store as-is,
+              without any namespace modifications.
+            </p>
+          </div>
+        </template>
+      </CollapsiblePanel>
 
       <textarea
-
         v-model="query"
-
         class="query-textarea"
-
         placeholder="Example:
-SELECT * WHERE {
-  Napoleon rules France
+  SELECT * WHERE {
+  Bavaria Population
 }"
       />
 
-      <!-- BUTTONS -->
+      <div v-if="validationError || error" class="error-banner">
+        {{ validationError || error }}
+      </div>
 
-      <div class="builder-buttons">
-
-        <!-- CLEAR -->
-
-        <button
-          class="clear-btn"
-          @click="clearInput"
-        >
-
+      <div class="button-wrapper" @click="clearInput()">
+        <button class="button" :disabled="isLoading || !!validationError" @click="clearInput">
           <CircleX :size="18" />
-
-          CLEAR INPUT
-
+          Clear Input
         </button>
 
-        <!-- EXECUTE -->
-
         <button
-          class="execute-btn"
+          class="button accent"
+          :disabled="isLoading || !!validationError"
           @click="executeQuery"
         >
-
-          <ArrowDown :size="18" />
-
-          EXECUTE INQUIRY
-
+          <CircleX :size="18" />
+          Execute
         </button>
-
       </div>
-
     </div>
 
-    <!-- RESULTS -->
-
-    <div class="results-card">
-
-      <div class="results-header">
-
-        <div class="results-title">
-
-          QUERY RESULTS:
-
-        </div>
-
-        <div class="results-count">
-
-          {{ results.length }}
-          TRIPLES
-
-        </div>
-
-      </div>
-
-      <!-- TABLE -->
-
-      <table>
-
-        <thead>
-
-          <tr>
-
-            <th>SUBJECT</th>
-
-            <th>PREDICATE</th>
-
-            <th>OBJECT</th>
-
-          </tr>
-
-        </thead>
-
-        <tbody>
-
-          <!-- RESULTS -->
-
-          <tr
-            v-for="triple in results"
-            :key="triple.id"
-          >
-
-            <td>
-              {{ triple.subject }}
-            </td>
-
-            <td>
-              {{ triple.predicate }}
-            </td>
-
-            <td>
-              {{ triple.object }}
-            </td>
-
-          </tr>
-
-          <!-- EMPTY -->
-
-          <tr v-if="results.length === 0">
-
-            <td colspan="3">
-
-              No matching triples found.
-
-            </td>
-
-          </tr>
-
-        </tbody>
-
-      </table>
-
+    <div class="card">
+      <TriplesResultsCard :triples="results" />
+      <TriplesTable :triples="results" disable-selection />
     </div>
-
   </MainLayout>
-
 </template>
 
 <script setup lang="ts">
+import HeaderOverview from '../components/HeaderOverview.vue'
 
 import { ref } from 'vue'
 
 import MainLayout from '../layouts/MainLayout.vue'
 
-import {
-  Search,
-  CircleX,
-  ArrowDown
-} from 'lucide-vue-next'
+import { Search, CircleX } from 'lucide-vue-next'
 
-import { api } from '../services/api'
-
-import {
-  useSemanticStore,
-  type Triple
-} from '../store/semanticStore'
-
-/* =========================================
-   STORE
-========================================= */
-
-const store = useSemanticStore()
-
-/* =========================================
-   QUERY
-========================================= */
-
-const query = ref('')
-
-/* =========================================
-   RESULTS
-========================================= */
+import CollapsiblePanel from '@/components/new/CollapsiblePanel.vue'
+import TriplesResultsCard from '@/components/new/TripleResults.vue'
+import TriplesTable from '@/components/new/TripleTable.vue'
+import type { Triple } from '@/store/semanticStore.ts'
 
 const results = ref<Triple[]>([])
-
-/* =========================================
-   EXECUTE QUERY
-========================================= */
+const query = ref('')
 
 function executeQuery() {
-
-  const trimmedQuery =
-    query.value.trim()
+  const trimmedQuery = query.value.trim()
 
   if (!trimmedQuery) {
-
     results.value = []
 
     return
   }
-
-  results.value =
-    api.sparqlQuery(trimmedQuery)
 }
 
-/* =========================================
-   CLEAR INPUT
-========================================= */
-
 function clearInput() {
-
   query.value = ''
 
   results.value = []
 }
-
 </script>
+
+<style scoped>
+.query-textarea {
+  background: #f4f4f4;
+  border: 2px solid var(--borderColor);
+  resize: none;
+  padding: var(--paddingHalf);
+  font-size: var(--dataFontStyle);
+  outline: none;
+  height: 200px;
+}
+
+.button-wrapper {
+  display: flex;
+  flex-direction: row;
+  margin-left: auto;
+  gap: var(--padding);
+}
+</style>
