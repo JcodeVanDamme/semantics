@@ -1,22 +1,27 @@
 package com.github.jcodevandamme.semantics.app.controllers;
 
-import com.github.jcodevandamme.semantics.app.dto.request.*;
-import com.github.jcodevandamme.semantics.app.dto.response.*;
-import com.github.jcodevandamme.semantics.app.dto.util.*;
 
-
+import com.github.jcodevandamme.semantics.app.dto.response.CountResponse;
+import com.github.jcodevandamme.semantics.app.dto.response.FactorResponse;
+import com.github.jcodevandamme.semantics.app.dto.response.StateResponse;
+import com.github.jcodevandamme.semantics.app.dto.util.StateDto;
+import com.github.jcodevandamme.semantics.app.services.semantics.DomainService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/ops")
-public class OpsController {
+@RequestMapping("/semantics.rdf.system")
+public class DomainController {
 
-    /*@GetMapping("/activeStates")
+    private final DomainService service;
+    public DomainController(DomainService service) {
+        this.service = service;
+    }
+
+    @GetMapping("/activeStates")
     public ResponseEntity<CountResponse> getActiveStateCount() {
 
-        CountResponse response = new CountResponse(0);
+        CountResponse response = service.countActiveStates();
 
         return ResponseEntity.ok(response);
     }
@@ -24,7 +29,7 @@ public class OpsController {
     @GetMapping("/stateChanges")
     public ResponseEntity<FactorResponse> getStateChangeFactor() {
 
-        FactorResponse response = new FactorResponse(0.0f);
+        FactorResponse response = service.calculateStateChangeFactor();
 
         return ResponseEntity.ok(response);
     }
@@ -32,42 +37,12 @@ public class OpsController {
     @GetMapping("/states")
     public ResponseEntity<StateResponse> getStates() {
 
-        StateResponse response = new StateResponse(
-                1,
-                new StateDto[] {
-                        new StateDto(
-                                "Statename",
-                                new RulerDto(
-                                        "Rulername",
-                                        "Title"
-                                ),
-                                new MediatizatedStatesDto(
-                                        1,
-                                        new MediatizatedStateDto[] {
-                                                new MediatizatedStateDto(
-                                                        "Statename",
-                                                        "Some Type"
-                                                )
-                                        }
-                                ),
-                                new RegionsDto(
-                                        1,
-                                        new RegionDto[]{
-                                                new RegionDto(
-                                                        "Regionname",
-                                                        "Some Type"
-                                                )
-                                        }
-                                ),
-                                0,
-                                "Some Type"
-                        )
-                }
-        );
+        StateResponse response = service.getStates();
 
         return ResponseEntity.ok(response);
     }
 
+    /*
     @PostMapping("/mediatizate")
     public ResponseEntity<TripleLogResponse> mediatizateState(@Validated @RequestBody MediatizationRequest request) {
 

@@ -37,7 +37,7 @@
         </tr>
 
         <tr v-if="triples.length === 0">
-          <td colspan="3">No Triples found matching the inquiry.</td>
+          <td colspan="3">No Triples found.</td>
         </tr>
       </tbody>
     </table>

@@ -1,10 +1,10 @@
-package com.github.jcodevandamme.semantics.app.services;
+package com.github.jcodevandamme.semantics.app.services.rdf;
 
 import com.github.jcodevandamme.semantics.app.dto.DTOFactory;
 import com.github.jcodevandamme.semantics.app.dto.request.PutTriplesRequest;
 import com.github.jcodevandamme.semantics.app.dto.util.TripleDto;
 import com.github.jcodevandamme.semantics.app.persistence.TripleLogger;
-import com.github.jcodevandamme.semantics.rdf.bmatrix.TripleAlreadyExistsException;
+import com.github.jcodevandamme.semantics.app.services.AppStore;
 import com.github.jcodevandamme.semantics.rdf.bmatrix.TripleNotFoundException;
 import com.github.jcodevandamme.semantics.rdf.dictionary.TripleCodingException;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
@@ -47,9 +47,8 @@ public class TripleService {
         return DTOFactory.tripleArr(results);
     }
 
-    public TripleDto[] querySparql(String sparqlQuery) {
-        List<Triple> results = tripleStore.query(sparqlQuery);
-        return DTOFactory.tripleArr(results);
+    public Object querySparql(String sparqlQuery) {
+        return tripleStore.query(sparqlQuery);
     }
 
     public boolean updateTriple(PutTriplesRequest request) throws TripleNotFoundException, IOException {

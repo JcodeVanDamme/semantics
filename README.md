@@ -428,34 +428,37 @@ GET
 #### Response Body
 ```json
 {
-  "count": 0,
   "states": [
     {
-      "name": "gabba",
+      "name": "Kingdom of Prussia",
+      "stateType": "Kingdom",
+      "population": 18491000,
       "ruler": {
-        "name": "gabba",
-        "title": "gabba"
+          "name": "Wilhelm I",
+          "title": "King of Prussia"
       },
-      "mediatizatedStates": {
-        "count": 0,
-        "states": [
-          {
-            "name": "gabba",
-            "stateType": "gabba"
+      "regions": [
+        {
+            "name": "East Prussia",
+            "type": "Province",
+            "population": 1500000
+        },
+        {
+            "name": "West Prussia",
+            "type": "Province",
+            "population": 900000
+        }
+      ],
+      "mediatizatedStates": [
+        {
+          "name": "Duchy of Anhalt",
+          "stateType": "Duchy",
+          "ruler": {
+              "name": "Leopold IV",
+              "title": "Duke of Anhalt"
           }
-        ]
-      },
-      "regions": {
-        "count": 0,
-        "regions": [
-		  {
-		    "name": "gabba",
-            "type": "gabba"
-		  }
-        ]
-      },
-      "population": 0,
-      "stateType": "gabba"
+        }
+      ]
     }
   ]
 }
@@ -463,26 +466,25 @@ GET
 
 #### Response Schema
 
+### Response Schema
+
 | Field | Type | Description |
-|------|------|------|
-| `count` | integer | Number of active States |
-| `states` | array | List of active States |
-| `states[].name` | string | Name of the State |
-| `states[].ruler` | object | Current ruler of the State |
-| `states[].ruler.name` | string | Name of the ruler |
-| `states[].ruler.title` | string | Title of the ruler |
-| `states[].mediatizatedStates` | object | States mediatizated by this State |
-| `states[].mediatizatedStates.count` | integer | Number of mediatizated States |
-| `states[].mediatizatedStates.states` | array | List of mediatizated States |
-| `states[].mediatizatedStates.states[].name` | string | Name of the mediatizated State |
-| `states[].mediatizatedStates.states[].stateType` | string | Type of the mediatizated State |
-| `states[].regions` | object | Region Data associated with this State |
-| `states[].regions.count` | integer | Number of associated regions |
-| `states[].regions.regions` | array | List of Regions associated with this State|
-| `states[].regions.regions[].name` | string | Name of the region |
-| `states[].regions.regions[].type` | string | Type of the region |
-| `states[].population` | integer | Population of the State |
-| `states[].stateType` | string | Type of the State |
+| :--- | :--- | :--- |
+| `states` | Array | List of state objects. |
+| `states[].name` | String | Name of the state. |
+| `states[].stateType` | String | Classification of the state. |
+| `states[].population` | Integer | Population of the state itself. |
+| `states[].ruler.name` | String | Name of the states ruler. |
+| `states[].ruler.title` | String | Title of the states ruler. |
+| `states[].regions` | Array | List of regions within the state. |
+| `states[].regions[].name` | String | Name of the region. |
+| `states[].regions[].type` | String | Type of the region. |
+| `states[].regions[].population` | Integer | Population of the region. |
+| `states[].mediatizatedStates` | Array | List states mediatized by this state. |
+| `states[].mediatizatedStates[].name` | String | Name of the mediatized state. |
+| `states[].mediatizatedStates[].stateType` | String | Classification of the mediatized state. |
+| `states[].mediatizatedStates[].ruler.name` | String | Name of the mediatized state's ruler. |
+| `states[].mediatizatedStates[].ruler.title` | String | Title of the mediatized state's ruler. |
 
 ---
 

@@ -29,7 +29,6 @@ public class BMatrix {
     }
 
     public boolean add(int s, int p, int o) {
-        System.out.println("BMATRIX ADD");
         if (spoQuery(s, p, o)) {
             return false;
         }
@@ -53,7 +52,6 @@ public class BMatrix {
     }
 
     public boolean delete(int s, int p, int o) {
-        System.out.println("BMATRIX DEL");
         if (!spoQuery(s, p, o)) {
             return false;
         }
@@ -77,10 +75,8 @@ public class BMatrix {
 
     public boolean update(int oldS, int oldP, int oldO, int newS, int newP, int newO) throws TripleNotFoundException, TripleAlreadyExistsException {
         if (!spoQuery(oldS, oldP, oldO)) {
-            System.out.println("UPDATE ORIGINAL NOT FOUND");
             throw new TripleNotFoundException();
         } else if (spoQuery(newS, newP, newO)) {
-            System.out.println("UPDATE NEW EXISTS");
             throw new TripleAlreadyExistsException();
         }
 

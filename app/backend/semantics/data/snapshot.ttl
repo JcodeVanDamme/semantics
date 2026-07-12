@@ -1,81 +1,335 @@
-<http://example.org/historical-states#ontology>
-        a       <http://www.w3.org/2002/07/owl#Ontology> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Historical States Ontology" ;
-        <http://www.w3.org/2000/01/rdf-schema#comment>  "Eine semantische Ontologie zur Abbildung von Staaten, deren Territorien, Herrschern und Mediatisierungsprozessen." .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://example.org/historical-states#State>
-        a       <http://www.w3.org/2002/07/owl#Class> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "State" ;
-        <http://www.w3.org/2000/01/rdf-schema#comment>  "Basisklasse für alle historischen Staaten im System." .
+# --- NAMESPACES ---
+@prefix ont: <http://semantics.rdf.system.ontology/> .
+@prefix data: <http://semantics.rdf.system.data/> .
 
-<http://example.org/historical-states#OriginalState>
-        a       <http://www.w3.org/2002/07/owl#Class> ;
-        <http://www.w3.org/2000/01/rdf-schema#subClassOf>  <http://example.org/historical-states#State> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Ursprünglicher Staat" ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Original State" ;
-        <http://www.w3.org/2000/01/rdf-schema#comment>  "Spezialklasse/Markierung für Staaten, die von Beginn an im Original-Datensatz existierten." .
+# ==============================================================================
+# SCHEMA DEFINITIONS (T-Box)
+# ==============================================================================
 
-<http://example.org/historical-states#Ruler>
-        a       <http://www.w3.org/2002/07/owl#Class> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Herrscher" ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Ruler" ;
-        <http://www.w3.org/2000/01/rdf-schema#comment>  "Repräsentiert eine historische Herrscherperson." .
+ont:Place a owl:Class ;
+    rdfs:label "Place" .
 
-<http://example.org/historical-states#Region>
-        a       <http://www.w3.org/2002/07/owl#Class> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Region" ;
-        <http://www.w3.org/2000/01/rdf-schema#comment>  "Repräsentiert eine geografische Region oder ein zugeordnetes Territorium." .
+ont:State a owl:Class ;
+    rdfs:subClassOf ont:Place ;
+    rdfs:label "State" .
 
-<http://example.org/historical-states#hasRuler>
-        a       <http://www.w3.org/2002/07/owl#ObjectProperty> ;
-        <http://www.w3.org/2000/01/rdf-schema#domain>  <http://example.org/historical-states#State> ;
-        <http://www.w3.org/2000/01/rdf-schema#range>  <http://example.org/historical-states#Ruler> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "hat Herrscher" ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "has ruler" ;
-        <http://www.w3.org/2000/01/rdf-schema#comment>  "Verknüpft einen Staat mit seinem aktuell aktiven Herrscher." .
+ont:Region a owl:Class ;
+    rdfs:subClassOf ont:Place ;
+    rdfs:label "Region" .
 
-<http://example.org/historical-states#hasRegion>
-        a       <http://www.w3.org/2002/07/owl#ObjectProperty> ;
-        <http://www.w3.org/2000/01/rdf-schema#domain>  <http://example.org/historical-states#State> ;
-        <http://www.w3.org/2000/01/rdf-schema#range>  <http://example.org/historical-states#Region> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "hat Region" ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "has region" ;
-        <http://www.w3.org/2000/01/rdf-schema#comment>  "Ordnet einem Staat ein physisches Territorium zu." .
+ont:Person a owl:Class ;
+    rdfs:label "Person" .
 
-<http://example.org/historical-states#mediatizedState>
-        a       <http://www.w3.org/2002/07/owl#ObjectProperty> ;
-        <http://www.w3.org/2000/01/rdf-schema#domain>  <http://example.org/historical-states#State> ;
-        <http://www.w3.org/2000/01/rdf-schema#range>  <http://example.org/historical-states#State> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "mediatisierte Staat" ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "mediatized state" ;
-        <http://www.w3.org/2000/01/rdf-schema#comment>  "Kennzeichnet, dass das Subjekt (Staat A) das Objekt (Staat B) mediatisiert/geschluckt hat." .
+ont:Ruler a owl:Class ;
+    rdfs:subClassOf ont:Person ;
+    rdfs:label "Ruler" .
 
-<http://example.org/historical-states#population>
-        a       <http://www.w3.org/2002/07/owl#DatatypeProperty> ;
-        <http://www.w3.org/2000/01/rdf-schema#domain>  <http://example.org/historical-states#State> ;
-        <http://www.w3.org/2000/01/rdf-schema#range>  <http://www.w3.org/2001/XMLSchema#integer> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Einwohnerzahl" ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "population" ;
-        <http://www.w3.org/2000/01/rdf-schema#comment>  "Die gemessene Bevölkerungszahl des Staates." .
+ont:hasRuler a owl:ObjectProperty ;
+    rdfs:domain ont:State ;
+    rdfs:range ont:Ruler .
 
-<http://example.org/historical-states#stateType>
-        a       <http://www.w3.org/2002/07/owl#DatatypeProperty> ;
-        <http://www.w3.org/2000/01/rdf-schema#domain>  <http://example.org/historical-states#State> ;
-        <http://www.w3.org/2000/01/rdf-schema#range>  <http://www.w3.org/2001/XMLSchema#string> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Staatstyp" ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "state type" ;
-        <http://www.w3.org/2000/01/rdf-schema#comment>  "Der strukturelle Typ des Staates." .
+ont:rules a owl:ObjectProperty ;
+    rdfs:domain ont:Ruler .
 
-<http://example.org/historical-states#rulerTitle>
-        a       <http://www.w3.org/2002/07/owl#DatatypeProperty> ;
-        <http://www.w3.org/2000/01/rdf-schema#domain>  <http://example.org/historical-states#Ruler> ;
-        <http://www.w3.org/2000/01/rdf-schema#range>  <http://www.w3.org/2001/XMLSchema#string> .
+ont:locatedIn a owl:ObjectProperty ;
+    rdfs:domain ont:Region ;
+    rdfs:range ont:State .
 
-<http://semantics.rdf.system/s1>
-        <http://semantics.rdf.system/s2>  <http://semantics.rdf.system/s3> .
+ont:mediatized a owl:ObjectProperty ;
+    rdfs:domain ont:State ;
+    rdfs:range ont:State .
 
-<http://example.org/s10>
-        <http://example.org/p10>  <http://example.org/o10> .
+ont:isActive a owl:DatatypeProperty ;
+    rdfs:label "is active" ;
+    rdfs:domain ont:State ;
+    rdfs:range xsd:boolean .
 
-<http://example.org/s9>
-        <http://example.org/p9>  <http://example.org/o9> .
+ont:population a owl:DatatypeProperty ;
+    rdfs:domain ont:Place ;
+    rdfs:range xsd:integer .
+
+ont:stateType a owl:DatatypeProperty ;
+    rdfs:domain ont:State ;
+    rdfs:range xsd:string .
+
+ont:regionType a owl:DatatypeProperty ;
+    rdfs:label "region type" ;
+    rdfs:domain ont:Region ;
+    rdfs:range xsd:string .
+
+ont:isOriginalState a owl:DatatypeProperty ;
+    rdfs:domain ont:State ;
+    rdfs:range xsd:boolean .
+
+ont:rulerTitle a owl:DatatypeProperty ;
+    rdfs:domain ont:Ruler ;
+    rdfs:range xsd:string .
+
+# --- STATE 1: Kingdom of Prussia ---
+data:State_Prussia a ont:State ;
+    rdfs:label "Kingdom of Prussia" ;
+    ont:hasRuler data:Ruler_WilhelmI ;
+    ont:population 18491000 ;
+    ont:stateType "Kingdom" ;
+    ont:isOriginalState true ;
+    ont:isActive true ;
+	ont:mediatized data:State_Anhalt .
+
+# --- STATE 2: Kingdom of Bavaria ---
+data:State_Bavaria a ont:State ;
+    rdfs:label "Kingdom of Bavaria" ;
+    ont:hasRuler data:Ruler_LudwigII ;
+    ont:population 4800000 ;
+    ont:stateType "Kingdom" ;
+    ont:isOriginalState true ;
+    ont:isActive true .
+
+# --- STATE 3: Kingdom of Saxony ---
+data:State_Saxony a ont:State ;
+    rdfs:label "Kingdom of Saxony" ;
+    ont:hasRuler data:Ruler_Johann ;
+    ont:population 2400000 ;
+    ont:stateType "Kingdom" ;
+    ont:isOriginalState true ;
+    ont:isActive true .
+
+# --- STATE 4: Kingdom of Württemberg ---
+data:State_Wuerttemberg a ont:State ;
+    rdfs:label "Kingdom of Württemberg" ;
+    ont:hasRuler data:Ruler_KarlI ;
+    ont:population 1800000 ;
+    ont:stateType "Kingdom" ;
+    ont:isOriginalState true ;
+    ont:isActive true .
+
+# --- STATE 5: Grand Duchy of Baden ---
+data:State_Baden a ont:State ;
+    rdfs:label "Grand Duchy of Baden" ;
+    ont:hasRuler data:Ruler_FriedrichI ;
+    ont:population 1400000 ;
+    ont:stateType "Grand Duchy" ;
+    ont:isOriginalState true ;
+    ont:isActive true .
+
+# --- STATE 6: Grand Duchy of Hesse ---
+data:State_Hesse a ont:State ;
+    rdfs:label "Grand Duchy of Hesse" ;
+    ont:hasRuler data:Ruler_LudwigIII ;
+    ont:population 850000 ;
+    ont:stateType "Grand Duchy" ;
+    ont:isOriginalState true ;
+    ont:isActive true .
+
+# --- STATE 7: Grand Duchy of Mecklenburg-Schwerin ---
+data:State_Mecklenburg a ont:State ;
+    rdfs:label "Grand Duchy of Mecklenburg-Schwerin" ;
+    ont:hasRuler data:Ruler_FriedrichFrancisII ;
+    ont:population 560000 ;
+    ont:stateType "Grand Duchy" ;
+    ont:isOriginalState true ;
+    ont:isActive true .
+
+# --- STATE 8: Grand Duchy of Oldenburg ---
+data:State_Oldenburg a ont:State ;
+    rdfs:label "Grand Duchy of Oldenburg" ;
+    ont:hasRuler data:Ruler_PeterII ;
+    ont:population 315000 ;
+    ont:stateType "Grand Duchy" ;
+    ont:isOriginalState true ;
+    ont:isActive true .
+
+# --- STATE 9: Duchy of Anhalt ---
+data:State_Anhalt a ont:State ;
+    rdfs:label "Duchy of Anhalt" ;
+    ont:hasRuler data:Ruler_LeopoldIV ;
+    ont:population 200000 ;
+    ont:stateType "Duchy" ;
+    ont:isOriginalState false ;
+    ont:isActive false .
+
+# --- STATE 10: Kingdom of Hanover (Annexed) ---
+data:State_Hanover a ont:State ;
+    rdfs:label "Kingdom of Hanover" ;
+    ont:hasRuler data:Ruler_GeorgeV ;
+    ont:population 1900000 ;
+    ont:stateType "Kingdom" ;
+    ont:isOriginalState false ;
+    ont:isActive true .
+
+# ==============================================================================
+# RULER DEFINITIONS
+# ==============================================================================
+
+data:Ruler_WilhelmI a ont:Ruler ;
+    rdfs:label "Wilhelm I" ;
+    ont:rulerTitle "King of Prussia" .
+
+data:Ruler_LudwigII a ont:Ruler ;
+    rdfs:label "Ludwig II" ;
+    ont:rulerTitle "King of Bavaria" .
+
+data:Ruler_Johann a ont:Ruler ;
+    rdfs:label "Johann" ;
+    ont:rulerTitle "King of Saxony" .
+
+data:Ruler_KarlI a ont:Ruler ;
+    rdfs:label "Karl I" ;
+    ont:rulerTitle "King of Württemberg" .
+
+data:Ruler_FriedrichI a ont:Ruler ;
+    rdfs:label "Friedrich I" ;
+    ont:rulerTitle "Grand Duke of Baden" .
+
+data:Ruler_LudwigIII a ont:Ruler ;
+    rdfs:label "Ludwig III" ;
+    ont:rulerTitle "Grand Duke of Hesse" .
+
+data:Ruler_FriedrichFrancisII a ont:Ruler ;
+    rdfs:label "Friedrich Francis II" ;
+    ont:rulerTitle "Grand Duke of Mecklenburg-Schwerin" .
+
+data:Ruler_PeterII a ont:Ruler ;
+    rdfs:label "Peter II" ;
+    ont:rulerTitle "Grand Duke of Oldenburg" .
+
+data:Ruler_LeopoldIV a ont:Ruler ;
+    rdfs:label "Leopold IV" ;
+    ont:rulerTitle "Duke of Anhalt" .
+
+data:Ruler_GeorgeV a ont:Ruler ;
+    rdfs:label "George V" ;
+    ont:rulerTitle "King of Hanover" .
+
+# ==============================================================================
+# REGION DEFINITIONS
+# ==============================================================================
+
+
+# --- REGIONS FOR PRUSSIA ---
+data:Region_Prussia_1 a ont:Region ;
+    rdfs:label "East Prussia" ;
+    ont:population 1500000 ;
+    ont:regionType "Province" ;
+    ont:locatedIn data:State_Prussia .
+
+data:Region_Prussia_2 a ont:Region ;
+    rdfs:label "West Prussia" ;
+    ont:population 900000 ;
+    ont:regionType "Province" ;
+    ont:locatedIn data:State_Prussia .
+
+# --- REGIONS FOR BAVARIA ---
+data:Region_Bavaria_1 a ont:Region ;
+    rdfs:label "Upper Bavaria" ;
+    ont:population 1200000 ;
+    ont:regionType "District" ;
+    ont:locatedIn data:State_Bavaria .
+
+data:Region_Bavaria_2 a ont:Region ;
+    rdfs:label "Lower Bavaria" ;
+    ont:population 600000 ;
+    ont:regionType "District" ;
+    ont:locatedIn data:State_Bavaria .
+
+# --- REGIONS FOR SAXONY ---
+data:Region_Saxony_1 a ont:Region ;
+    rdfs:label "Dresden" ;
+    ont:population 800000 ;
+    ont:regionType "Administrative Region" ;
+    ont:locatedIn data:State_Saxony .
+
+data:Region_Saxony_2 a ont:Region ;
+    rdfs:label "Leipzig" ;
+    ont:population 700000 ;
+    ont:regionType "Administrative Region" ;
+    ont:locatedIn data:State_Saxony .
+
+# --- REGIONS FOR WÜRTTEMBERG ---
+data:Region_Wuerttemberg_1 a ont:Region ;
+    rdfs:label "Neckar" ;
+    ont:population 900000 ;
+    ont:regionType "District" ;
+    ont:locatedIn data:State_Wuerttemberg .
+
+data:Region_Wuerttemberg_2 a ont:Region ;
+    rdfs:label "Black Forest" ;
+    ont:population 400000 ;
+    ont:regionType "District" ;
+    ont:locatedIn data:State_Wuerttemberg .
+
+# --- REGIONS FOR BADEN ---
+data:Region_Baden_1 a ont:Region ;
+    rdfs:label "Karlsruhe" ;
+    ont:population 700000 ;
+    ont:regionType "Administrative Region" ;
+    ont:locatedIn data:State_Baden .
+
+# --- REGIONS FOR HESSE ---
+data:Region_Hesse_1 a ont:Region ;
+    rdfs:label "Upper Hesse" ;
+    ont:population 400000 ;
+    ont:regionType "Province" ;
+    ont:locatedIn data:State_Hesse .
+
+data:Region_Hesse_2 a ont:Region ;
+    rdfs:label "Starkenburg" ;
+    ont:population 300000 ;
+    ont:regionType "Province" ;
+    ont:locatedIn data:State_Hesse .
+
+# --- REGIONS FOR MECKLENBURG ---
+data:Region_Mecklenburg_1 a ont:Region ;
+    rdfs:label "Schwerin" ;
+    ont:population 250000 ;
+    ont:regionType "District" ;
+    ont:locatedIn data:State_Mecklenburg .
+
+data:Region_Mecklenburg_2 a ont:Region ;
+    rdfs:label "Rostock" ;
+    ont:population 200000 ;
+    ont:regionType "District" ;
+    ont:locatedIn data:State_Mecklenburg .
+
+# --- REGIONS FOR OLDENBURG ---
+data:Region_Oldenburg_1 a ont:Region ;
+    rdfs:label "Oldenburg Land" ;
+    ont:population 200000 ;
+    ont:regionType "Administrative Region" ;
+    ont:locatedIn data:State_Oldenburg .
+
+# --- REGIONS FOR ANHALT ---
+data:Region_Anhalt_1 a ont:Region ;
+    rdfs:label "Dessau" ;
+    ont:population 100000 ;
+    ont:regionType "Administrative Region" ;
+    ont:locatedIn data:State_Anhalt .
+
+data:Region_Anhalt_2 a ont:Region ;
+    rdfs:label "Bernburg" ;
+    ont:population 80000 ;
+    ont:regionType "Administrative Region" ;
+    ont:locatedIn data:State_Anhalt .
+
+# --- REGIONS FOR HANOVER ---
+data:Region_Hanover_1 a ont:Region ;
+    rdfs:label "Calenberg" ;
+    ont:population 600000 ;
+    ont:regionType "District" ;
+    ont:locatedIn data:State_Hanover .
+
+data:Region_Hanover_2 a ont:Region ;
+    rdfs:label "Lüneburg" ;
+    ont:population 500000 ;
+    ont:regionType "District" ;
+    ont:locatedIn data:State_Hanover .
+
+data:Region_Hanover_3 a ont:Region ;
+    rdfs:label "East Frisia" ;
+    ont:population 300000 ;
+    ont:regionType "Province" ;
+    ont:locatedIn data:State_Hanover .

@@ -1,28 +1,27 @@
 package com.github.jcodevandamme.semantics.rdf.query;
 
 import com.github.jcodevandamme.semantics.rdf.bmatrix.BMatrix;
+import com.github.jcodevandamme.semantics.rdf.dictionary.TripleDictionary;
 import com.github.jcodevandamme.semantics.rdf.model.EncodedTriple;
-import com.github.jcodevandamme.semantics.rdf.model.Triple;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class QueryProcessor {
+public class TripleQueryProcessor {
 
+    private final TripleDictionary dict;
     private final BMatrix bMatrix;
 
-    public QueryProcessor(BMatrix bMatrix) {
+    public TripleQueryProcessor(TripleDictionary dict, BMatrix bMatrix) {
+        this.dict = dict;
         this.bMatrix = bMatrix;
     }
 
-    public List<EncodedTriple> process(Query query) {
-        if (query instanceof TripleQuery) {
-            return processTripleQuery((TripleQuery) query);
-        }
-        throw new IllegalStateException("Unhandled Query Type: " + query.toString());
+    public List<EncodedTriple> process(TripleQuery query) {
+        return execute(query);
     }
 
-    private List<EncodedTriple> processTripleQuery(TripleQuery q) {
+    public List<EncodedTriple> execute(TripleQuery q) {
         switch (type(q)) {
             case SPO:
                 if (bMatrix.spoQuery(q.s(), q.p(), q.o())) {
@@ -49,7 +48,7 @@ public class QueryProcessor {
         }
     }
     
-    private QueryType type(Query query) {
+    private static QueryType type(TripleQuery query) {
         boolean s = query.s() != null;
         boolean p = query.p() != null;
         boolean o = query.o() != null;

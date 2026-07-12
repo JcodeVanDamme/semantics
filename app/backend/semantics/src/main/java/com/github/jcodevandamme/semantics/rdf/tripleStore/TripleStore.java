@@ -10,7 +10,9 @@ import com.github.jcodevandamme.semantics.rdf.model.EncodedTriple;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import com.github.jcodevandamme.semantics.rdf.query.Query;
 import com.github.jcodevandamme.semantics.rdf.query.QueryFactory;
-import com.github.jcodevandamme.semantics.rdf.query.QueryProcessor;
+import com.github.jcodevandamme.semantics.rdf.query.TripleQuery;
+import com.github.jcodevandamme.semantics.rdf.query.TripleQueryProcessor;
+import com.github.jcodevandamme.semantics.rdf.query.sparql.*;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorConfiguration;
 
 import java.util.Collections;
@@ -27,8 +29,8 @@ public class TripleStore {
 
     private final TripleDictionary dict;
     private final BMatrix bMatrix;
-    private final QueryFactory factory;
-    private final QueryProcessor processor;
+    private final TripleQueryProcessor tripleProcessor;
+    private final SparqlProcessor sparqlProcessor;
 
     public TripleStore() {
         dict = new TripleDictionary();
@@ -41,20 +43,20 @@ public class TripleStore {
                         DEFAULT_BITVECTOR_INT_MIN,
                         DEFAULT_BITVECTOR_INT_MAX
                 ));
-        factory = new QueryFactory(dict);
-        processor = new QueryProcessor(bMatrix);
+        tripleProcessor = new TripleQueryProcessor(dict, bMatrix);
+        sparqlProcessor = new SparqlProcessor(tripleProcessor);
     }
     public TripleStore(int k, int t, DynamicBitVectorConfiguration config) {
         dict = new TripleDictionary();
         bMatrix = new BMatrix(k, t, config);
-        factory = new QueryFactory(dict);
-        processor = new QueryProcessor(bMatrix);
+        tripleProcessor = new TripleQueryProcessor(dict, bMatrix);
+        sparqlProcessor = new SparqlProcessor(tripleProcessor);
     }
 
     public List<Triple> query(String s, String p, String o) {
         try {
-            Query tripleQuery = factory.fromTriple(s, p, o);
-            List<EncodedTriple> queryResults = processor.process(tripleQuery);
+            TripleQuery query = QueryFactory.fromTriple(s, p, o, dict);
+            List<EncodedTriple> queryResults = tripleProcessor.process(query);
             return TripleDecoder.decode(queryResults, dict);
 
         } catch (TripleCodingException ex) {
@@ -62,13 +64,20 @@ public class TripleStore {
         }
     }
 
-    public List<Triple> query(String query) {
+    public Object query(String queryString) { // Rückgabetyp jetzt Object, da es Liste von Triples ODER Liste von Maps sein kann
         try {
-            Query sparqlQuery = factory.fromSparql(query);
-            List<EncodedTriple> queryResults = processor.process(sparqlQuery);
-            return TripleDecoder.decode(queryResults, dict);
+            SparqlQuery sparqlQuery = SparqlParser.parseSparql(queryString, this.dict);
+            SparqlResult result = sparqlProcessor.execute(sparqlQuery);
 
-        } catch (TripleCodingException ex) {
+            if (result.isResultSet()) {
+                // HIER findet die Dekodierung für SELECT statt!
+                return TripleDecoder.decodeSelectResults(result.getResultSet(), this.dict);
+            } else {
+                // HIER findet die Dekodierung für CONSTRUCT/DESCRIBE statt (dein bisheriger Weg)
+                return TripleDecoder.decode(result.getTripleResult(), this.dict);
+            }
+
+        } catch (Exception ex) {
             return Collections.emptyList();
         }
     }
@@ -139,7 +148,6 @@ public class TripleStore {
     }
 
     private void register(Triple t) {
-        System.out.println("Registering " + t);
         dict.registerSO((String) t.s().value(), false);
         dict.registerP((String) t.p().value());
         dict.registerSO((String) t.o().value(), t.o().isLiteral());

@@ -5,7 +5,10 @@ import com.github.jcodevandamme.semantics.rdf.model.EncodedTriple;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TripleDecoder {
 
@@ -26,5 +29,28 @@ public class TripleDecoder {
             results.add(decoded);
         }
         return results;
+    }
+
+    public static List<Map<String, String>> decodeSelectResults(
+            List<Map<String, Integer>> encodedBindings, TripleDictionary dict) {
+
+        return encodedBindings.stream()
+                .map(binding -> decodeSingleBinding(binding, dict))
+                .collect(Collectors.toList());
+    }
+
+    private static Map<String, String> decodeSingleBinding(
+            Map<String, Integer> encodedBinding, TripleDictionary dict) {
+
+        Map<String, String> decoded = new HashMap<>();
+        for (Map.Entry<String, Integer> entry : encodedBinding.entrySet()) {
+            // Wichtig: Hier musst du die passende Methode deines Dictionaries nutzen.
+            // Falls das Dictionary verschiedene Methoden für P und SO hat,
+            // müsste man hier die Variable prüfen.
+            // Meist reicht für allgemeine Ergebnisse ein decodeSO() oder get(id).
+            String value = dict.decodeSO(entry.getValue());
+            decoded.put(entry.getKey(), value);
+        }
+        return decoded;
     }
 }

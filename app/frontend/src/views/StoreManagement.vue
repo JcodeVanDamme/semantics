@@ -340,8 +340,7 @@ onMounted(() => {
 <style scoped>
 .store-layout {
   display: flex;
-  gap: 20px;
-  margin-top: 20px;
+  gap: var(--paddingDouble);
   flex: 1;
 }
 
@@ -399,10 +398,7 @@ onMounted(() => {
   color: var(--mainFontColor);
 }
 .loading-state {
-  padding: 40px;
-  text-align: center;
-  font-style: italic;
-  color: #64748b;
+
 }
 
 @media (max-width: 1100px) {

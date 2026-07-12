@@ -1,4 +1,4 @@
 package com.github.jcodevandamme.semantics.app.dto.response;
 
-public record FactorResponse(float factor) {
+public record FactorResponse(double factor) {
 }
