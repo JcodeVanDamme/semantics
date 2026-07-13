@@ -1,4 +1,6 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+const BASE_URL = 'http://localhost:8080'
+const RDF_ENDPOINT = '/semantics.rdf.system'
+const DOMAIN_ENDPOINT = '/triples'
 
 export interface RDFTerm {
   value: string
@@ -64,7 +66,6 @@ export interface StateData {
 }
 
 export interface StateDataResponse {
-  count: number
   states: StateData[]
 }
 

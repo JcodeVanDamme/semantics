@@ -1,5 +1,6 @@
 package com.github.jcodevandamme.semantics.rdf.serialization;
 
+import com.github.jcodevandamme.semantics.app.persistence.TripleLogger;
 import com.github.jcodevandamme.semantics.rdf.tripleStore.TripleStore;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.riot.system.StreamRDF;

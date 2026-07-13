@@ -25,13 +25,14 @@ public class TripleDecoder {
                     objectIsLiteral
             );
 
-            System.out.println("Decoded: " + decoded);
             results.add(decoded);
         }
         return results;
     }
 
-    public static List<Map<String, String>> decodeSelectResults(
+    // Sparql-Slop
+    //
+    /*public static List<Map<String, String>> decodeSelectResults(
             List<Map<String, Integer>> encodedBindings, TripleDictionary dict) {
 
         return encodedBindings.stream()
@@ -52,5 +53,5 @@ public class TripleDecoder {
             decoded.put(entry.getKey(), value);
         }
         return decoded;
-    }
+    }*/
 }

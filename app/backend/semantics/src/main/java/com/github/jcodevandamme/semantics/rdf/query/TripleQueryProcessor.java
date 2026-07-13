@@ -9,11 +9,9 @@ import java.util.List;
 
 public class TripleQueryProcessor {
 
-    private final TripleDictionary dict;
     private final BMatrix bMatrix;
 
-    public TripleQueryProcessor(TripleDictionary dict, BMatrix bMatrix) {
-        this.dict = dict;
+    public TripleQueryProcessor(BMatrix bMatrix) {
         this.bMatrix = bMatrix;
     }
 

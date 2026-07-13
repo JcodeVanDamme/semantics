@@ -21,19 +21,19 @@ The accompanying web application models and explores the mediatization and terri
 
 ## Domain-Specific-Endpoints
 
-- [**GET** `/ops/activeStates`](#get-active-states) - Retrieve the number of active States
+- [**GET** `/semantics.rdf.system/activeStates`](#get-active-states) - Retrieve the number of active States
 
-- [**GET** `/ops/stateChanges`](#get-state-change-factor) - Retrieve the difference of active States and original States
+- [**GET** `/semantics.rdf.system/stateChanges`](#get-state-change-factor) - Retrieve the difference of active States and original States
 
-- [**GET** `/ops/states`](#get-state-data) - Retrieve relevant Information of all active States
+- [**GET** `/semantics.rdf.system/states`](#get-state-data) - Retrieve relevant Information of all active States
 
-- [**POST** `/ops/mediatizate`](#mediatizate-state) - Mediatizate a State into another one
+- [**POST** `/semantics.rdf.system/mediatizate`](#mediatizate-state) - Mediatizate a State into another one
 
-- [**POST** `/ops/changeRuler`](#change-state-ruler) - Change the Ruler of a State
+- [**POST** `/semantics.rdf.system/changeRuler`](#change-state-ruler) - Change the Ruler of a State
 
-- [**POST** `/ops/foundState`](#found-state) - Found a new State
+- [**POST** `/semantics.rdf.system/foundState`](#found-state) - Found a new State
 
-- [**GET** `/ops/history`](#get-state-action-history) - Retrieve the History of State-Relevant-Actions
+- [**GET** `/semantics.rdf.system/history`](#get-state-action-history) - Retrieve the History of State-Relevant-Actions
 
 
 ---
@@ -338,7 +338,7 @@ DELETE
 
 #### Endpoint
 ```text
-/ops/activeStates
+/semantics.rdf.system/activeStates
 ```
 
 #### Method
@@ -374,7 +374,7 @@ GET
 
 #### Endpoint
 ```text
-/ops/stateChanges
+/semantics.rdf.system/stateChanges
 ```
 
 #### Method
@@ -410,7 +410,7 @@ GET
 
 #### Endpoint
 ```text
-/ops/states
+/semantics.rdf.system/states
 ```
 
 #### Method
@@ -496,7 +496,7 @@ GET
 
 #### Endpoint
 ```text
-/ops/mediatizate
+/semantics.rdf.system/mediatizate
 ```
 
 #### Method
@@ -532,26 +532,27 @@ POST
 #### Response Body
 ```json
 {
-  "count": 1,
-  "history": [
-    {
-      "action": "update",
-      "triples": [
+    "action": "MEDIATIZATION",
+    "timeStamp": "2026-07-13T07:12:39.873639600Z",
+    "triples": [
         {
-          "s": { "value": "gabba" },
-          "p": { "value": "rules" },
-          "o": { "value": "Anhalt", "isLiteral": false },
-          "type": "deleted"
-        },
-        {
-          "s": { "value": "gabba" },
-          "p": { "value": "rules" },
-          "o": { "value": "Saxony", "isLiteral": false },
-          "type": "added"
+            "action": "Created",
+            "triple": {
+                "s": {
+                    "value": "http://semantics.rdf.system.data/State_Prussia",
+                    "isLiteral": false
+                },
+                "p": {
+                    "value": "http://semantics.rdf.system.ontology/mediatized",
+                    "isLiteral": false
+                },
+                "o": {
+                    "value": "http://semantics.rdf.system.data/State_Bavaria",
+                    "isLiteral": false
+                }
+            }
         }
-      ]
-    }
-  ]
+	]
 }
 ```
 
@@ -559,18 +560,20 @@ POST
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
-| `count` | integer | Number of logged Triple-Store-Actions |
-| `history` | array | List of logged Triple-Store-Actions |
-| `history[].action` | string | Type of Triple-Store-Action (e.g., `"update"`) |
-| `history[].triples` | array | List of Triples modified by this action |
-| `history[].triples[].s` | object | Subject of the Action Triple|
-| `history[].triples[].s.value` | string | The Value of the Subject |
-| `history[].triples[].p` | object | Predicate of the Action Triple |
-| `history[].triples[].p.value` | string | The Value of the Predicate |
-| `history[].triples[].o` | object | Object of the Action Triple |
-| `history[].triples[].o.value` | string | TThe Value of the Object (can be a URI or a literal text/number) |
-| `history[].triples[].o.isLiteral` | boolean | `true` if the object value is a literal; `false` if it is a URI|
-| `history[].triples[].type` | string | Mutation tracking direction: `"added"` or `"deleted"` |
+| `action` | String | The event identifier. |
+| `timeStamp` | String | The ISO-8601 timestamp when the event occurred. |
+| `triples` | Array | A collection of modifications applied to the triple store. |
+| `triples[].action` | String | The operation performed with the Triple. |
+| `triples[].triple` | Object | The Action Triple. |
+| `triples[].triple.s` | Object | Subject of the Action Triple |
+| `triples[].triple.s.value` | String | The Value of the Subject. |
+| `triples[].triple.s.isLiteral` | Boolean | Always True. |
+| `triples[].triple.p` | Object | Predicate of the Action Triple. |
+| `triples[].triple.p.value` | String | The Value of the Subject. |
+| `triples[].triple.p.isLiteral` | Boolean | Always True. |
+| `triples[].triple.o` | Object | Object of the Action Triple. |
+| `triples[].triple.o.value` | String | The URI string or the literal value of the Object. |
+| `triples[].triple.o.isLiteral` | Boolean | `true` if the object value is a literal; `false` if it is a URI. |
 
 ---
 
@@ -617,26 +620,27 @@ POST
 #### Response Body
 ```json
 {
-  "count": 1,
-  "history": [
-    {
-      "action": "update",
-      "triples": [
+    "action": "MEDIATIZATION",
+    "timeStamp": "2026-07-13T07:12:39.873639600Z",
+    "triples": [
         {
-          "s": { "value": "gabba" },
-          "p": { "value": "rules" },
-          "o": { "value": "Anhalt", "isLiteral": false },
-          "type": "deleted"
-        },
-        {
-          "s": { "value": "gabba" },
-          "p": { "value": "rules" },
-          "o": { "value": "Saxony", "isLiteral": false },
-          "type": "added"
+            "action": "Created",
+            "triple": {
+                "s": {
+                    "value": "http://semantics.rdf.system.data/State_Prussia",
+                    "isLiteral": false
+                },
+                "p": {
+                    "value": "http://semantics.rdf.system.ontology/mediatized",
+                    "isLiteral": false
+                },
+                "o": {
+                    "value": "http://semantics.rdf.system.data/State_Bavaria",
+                    "isLiteral": false
+                }
+            }
         }
-      ]
-    }
-  ]
+	]
 }
 ```
 
@@ -644,18 +648,20 @@ POST
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
-| `count` | integer | Number of logged Triple-Store-Actions |
-| `history` | array | List of logged Triple-Store-Actions |
-| `history[].action` | string | Type of Triple-Store-Action (e.g., `"update"`) |
-| `history[].triples` | array | List of Triples modified by this action |
-| `history[].triples[].s` | object | Subject of the Action Triple|
-| `history[].triples[].s.value` | string | The Value of the Subject |
-| `history[].triples[].p` | object | Predicate of the Action Triple |
-| `history[].triples[].p.value` | string | The Value of the Predicate |
-| `history[].triples[].o` | object | Object of the Action Triple |
-| `history[].triples[].o.value` | string | TThe Value of the Object (can be a URI or a literal text/number) |
-| `history[].triples[].o.isLiteral` | boolean | `true` if the object value is a literal; `false` if it is a URI|
-| `history[].triples[].type` | string | Mutation tracking direction: `"added"` or `"deleted"` |
+| `action` | String | The event identifier. |
+| `timeStamp` | String | The ISO-8601 timestamp when the event occurred. |
+| `triples` | Array | A collection of modifications applied to the triple store. |
+| `triples[].action` | String | The operation performed with the Triple. |
+| `triples[].triple` | Object | The Action Triple. |
+| `triples[].triple.s` | Object | Subject of the Action Triple |
+| `triples[].triple.s.value` | String | The Value of the Subject. |
+| `triples[].triple.s.isLiteral` | Boolean | Always True. |
+| `triples[].triple.p` | Object | Predicate of the Action Triple. |
+| `triples[].triple.p.value` | String | The Value of the Subject. |
+| `triples[].triple.p.isLiteral` | Boolean | Always True. |
+| `triples[].triple.o` | Object | Object of the Action Triple. |
+| `triples[].triple.o.value` | String | The URI string or the literal value of the Object. |
+| `triples[].triple.o.isLiteral` | Boolean | `true` if the object value is a literal; `false` if it is a URI. |
 
 ---
 
@@ -667,7 +673,7 @@ POST
 
 #### Endpoint
 ```
-/ops/foundState
+/semantics.rdf.system/foundState
 ```
 
 #### Method
@@ -705,26 +711,27 @@ POST
 #### Response Body
 ```json
 {
-  "count": 1,
-  "history": [
-    {
-      "action": "update",
-      "triples": [
+    "action": "MEDIATIZATION",
+    "timeStamp": "2026-07-13T07:12:39.873639600Z",
+    "triples": [
         {
-          "s": { "value": "gabba" },
-          "p": { "value": "rules" },
-          "o": { "value": "Anhalt", "isLiteral": false },
-          "type": "deleted"
-        },
-        {
-          "s": { "value": "gabba" },
-          "p": { "value": "rules" },
-          "o": { "value": "Saxony", "isLiteral": false },
-          "type": "added"
+            "action": "Created",
+            "triple": {
+                "s": {
+                    "value": "http://semantics.rdf.system.data/State_Prussia",
+                    "isLiteral": false
+                },
+                "p": {
+                    "value": "http://semantics.rdf.system.ontology/mediatized",
+                    "isLiteral": false
+                },
+                "o": {
+                    "value": "http://semantics.rdf.system.data/State_Bavaria",
+                    "isLiteral": false
+                }
+            }
         }
-      ]
-    }
-  ]
+	]
 }
 ```
 
@@ -732,18 +739,20 @@ POST
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
-| `count` | integer | Number of logged Triple-Store-Actions |
-| `history` | array | List of logged Triple-Store-Actions |
-| `history[].action` | string | Type of Triple-Store-Action (e.g., `"update"`) |
-| `history[].triples` | array | List of Triples modified by this action |
-| `history[].triples[].s` | object | Subject of the Action Triple|
-| `history[].triples[].s.value` | string | The Value of the Subject |
-| `history[].triples[].p` | object | Predicate of the Action Triple |
-| `history[].triples[].p.value` | string | The Value of the Predicate |
-| `history[].triples[].o` | object | Object of the Action Triple |
-| `history[].triples[].o.value` | string | TThe Value of the Object (can be a URI or a literal text/number) |
-| `history[].triples[].o.isLiteral` | boolean | `true` if the object value is a literal; `false` if it is a URI|
-| `history[].triples[].type` | string | Mutation tracking direction: `"added"` or `"deleted"` |
+| `action` | String | The event identifier. |
+| `timeStamp` | String | The ISO-8601 timestamp when the event occurred. |
+| `triples` | Array | A collection of modifications applied to the triple store. |
+| `triples[].action` | String | The operation performed with the Triple. |
+| `triples[].triple` | Object | The Action Triple. |
+| `triples[].triple.s` | Object | Subject of the Action Triple |
+| `triples[].triple.s.value` | String | The Value of the Subject. |
+| `triples[].triple.s.isLiteral` | Boolean | Always True. |
+| `triples[].triple.p` | Object | Predicate of the Action Triple. |
+| `triples[].triple.p.value` | String | The Value of the Subject. |
+| `triples[].triple.p.isLiteral` | Boolean | Always True. |
+| `triples[].triple.o` | Object | Object of the Action Triple. |
+| `triples[].triple.o.value` | String | The URI string or the literal value of the Object. |
+| `triples[].triple.o.isLiteral` | Boolean | `true` if the object value is a literal; `false` if it is a URI. |
 
 ---
 
@@ -753,7 +762,7 @@ POST
 
 #### Endpoint
 ```
-/ops/history
+/semantics.rdf.system/history
 ```
 
 #### Method
@@ -764,25 +773,28 @@ GET
 #### Response Body
 ```json
 {
-  "count": 1,
-  "history": [
-    {
-      "action": "update",
-      "triples": [
+  [
+    "action": "MEDIATIZATION",
+    "timeStamp": "2026-07-13T07:12:39.873639600Z",
+    "triples": [
         {
-          "s": { "value": "gabba" },
-          "p": { "value": "rules" },
-          "o": { "value": "Anhalt", "isLiteral": false },
-          "type": "deleted"
-        },
-        {
-          "s": { "value": "gabba" },
-          "p": { "value": "rules" },
-          "o": { "value": "Saxony", "isLiteral": false },
-          "type": "added"
+            "action": "Created",
+            "triple": {
+                "s": {
+                    "value": "http://semantics.rdf.system.data/State_Prussia",
+                    "isLiteral": false
+                },
+                "p": {
+                    "value": "http://semantics.rdf.system.ontology/mediatized",
+                    "isLiteral": false
+                },
+                "o": {
+                    "value": "http://semantics.rdf.system.data/State_Bavaria",
+                    "isLiteral": false
+                }
+            }
         }
-      ]
-    }
+	  ]
   ]
 }
 ```
@@ -791,18 +803,20 @@ GET
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
-| `count` | integer | Number of logged Triple-Store-Actions |
-| `history` | array | List of logged Triple-Store-Actions |
-| `history[].action` | string | Type of Triple-Store-Action (e.g., `"update"`) |
-| `history[].triples` | array | List of Triples modified by this action |
-| `history[].triples[].s` | object | Subject of the Action Triple|
-| `history[].triples[].s.value` | string | The Value of the Subject |
-| `history[].triples[].p` | object | Predicate of the Action Triple |
-| `history[].triples[].p.value` | string | The Value of the Predicate |
-| `history[].triples[].o` | object | Object of the Action Triple |
-| `history[].triples[].o.value` | string | TThe Value of the Object (can be a URI or a literal text/number) |
-| `history[].triples[].o.isLiteral` | boolean | `true` if the object value is a literal; `false` if it is a URI|
-| `history[].triples[].type` | string | Mutation tracking direction: `"added"` or `"deleted"` |
+| `action` | String | The event identifier. |
+| `timeStamp` | String | The ISO-8601 timestamp when the event occurred. |
+| `triples` | Array | A collection of modifications applied to the triple store. |
+| `triples[].action` | String | The operation performed with the Triple. |
+| `triples[].triple` | Object | The Action Triple. |
+| `triples[].triple.s` | Object | Subject of the Action Triple |
+| `triples[].triple.s.value` | String | The Value of the Subject. |
+| `triples[].triple.s.isLiteral` | Boolean | Always True. |
+| `triples[].triple.p` | Object | Predicate of the Action Triple. |
+| `triples[].triple.p.value` | String | The Value of the Subject. |
+| `triples[].triple.p.isLiteral` | Boolean | Always True. |
+| `triples[].triple.o` | Object | Object of the Action Triple. |
+| `triples[].triple.o.value` | String | The URI string or the literal value of the Object. |
+| `triples[].triple.o.isLiteral` | Boolean | `true` if the object value is a literal; `false` if it is a URI. |
 
 ---
 

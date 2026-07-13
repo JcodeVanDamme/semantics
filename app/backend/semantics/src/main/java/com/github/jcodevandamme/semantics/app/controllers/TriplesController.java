@@ -46,11 +46,11 @@ public class TriplesController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/sparql")
+    /*@PostMapping("/sparql")
     public synchronized ResponseEntity<Object> sparqlQuery(@Validated @RequestBody String query) {
         Object res = service.querySparql(query);
         return ResponseEntity.ok(res);
-    }
+    }*/
 
     @PutMapping
     public synchronized HttpStatus updateTriple(@Validated @RequestBody PutTriplesRequest request) throws TripleNotFoundException, TripleAlreadyExistsException, IOException {

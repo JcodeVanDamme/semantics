@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 @Component
 public class StorageInitializer {
@@ -21,19 +22,23 @@ public class StorageInitializer {
     private final String dir;
     private final String snapshotFileName;
     private final String updateFileName;
+    private final String baseDataFileName;
+
     private final AppStore tripleStore;
 
     public StorageInitializer(
             AppStore tripleStore,
             @Value("${rdf.storage.directory}") String dir,
             @Value("${rdf.storage.filename.snapshot}") String snapshot,
-            @Value("${rdf.storage.filename.update}") String update
+            @Value("${rdf.storage.filename.update}") String update,
+            @Value("${rdf.storage.filename.base}") String baseData
 
     ) {
         this.tripleStore = tripleStore;
         this.dir = dir;
         this.snapshotFileName = snapshot;
         this.updateFileName = update;
+        this.baseDataFileName = baseData;
     }
 
     @PostConstruct
@@ -47,17 +52,27 @@ public class StorageInitializer {
     }
 
     private void initializeSnapshot() throws IOException {
-        Path storagePath = Paths.get(dir).resolve(snapshotFileName);
-        Files.createDirectories(storagePath.getParent());
+        Path snapshotPath = Paths.get(dir).resolve(snapshotFileName);
+        Files.createDirectories(snapshotPath.getParent());
 
-        if (Files.exists(storagePath)) {
+        if (Files.exists(snapshotPath)) {
             System.out.println("Snapshot found, begin Parsing.");
-            ParserTripleProvider provider = new ParserTripleProvider(storagePath.toString());
+            ParserTripleProvider provider = new ParserTripleProvider(snapshotPath.toString());
             provider.initTriples(tripleStore);
 
         } else {
-            System.out.println("No existing Snapshot found. Starting with an empty TripleStore.");
-            Files.createFile(storagePath);
+            System.out.println("No existing Snapshot found. Creating Snapshot from BaseData.");
+            Path baseDataPath = Paths.get(dir).resolve(baseDataFileName);
+
+            if (Files.exists(baseDataPath)) {
+                Files.copy(baseDataPath, snapshotPath, StandardCopyOption.REPLACE_EXISTING);
+                System.out.println("Snapshot created as a copy of BaseData.");
+
+                ParserTripleProvider provider = new ParserTripleProvider(snapshotPath.toString());
+                provider.initTriples(tripleStore);
+            } else {
+                throw new IOException("BaseData file not found at: " + baseDataPath);
+            }
         }
     }
 
@@ -85,8 +100,6 @@ public class StorageInitializer {
         char operator = line.charAt(0);
         String triple = line.substring(2);
         Triple t = LogParser.parseTriple(triple);
-
-        System.out.println("Read Triple: " + t);
 
         if (operation(operator) == UpdateType.ADD) {
             tripleStore.create(t);

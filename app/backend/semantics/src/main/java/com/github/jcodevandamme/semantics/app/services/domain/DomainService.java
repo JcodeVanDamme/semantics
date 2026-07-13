@@ -1,34 +1,36 @@
-package com.github.jcodevandamme.semantics.app.services.semantics;
+package com.github.jcodevandamme.semantics.app.services.domain;
 
+import com.github.jcodevandamme.semantics.app.dto.request.MediatizationRequest;
 import com.github.jcodevandamme.semantics.app.dto.response.CountResponse;
 import com.github.jcodevandamme.semantics.app.dto.response.FactorResponse;
 import com.github.jcodevandamme.semantics.app.dto.response.StateResponse;
+import com.github.jcodevandamme.semantics.app.dto.response.TripleLogResponse;
 import com.github.jcodevandamme.semantics.app.dto.util.StateDto;
 import com.github.jcodevandamme.semantics.app.dto.util.*;
 import com.github.jcodevandamme.semantics.app.persistence.TripleLogger;
 import com.github.jcodevandamme.semantics.app.services.AppStore;
-import com.github.jcodevandamme.semantics.app.services.semantics.fetcher.DomainFetcher;
-import com.github.jcodevandamme.semantics.app.services.semantics.fetcher.data.MedState;
-import com.github.jcodevandamme.semantics.app.services.semantics.fetcher.data.Region;
-import com.github.jcodevandamme.semantics.app.services.semantics.fetcher.data.State;
+import com.github.jcodevandamme.semantics.app.services.domain.actor.DomainActor;
+import com.github.jcodevandamme.semantics.app.services.domain.actor.data.MedState;
+import com.github.jcodevandamme.semantics.app.services.domain.actor.data.Region;
+import com.github.jcodevandamme.semantics.app.services.domain.actor.data.State;
+import com.github.jcodevandamme.semantics.app.services.domain.logger.HistoryLogger;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
 public class DomainService {
 
-    private final DomainFetcher domain;
-    private final AppStore tripleStore;
-    private final TripleLogger logger;
+    private final DomainActor domain;
+    private final HistoryLogger logger;
 
     public DomainService(
-            AppStore tripleStore,
-            TripleLogger logger
+            DomainActor domain,
+            HistoryLogger logger
     ) {
-        this.tripleStore = tripleStore;
+        this.domain = domain;
         this.logger = logger;
-        domain = new DomainFetcher(tripleStore);
     }
 
     public CountResponse countActiveStates() {
@@ -42,6 +44,16 @@ public class DomainService {
     public StateResponse getStates() {
         List<State> states = domain.fetchStateData();
         return new StateResponse(statesToDTO(states));
+    }
+
+    public HistoryDto mediatizate(MediatizationRequest req) throws IOException, DomainActionException {
+        String target = req.absorbed();
+        String into = req.into();
+        return domain.mediatizate(target, into);
+    }
+
+    public HistoryDto[] getHistory() {
+        return logger.flushHistory();
     }
 
     private StateDto[] statesToDTO(List<State> states) {

@@ -17,6 +17,7 @@ import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvecto
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class TripleStore {
 
@@ -30,7 +31,9 @@ public class TripleStore {
     private final TripleDictionary dict;
     private final BMatrix bMatrix;
     private final TripleQueryProcessor tripleProcessor;
-    private final SparqlProcessor sparqlProcessor;
+    //private final SparqlProcessor sparqlProcessor;
+
+    public TripleDictionary dict() { return dict; }
 
     public TripleStore() {
         dict = new TripleDictionary();
@@ -43,28 +46,35 @@ public class TripleStore {
                         DEFAULT_BITVECTOR_INT_MIN,
                         DEFAULT_BITVECTOR_INT_MAX
                 ));
-        tripleProcessor = new TripleQueryProcessor(dict, bMatrix);
-        sparqlProcessor = new SparqlProcessor(tripleProcessor);
+        tripleProcessor = new TripleQueryProcessor(bMatrix);
+        //sparqlProcessor = new SparqlProcessor(tripleProcessor);
     }
     public TripleStore(int k, int t, DynamicBitVectorConfiguration config) {
         dict = new TripleDictionary();
         bMatrix = new BMatrix(k, t, config);
-        tripleProcessor = new TripleQueryProcessor(dict, bMatrix);
-        sparqlProcessor = new SparqlProcessor(tripleProcessor);
+        tripleProcessor = new TripleQueryProcessor(bMatrix);
+        //sparqlProcessor = new SparqlProcessor(tripleProcessor);
     }
 
     public List<Triple> query(String s, String p, String o) {
         try {
             TripleQuery query = QueryFactory.fromTriple(s, p, o, dict);
             List<EncodedTriple> queryResults = tripleProcessor.process(query);
-            return TripleDecoder.decode(queryResults, dict);
+
+            List<EncodedTriple> filteredResults = queryResults.stream()
+                    .filter(Objects::nonNull)
+                    .toList();
+
+            return TripleDecoder.decode(filteredResults, dict);
 
         } catch (TripleCodingException ex) {
             return Collections.emptyList();
         }
     }
 
-    public Object query(String queryString) { // Rückgabetyp jetzt Object, da es Liste von Triples ODER Liste von Maps sein kann
+    // Sparql-Slop
+    //
+    /*public Object query(String queryString) {
         try {
             SparqlQuery sparqlQuery = SparqlParser.parseSparql(queryString, this.dict);
             SparqlResult result = sparqlProcessor.execute(sparqlQuery);
@@ -80,7 +90,7 @@ public class TripleStore {
         } catch (Exception ex) {
             return Collections.emptyList();
         }
-    }
+    }*/
 
     public boolean create(Triple t) {
         register(t);

@@ -1,4 +1,4 @@
-package com.github.jcodevandamme.semantics.app.services.semantics.fetcher.data;
+package com.github.jcodevandamme.semantics.app.services.domain.actor.data;
 
 public class MedState {
     public String name;

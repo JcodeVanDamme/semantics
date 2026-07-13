@@ -37,7 +37,6 @@ public class TripleLogger  {
                 case DELETE -> writer.write("-");
             }
 
-            // ⚠️ WICHTIGER FIX für deinen Parser (siehe Erklärung unten):
             writer.write(" ");
             writer.write((String) t.s().value());
             writer.write(",");

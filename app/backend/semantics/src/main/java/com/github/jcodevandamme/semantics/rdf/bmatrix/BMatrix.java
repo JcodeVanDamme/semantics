@@ -59,7 +59,9 @@ public class BMatrix {
         st.removeEntry(s, tripleIdx);
         ot.removeEntry(o, tripleIdx);
         bp.deregisterTriple(tripleIdx, p);
-        triples.remove(new EncodedTriple(s, p, o));
+        //triples.remove(new EncodedTriple(s, p, o));
+        triples.set(tripleIdx, null);
+
         return true;
     }
 

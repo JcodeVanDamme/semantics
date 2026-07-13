@@ -1,4 +1,4 @@
-package com.github.jcodevandamme.semantics.app.services.semantics.fetcher.data;
+package com.github.jcodevandamme.semantics.app.services.domain.actor.data;
 
 import java.util.ArrayList;
 import java.util.List;

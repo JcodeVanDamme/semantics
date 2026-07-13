@@ -1,4 +1,4 @@
-package com.github.jcodevandamme.semantics.app.services.semantics.fetcher;
+package com.github.jcodevandamme.semantics.app.services.domain.actor;
 public final class Vocab {
 
     public static final String ONT_NS = "http://semantics.rdf.system.ontology/";
@@ -18,10 +18,8 @@ public final class Vocab {
         public static final String POPULATION = ONT_NS + "population";
         public static final String STATE_TYPE = ONT_NS + "stateType";
         public static final String REGION_TYPE = ONT_NS + "regionType";
-        public static final String IS_ORIGINAL_STATE = ONT_NS + "isOriginalState";
         public static final String RULER_TITLE = ONT_NS + "rulerTitle";
         public static final String HAS_RULER = ONT_NS + "hasRuler";
-        public static final String RULES = ONT_NS + "rules";
         public static final String LOCATED_IN = ONT_NS + "locatedIn";
         public static final String MEDIATIZED = ONT_NS + "mediatized";
     }
