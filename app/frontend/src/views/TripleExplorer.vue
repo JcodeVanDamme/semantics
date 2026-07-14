@@ -6,9 +6,7 @@
     />
 
     <div class="card">
-      <CollapsiblePanel
-        >-
-
+      <CollapsiblePanel>
         <template #header>
           <div class="icon-title accent">
             <Search />
@@ -187,7 +185,6 @@ async function executeQuery() {
   try {
     const DEFAULT_NS = 'http://semantics.rdf.system/'
 
-    // Sanitize any remaining value spaces directly during parameter resolution
     const cleanSubjectVal = subject.value.replace(/\s+/g, '')
     const cleanPredicateVal = predicate.value.replace(/\s+/g, '')
     const cleanObjectVal = object.value.replace(/\s+/g, '')
@@ -211,6 +208,7 @@ async function executeQuery() {
       p: finalPredicate || undefined,
       o: finalObject || undefined,
     })
+    console.log(response)
 
     results.value = response.triples.map((triple: any, index: number) => {
       const rawTriple = {

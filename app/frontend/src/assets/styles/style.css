@@ -7,8 +7,12 @@
   --accentColor: #1c2c78;
   --errorColor:  #be472f;
   --noteColor:  #e3a92d;
+  --successColor:  #2ad45a;
   --errorSecondaryColor:  #E5D4C9;
   --noteSecondaryColor:  #EBE2C9;
+  --successSecondaryColor:  #D0E8CF;
+
+  --cardColor: color-mix(in srgb, var(--primaryColor), transparent 0%);
 
   /* --- FONT COLORS --- */
   --darkFontColor: #222;
@@ -34,6 +38,7 @@
   --text-h3: 1.4rem;
   --text-h2: 1.563rem;
   --text-h1: 3.052rem;
+  --buttonFontSize: 1.05rem;
 
   /* --- MISC --- */
   --padding: 15px;
@@ -52,9 +57,7 @@ body {
   margin: 0;
 }
 
-/* --- FIXED HEADERS (Moved out of :root to fix specificity) --- */
 h1, h2, h3, h4, h5, h6 {
-  /* Headers use a dynamic variable that defaults to their base color if no utility class is added */
   color: var(--header-color, var(--darkFontColor));
 }
 
@@ -113,10 +116,8 @@ h3 {
   background-image:
     url('../images/backgroundMap.png'),
     linear-gradient(180deg, #FEF0D9 0%, #778E73 43%, #02625D 100%);
-  background-repeat: no-repeat, no-repeat;
-
-  background-position: top center, center center;
-  background-size: auto, cover;
+  background-attachment: fixed;
+  background-size: cover, cover;
 
   display: flex;
   flex-direction: column;
@@ -125,7 +126,7 @@ h3 {
 }
 
 .card {
-  background: var(--primaryColor);
+  background: var(--cardColor);
   border: var(--border) solid var(--borderColor);
   padding: var(--padding);
   display: flex;
@@ -134,7 +135,7 @@ h3 {
 }
 
 .composite-card {
-  background: var(--primaryColor);
+  background: var(--cardColor);
   border: var(--border) solid var(--borderColor);
   display: flex;
   flex-direction: column;
@@ -170,18 +171,18 @@ h3 {
   margin-bottom: var(--paddingHalf);
 }
 
-/* --- DATA TABLES --- */
 table {
   width: 100%;
   border-collapse: collapse;
   overflow-x: scroll;
+  overflow-y: auto;
 }
 
 table th {
   text-align: left;
   text-transform: uppercase;
-  background: #d6d4cc;
-  padding: 15px;
+  background: var(--secondaryColor);
+  padding: var(--paddingHalf);
   font-weight: var(--fw-light);
   font-size: var(--text-h3);
   color: var(--mainFontColor);
@@ -195,7 +196,7 @@ table td {
 
 /* --- BUTTON COMPONENT --- */
 .button {
-  font-size: var(--text-h4);
+  font-size: var(--buttonFontSize);
   line-height: 1.3;
   font-family: var(--baseFontStyle);
   text-transform: uppercase;
@@ -207,7 +208,7 @@ table td {
   align-items: center;
   justify-content: center;
   gap: var(--paddingHalf);
-  padding: 12px 24px;
+  padding: 9px 18px;
   cursor: pointer;
   border-radius: 0;
   transition: all 0.2s ease;
@@ -277,6 +278,16 @@ table td {
   white-space: pre-line;
 }
 
+.success-banner {
+  padding: var(--padding);
+  border-left: 4px solid var(--successColor);
+  background-color: var(--successSecondaryColor);
+  color: var(--successColor);
+  font-family: var(--baseFontStyle);
+  font-size: var(--base-size);
+  white-space: pre-line;
+}
+
 .info-content {
   padding: var(--paddingDouble);
 }
@@ -290,4 +301,47 @@ table td {
   color: var(--header-color);
   height: 28px;
   width: 28px;
+}
+
+.close-button {
+  font-size: var(--base-size);
+  height: fit-content;
+  padding: 0px;
+  margin-left: var(--paddingDouble);
+}
+
+.upper {
+  text-transform: uppercase;
+}
+
+.input-button-wrapper {
+  margin-top: var(--paddingDouble);
+  display: flex;
+}
+
+.input-button-wrapper button {
+  margin-left: auto;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-form input {
+  border: none;
+  border-bottom: 2px solid var(--borderColor);
+  background: transparent;
+  font-size: 15px;
+  outline: none;
+  color: var(--mainFontColor);
+  transition: border-color 0.2s;
+  width: 100%;
+  margin-bottom: 15px;
+  padding-bottom: var(--padding);
+}
+
+.modal-form h3 {
+  margin: 0;
+  margin-bottom: 10px;
 }

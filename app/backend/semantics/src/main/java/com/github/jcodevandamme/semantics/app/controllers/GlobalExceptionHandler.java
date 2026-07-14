@@ -1,5 +1,6 @@
 package com.github.jcodevandamme.semantics.app.controllers;
 
+import com.github.jcodevandamme.semantics.app.services.domain.DomainActionException;
 import com.github.jcodevandamme.semantics.rdf.bmatrix.TripleAlreadyExistsException;
 import com.github.jcodevandamme.semantics.rdf.bmatrix.TripleNotFoundException;
 import com.github.jcodevandamme.semantics.rdf.dictionary.TripleCodingException;
@@ -39,5 +40,12 @@ public class GlobalExceptionHandler {
         ex.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Error encountered during Serialization. " + ex.getMessage());
+    }
+
+    @ExceptionHandler(DomainActionException.class)
+    public ResponseEntity<String> handleDomainError(DomainActionException ex) {
+        ex.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ex.getMessage());
     }
 }

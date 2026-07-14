@@ -2,17 +2,18 @@
   <BaseModal
     title="STATE FOUNDING:"
     description="Fill out the Fields below in order for your new State to be created."
-    sizeClass="found-modal"
     @close="emit('close')"
   >
     <div class="modal-form">
-      <h3>Statename</h3>
+      <h3>State-URI</h3>
       <input v-model="form.name" placeholder="Statename" />
-      <h3>Ruler</h3>
+      <h3>State-Label</h3>
       <input v-model="form.ruler" placeholder="Ruler" />
       <h3>Population</h3>
       <input v-model="form.population" placeholder="Population" />
-      <h3>Statetype</h3>
+      <h3>State-Type-URI</h3>
+      <input v-model="form.type" placeholder="Statetype" />
+      <h3>State-Type-Label</h3>
       <input v-model="form.type" placeholder="Statetype" />
 
       <div class="input-button-wrapper">
@@ -29,6 +30,7 @@
 import { ref, computed } from 'vue'
 import { Flag } from 'lucide-vue-next'
 import BaseModal from './BaseModal.vue'
+import SuggestionInput from '@/components/new/SuggestionInput.vue'
 
 const emit = defineEmits<{
   (e: 'close'): void

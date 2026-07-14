@@ -23,6 +23,10 @@
           {{ validationError || error }}
         </div>
 
+        <div v-if="success" class="success-banner">
+          {{ successMsg }}
+        </div>
+
         <TripleInputGroup
           v-model:value="subject"
           v-model:uri="subjectUri"
@@ -143,6 +147,8 @@ const search = ref('')
 const results = ref<DisplayTriple[]>([]) // Verwendet jetzt das UI-kompatible Format
 const originalTriple = ref<BackendTriple | null>(null)
 const error = ref<string | null>(null)
+const success = ref(false)
+const successMsg = ref('')
 
 const { validationError, validationNote } = useRdfFormValidation({
   subject,
@@ -217,6 +223,7 @@ async function createTriple() {
     await api.createTriple(compileBackendPayload())
     await fetchStoreTriples()
     clearForm()
+    triggerSuccess('Triple successfully created!')
   } catch (err: any) {
     error.value = err.message || 'Encountered an unexpected Error.'
     console.error('Create Call failed:', err)
@@ -235,6 +242,7 @@ async function commitChanges() {
     })
     await fetchStoreTriples()
     cancelEdit()
+    triggerSuccess('Triple successfully updated!')
   } catch (err: any) {
     error.value = err.message || 'Encountered an unexpected Error.'
     console.error('Update Call failed:', err)
@@ -251,6 +259,7 @@ async function deleteTriple() {
     await api.deleteTriple(originalTriple.value)
     await fetchStoreTriples()
     cancelEdit()
+    triggerSuccess('Triple successfully deleted!')
   } catch (err: any) {
     error.value = err.message || 'Delete Error.'
     console.error('Delete Call failed:', err)
@@ -332,6 +341,16 @@ const filteredTriples = computed(() => {
   )
 })
 
+function triggerSuccess(msg: string) {
+  successMsg.value = msg
+  success.value = true
+  // Auto-hide after 3 seconds
+  setTimeout(() => {
+    success.value = false
+    successMsg.value = ''
+  }, 3000)
+}
+
 onMounted(() => {
   fetchStoreTriples()
 })
@@ -398,7 +417,6 @@ onMounted(() => {
   color: var(--mainFontColor);
 }
 .loading-state {
-
 }
 
 @media (max-width: 1100px) {

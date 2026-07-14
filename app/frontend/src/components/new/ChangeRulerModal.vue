@@ -1,61 +1,102 @@
 <template>
   <BaseModal
-    title="RULER CHANGE:"
-    description="Select the new Ruler for your selected State"
+    title="CHANGE RULER:"
+    description="Select an existing ruler or provide details to create a new one."
     @close="emit('close')"
   >
-    <input v-model="searchQuery" class="modal-search" placeholder="Search by Name or Title" />
+    <div class="modal-form">
+      <p v-if="form.isNewRuler" class="note-banner">
+        New ruler detected. Please provide label and title to register.
+      </p>
 
-    <div class="modal-list">
-      <div
-        v-v-for="(ruler, index) in filteredRulers"
-        :key="index"
-        class="modal-row"
-        :class="{ selected: selectedRuler?.name === ruler.name }"
-        @click="selectedRuler = ruler"
-      >
-        <div>{{ ruler.name }}</div>
-        <small>{{ ruler.title }}</small>
+      <h3>Ruler-URI</h3>
+      <SuggestionInput v-model="form.uri" :options="rulerOptions" />
+
+      <h3>Ruler-Label</h3>
+      <input
+        v-model="form.label"
+        :disabled="!form.isNewRuler"
+        placeholder="e.g. Frederick the Great"
+      />
+
+      <h3>Ruler-Title</h3>
+      <input v-model="form.title" :disabled="!form.isNewRuler" placeholder="e.g. King of Prussia" />
+
+      <div class="input-button-wrapper">
+        <button class="button accent" :disabled="!isValid" @click="handleSubmit">
+          <Flag :size="18" />
+          CONFIRM CHANGE
+        </button>
       </div>
     </div>
-
-    <button class="modal-action-btn" :disabled="!selectedRuler" @click="handleSubmit">
-      <Crown :size="18" />
-      CHANGE RULER
-    </button>
   </BaseModal>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { Crown } from 'lucide-vue-next'
+import { ref, computed, watch } from 'vue'
+import { Flag } from 'lucide-vue-next'
 import BaseModal from './BaseModal.vue'
-
-interface Ruler {
-  name: string
-  title: string
-}
+import SuggestionInput from './SuggestionInput.vue'
 
 const props = defineProps<{
-  rulers: Ruler[]
+  states: any[]
 }>()
 
 const emit = defineEmits<{
   (e: 'close'): void
-  (e: 'submit', ruler: Ruler): void
+  (e: 'submit', payload: any): void
 }>()
 
-const searchQuery = ref('')
-const selectedRuler = ref<Ruler | null>(null)
+const rulerOptions = computed(() => {
+  const map = new Map()
+  props.states.forEach((s) => {
+    if (s.ruler?.URI) {
+      map.set(s.ruler.URI, s.ruler.name)
+    }
+  })
+  return Array.from(map.entries()).map(([value, label]) => ({ label, value }))
+})
 
-const filteredRulers = computed(() => {
-  return props.rulers.filter((ruler) =>
-    ruler.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
-  )
+const form = ref({
+  uri: '',
+  label: '',
+  title: '',
+  isNewRuler: false,
+})
+
+watch(
+  () => form.value.uri,
+  (newUri) => {
+    if (!newUri) {
+      form.value.isNewRuler = false
+      return
+    }
+    alert(newUri)
+
+    const exists = rulerOptions.value.find((o) => o.value === newUri)
+    form.value.isNewRuler = !exists
+  },
+)
+
+const isValid = computed(() => {
+  if (form.value.isNewRuler) {
+    return form.value.uri && form.value.label && form.value.title
+  }
+  return form.value.uri.length > 0
 })
 
 function handleSubmit() {
-  if (!selectedRuler.value) return
-  emit('submit', selectedRuler.value)
+  if (!isValid.value) return
+  emit('submit', { ...form.value })
+  form.value = { uri: '', label: '', title: '', isNewRuler: false }
 }
 </script>
+
+<style scoped>
+
+.modal-form input:disabled {
+  opacity: 0.5;
+  border-bottom: 2px solid #ccc;
+}
+
+</style>

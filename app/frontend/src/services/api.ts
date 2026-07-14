@@ -1,3 +1,4 @@
+
 const BASE_URL = 'http://localhost:8080'
 const RDF_ENDPOINT = '/semantics.rdf.system'
 const DOMAIN_ENDPOINT = '/triples'
@@ -11,8 +12,8 @@ export interface RDFObject extends RDFTerm {
 }
 
 export interface BackendTriple {
-  s: RDFTerm
-  p: RDFTerm
+  s: RDFObject
+  p: RDFObject
   o: RDFObject
 }
 
@@ -21,48 +22,43 @@ export interface TripleQueryResponse {
   triples: BackendTriple[]
 }
 
-export interface HistoryAction {
+export interface TripleAction {
   action: string
-  triple: {
-    s: string
-    p: string
-    o: string
-  }
+  triple: BackendTriple
 }
 
 export interface HistoryResponse {
-  count: number
-  triples: HistoryAction[]
+  action: string
+  timeStamp: string
+  triples: TripleAction[]
 }
 
 export interface Ruler {
   name: string
+  URI: string
   title: string
 }
 
-export interface MediatizedStateSummary {
-  name: string
-  stateType: string
-}
-
-export interface RegionSummary {
+export interface Region {
   name: string
   type: string
+  population: number
+}
+
+export interface MediatizatedState {
+  name: string
+  stateType: string
+  ruler: Ruler
 }
 
 export interface StateData {
   name: string
-  ruler: Ruler
-  mediatizatedStates: {
-    count: number
-    states: MediatizedStateSummary[]
-  }
-  regions: {
-    count: number
-    regions: RegionSummary[]
-  }
-  population: number
+  URI: string
   stateType: string
+  population: number
+  ruler: Ruler
+  regions: Region[]
+  mediatizatedStates: MediatizatedState[]
 }
 
 export interface StateDataResponse {
@@ -82,14 +78,13 @@ async function handleResponse<T>(response: Response): Promise<T> {
 
 
 export const api = {
-
   /* --- DOMAIN-AGNOSTIC CRUD ENDPOINTS --- */
 
   async getTriples(filters?: { s?: string; p?: string; o?: string }): Promise<TripleQueryResponse> {
-    console.log('Querying Triple Store...')
-    console.log('S: ', filters?.s)
-    console.log('P: ', filters?.p)
-    console.log('O: ', filters?.o)
+    console.log('Queriying:')
+    console.log('S: ' + filters?.s)
+    console.log('P: ' + filters?.p)
+    console.log('O: ' + filters?.o)
 
     const params = new URLSearchParams()
     if (filters?.s) params.append('s', filters.s)
@@ -97,6 +92,7 @@ export const api = {
     if (filters?.o) params.append('o', filters.o)
 
     const response = await fetch(`${BASE_URL}/triples?${params.toString()}`)
+    console.log(response)
     return handleResponse<TripleQueryResponse>(response)
   },
 
@@ -138,45 +134,31 @@ export const api = {
 
   /* --- DOMAIN SPECIFIC ENDPOINTS --- */
 
-  async getActiveStates(): Promise<{ count: number }> {
-    const response = await fetch(`${BASE_URL}/ops/activeStates`)
+  async getActiveStateCount(): Promise<{ count: number }> {
+    const response = await fetch(`${BASE_URL}/semantics.rdf.system/activeStateCount`)
     return handleResponse<{ count: number }>(response)
   },
 
   async getStateChanges(): Promise<{ factor: number }> {
-    const response = await fetch(`${BASE_URL}/ops/stateChanges`)
+    const response = await fetch(`${BASE_URL}/semantics.rdf.system/stateChanges`)
     return handleResponse<{ factor: number }>(response)
   },
 
+  async getActiveStates(): Promise<StateDataResponse> {
+    const response = await fetch(`${BASE_URL}/semantics.rdf.system/activeStates`)
+    return handleResponse<StateDataResponse>(response)
+  },
+
   async getStates(): Promise<StateDataResponse> {
-    const response = await fetch(`${BASE_URL}/ops/states`)
+    const response = await fetch(`${BASE_URL}/semantics.rdf.system/states`)
     return handleResponse<StateDataResponse>(response)
   },
 
   async mediatizate(payload: { absorbed: string; into: string }): Promise<HistoryResponse> {
-    const response = await fetch(`${BASE_URL}/ops/mediatizate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
-    return handleResponse<HistoryResponse>(response)
-  },
+    console.log('Mediatizating')
+    console.log(payload)
 
-  async changeRuler(payload: { state: string; ruler: string }): Promise<HistoryResponse> {
-    const response = await fetch(`${BASE_URL}/ops/changeRuler`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
-    return handleResponse<HistoryResponse>(response)
-  },
-
-  async foundState(payload: {
-    stateName: string
-    stateType: string
-    rulerName: string
-  }): Promise<HistoryResponse> {
-    const response = await fetch(`${BASE_URL}/ops/foundState`, {
+    const response = await fetch(`${BASE_URL}/semantics.rdf.system/mediatizate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
@@ -185,7 +167,7 @@ export const api = {
   },
 
   async getHistory(): Promise<HistoryResponse> {
-    const response = await fetch(`${BASE_URL}/ops/history`)
+    const response = await fetch(`${BASE_URL}/semantics.rdf.system/history`)
     return handleResponse<HistoryResponse>(response)
   },
 }

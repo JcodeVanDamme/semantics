@@ -5,6 +5,7 @@ import java.util.List;
 
 public class State {
     public String name;
+    public String URI;
     public Ruler ruler;
     public String type;
     public int population;

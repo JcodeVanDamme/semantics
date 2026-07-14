@@ -1,6 +1,6 @@
 <template>
   <div class="modal-overlay" @click.self="emit('close')">
-    <div class="modal-box card" :class="sizeClass">
+    <div class="modal-box card">
       <div class="modal-header">
         <div class="top">
           <div class="text-wrapper">
@@ -27,7 +27,6 @@ import { X } from 'lucide-vue-next'
 defineProps<{
   title: string
   description?: string
-  sizeClass?: 'large-modal' | 'found-modal' | ''
 }>()
 
 const emit = defineEmits<{
@@ -69,13 +68,6 @@ const emit = defineEmits<{
   flex: 1;
 }
 
-.close-button {
-  font-size: var(--base-size);
-  height: fit-content;
-  padding: 5px;
-  margin-left: var(--paddingDouble);
-}
-
 .text-wrapper {
   display: flex;
   flex-direction: column;
@@ -84,44 +76,5 @@ const emit = defineEmits<{
 
 .text-wrapper * {
   margin: 0;
-}
-
-/* --- FORM CONTAINER STACK --- */
-.modal-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px; /* Keeps the inputs beautifully spaced vertically */
-  width: 100%;
-}
-
-/* --- REPLICATED INPUT STYLINGS --- */
-.modal-form input {
-  border: none;
-  border-bottom: 2px solid var(--borderColor);
-  background: transparent;
-  padding: 12px 10px;
-  font-size: 15px;
-  outline: none;
-  color: var(--mainFontColor);
-  transition: border-color 0.2s;
-}
-
-.modal-form input:focus {
-  border-color: var(--accentColor);
-}
-
-.modal-form input::placeholder {
-  color: #999;
-}
-
-.modal-form h3 {
-  margin-top: var(--padding);
-  margin-bottom: 0;
-}
-
-.input-button-wrapper {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: var(--padding);
 }
 </style>

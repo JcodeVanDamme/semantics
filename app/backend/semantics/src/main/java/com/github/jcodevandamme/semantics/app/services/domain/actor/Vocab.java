@@ -13,7 +13,6 @@ public final class Vocab {
         public static final String IS_ORIGINAL = ONT_NS + "isOriginalState";
         public static final String IS_ACTIVE = ONT_NS + "isActive";
         public static final String REGION = ONT_NS + "Region";
-        public static final String PERSON = ONT_NS + "Person";
         public static final String RULER = ONT_NS + "Ruler";
         public static final String POPULATION = ONT_NS + "population";
         public static final String STATE_TYPE = ONT_NS + "stateType";
@@ -30,12 +29,6 @@ public final class Vocab {
 
     public static final class Rdfs {
         public static final String LABEL = RDFS_NS + "label";
-    }
-
-    public static final class Xsd {
-        public static final String INTEGER = XSD_NS + "integer";
-        public static final String STRING = XSD_NS + "string";
-        public static final String BOOLEAN = XSD_NS + "boolean";
     }
 
     private Vocab() {}

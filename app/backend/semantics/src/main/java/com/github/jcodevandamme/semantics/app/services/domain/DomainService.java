@@ -1,14 +1,13 @@
 package com.github.jcodevandamme.semantics.app.services.domain;
 
+import com.github.jcodevandamme.semantics.app.dto.request.ChangeRulerRequest;
+import com.github.jcodevandamme.semantics.app.dto.request.FoundStateRequest;
 import com.github.jcodevandamme.semantics.app.dto.request.MediatizationRequest;
 import com.github.jcodevandamme.semantics.app.dto.response.CountResponse;
 import com.github.jcodevandamme.semantics.app.dto.response.FactorResponse;
 import com.github.jcodevandamme.semantics.app.dto.response.StateResponse;
-import com.github.jcodevandamme.semantics.app.dto.response.TripleLogResponse;
 import com.github.jcodevandamme.semantics.app.dto.util.StateDto;
 import com.github.jcodevandamme.semantics.app.dto.util.*;
-import com.github.jcodevandamme.semantics.app.persistence.TripleLogger;
-import com.github.jcodevandamme.semantics.app.services.AppStore;
 import com.github.jcodevandamme.semantics.app.services.domain.actor.DomainActor;
 import com.github.jcodevandamme.semantics.app.services.domain.actor.data.MedState;
 import com.github.jcodevandamme.semantics.app.services.domain.actor.data.Region;
@@ -41,8 +40,8 @@ public class DomainService {
         return new FactorResponse(domain.fetchChangeFactor());
     }
 
-    public StateResponse getStates() {
-        List<State> states = domain.fetchStateData();
+    public StateResponse getStates(boolean filterActiveStates) {
+        List<State> states = domain.fetchStateData(filterActiveStates);
         return new StateResponse(statesToDTO(states));
     }
 
@@ -52,8 +51,27 @@ public class DomainService {
         return domain.mediatizate(target, into);
     }
 
+    public HistoryDto changeRuler(ChangeRulerRequest req) throws DomainActionException, IOException {
+        String state = req.state();
+        String ruler = req.ruler();
+        String label = req.label();
+        String title = req.title();
+
+        return domain.performRulerUpdate(state, ruler, label, title);
+    }
+
     public HistoryDto[] getHistory() {
         return logger.flushHistory();
+    }
+
+    public HistoryDto foundState(FoundStateRequest req) throws IOException {
+        String state = req.state();
+        String ruler = req.ruler();
+        String label = req.label();
+        String type = req.type();
+        String pop = String.valueOf(req.population());
+
+        return domain.createState(state, ruler, pop, label, type);
     }
 
     private StateDto[] statesToDTO(List<State> states) {
@@ -62,10 +80,12 @@ public class DomainService {
             State state = states.get(i);
             dtos[i] = new StateDto(
                     state.name,
+                    state.URI,
                     state.type,
                     state.population,
                     new RulerDto(
                             state.ruler.name,
+                            state.ruler.URI,
                             state.ruler.title
                     ),
                     regionsToDTO(state.regions),
@@ -84,6 +104,7 @@ public class DomainService {
                     medState.type,
                     new RulerDto(
                             medState.ruler.name,
+                            medState.ruler.URI,
                             medState.ruler.title
                     )
             );

@@ -6,178 +6,228 @@
       <div class="table-header card flex">
         <div class="space-below">
           <h2>States</h2>
+
           <div class="divider accent"></div>
         </div>
-        <StateTable :states="states" :selected-state="selectedState" @select-state="selectState" />
+        <p class="success-banner banner">Hallo</p>
+
+        <StateTable
+          :states="activeStates"
+          :selected-state="selectedState"
+          @row-clicked="handleStateSelection"
+        />
         <div class="spacer"></div>
       </div>
 
-      <div v-if="!selectedState" class="dashboard-side-cards">
-        <div class="stats-card card">
-          <h3>TOTAL STATES</h3>
-          <span>{{ states.length }}</span>
+      <div class="dashboard-sidebar">
+        <div v-if="!selectedState" class="dashboard-side-cards">
+          <div class="stats-card card">
+            <h3>Active States</h3>
+            <span>{{ activeStatesCount }}</span>
+          </div>
+
+          <div class="stats-card card">
+            <h3>State Changes</h3>
+            <div
+              class="delta"
+              :class="{ positive: stateChangesFactor > 0, negative: stateChangesFactor < 0 }"
+            >
+              <span>{{ stateChangesFactor }}</span>
+              <TrendingUp v-if="stateChangesFactor > 0" :size="18" />
+              <TrendingDown v-else-if="stateChangesFactor < 0" :size="18" />
+            </div>
+          </div>
+
+          <button class="button accent" @click="showFoundModal = true">
+            <Flag :size="18" /> FOUND STATE
+          </button>
         </div>
-        <div class="stats-card card">
-          <h3>STATE CHANGES</h3>
-          <div class="delta">
-            <span>-00</span>
-            <TrendingUp />
+
+        <div v-else class="state-details-panel card">
+          <div class="details-header">
+            <div class="top">
+              <h2>{{ selectedState.name }}</h2>
+              <button type="button" class="close-button button accent" @click="closePanel()">
+                <X :size="18" />
+              </button>
+            </div>
+            <div class="divider accent"></div>
+          </div>
+
+          <h3 class="upper">Mediatizated States</h3>
+
+          <table class="mini-table">
+            <thead>
+              <tr>
+                <th>NAME</th>
+                <th>STATE TYPE</th>
+                <th>FORMER RULER</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template v-if="selectedState.mediatizatedStates.length > 0">
+                <tr v-for="(item, index) in selectedState.mediatizatedStates" :key="index">
+                  <td>{{ item.name }}</td>
+                  <td>{{ item.stateType }}</td>
+                  <td class="ruler">
+                    <div>{{ item.ruler.name }}</div>
+                    <div class="title">{{ item.ruler.title }}</div>
+                  </td>
+                </tr>
+              </template>
+
+              <tr v-else>
+                <td colspan="3" class="empty-state">No mediatized states.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="details-spacer"></div>
+
+          <div class="button-wrapper">
+            <button class="button accent" @click="showRulerModal = true">
+              <Crown :size="18" /> CHANGE RULER
+            </button>
+            <button class="button accent" @click="showMediatizeModal = true">
+              <Flag :size="18" /> MEDIATIZATE
+            </button>
           </div>
         </div>
-        <button class="button accent" @click="showFoundModal = true">
-          <Flag :size="18" /> FOUND STATE
-        </button>
-      </div>
-
-      <div v-if="selectedState" class="state-details-panel">
-        <div class="details-header">
-          <span>{{ selectedState.name }}</span>
-          <button @click="closePanel"><X :size="16" /></button>
-        </div>
-        <div class="mediatized-title">MEDIATIZATED STATES</div>
-        <table class="mini-table">
-          <thead>
-            <tr>
-              <th>NAME</th>
-              <th>STATE TYPE</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(item, index) in selectedState.mediatizedList" :key="index">
-              <td>{{ item.name }}</td>
-              <td>{{ item.type }}</td>
-            </tr>
-          </tbody>
-        </table>
-        <button class="action-btn" @click="changeRuler"><Crown :size="18" /> CHANGE RULER</button>
-        <button class="action-btn" @click="mediatizate"><Flag :size="18" /> MEDIATIZATE</button>
       </div>
     </div>
 
     <div class="table-header card">
       <div>
         <div class="event-header">
-          <h2>Latest Event</h2>
+          <div class="event-header-wrapper">
+            <h2>Latest Event:</h2>
+            <h2 class="event-description">{{ latestEvent }}</h2>
+          </div>
           <button class="button accent minimize" @click="showHistoryModal = true">
             View History
           </button>
         </div>
         <div class="divider accent"></div>
-        <p class="event-description">{{ latestEvent }}</p>
       </div>
-      <!-- TRIPLES TABLE COMPONENT -->
-      <TriplesTable :triples="eventTriples" @select-row="handleTripleSelect" />
+      <LatestActionTable :triples="eventTriples" :showActionColumn="true" />
     </div>
 
-    <!-- MODAL OVERLAYS -->
     <FoundStateModal
       v-if="showFoundModal"
       @close="showFoundModal = false"
       @submit="handleFoundStateSubmit"
     />
-
     <ChangeRulerModal
       v-if="showRulerModal"
-      :rulers="rulers"
+      :states="allStates"
       @close="showRulerModal = false"
-      @submit="handleChangeRulerSubmit"
+      @submit="handleRulerSubmit"
     />
-
     <MediatizeModal
       v-if="showMediatizeModal"
-      :states="states"
+      :acting-state="selectedState?.name"
+      :states="activeStates"
       @close="showMediatizeModal = false"
       @submit="handleMediatizeSubmit"
     />
-
     <HistoryModal v-if="showHistoryModal" @close="showHistoryModal = false" />
   </MainLayout>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { api } from '../services/api'
 import MainLayout from '../layouts/MainLayout.vue'
-import HistoryModal from '../components/HistoryModal.vue'
+import HistoryModal from '../components/new/HistoryModal.vue'
 import FoundStateModal from '../components/new/FoundStateModal.vue'
 import ChangeRulerModal from '../components/new/ChangeRulerModal.vue'
 import MediatizeModal from '../components/new/MediatizeModal.vue'
-import TriplesTable from '@/components/new/TripleTable.vue'
-import StateTable from '@/components/new/StateTable.vue'
-import { Crown, Flag, X, TrendingUp, TrendingDown } from 'lucide-vue-next'
-import { api } from '../services/api'
-import { useSemanticStore } from '../store/semanticStore'
+import LatestActionTable from '@/components/new/TripleTable.vue'
+import StateTable from '@/components/new/StatesTable.vue'
 import HeaderOverview from '@/components/HeaderOverview.vue'
+import { Crown, Flag, X, TrendingUp, TrendingDown } from 'lucide-vue-next'
+import { type EnhancedTriple } from '../components/new/TripleTable.vue'
 
-const store = useSemanticStore()
-const states = store.states
+const activeStates = ref<any[]>([])
+const allStates = ref<any[]>([])
 
-const showHistoryModal = ref(false)
+const activeStatesCount = ref<any>()
+const stateChangesFactor = ref<any>()
+
 const showFoundModal = ref(false)
 const showRulerModal = ref(false)
 const showMediatizeModal = ref(false)
+const showHistoryModal = ref(false)
 
+const eventTriples = ref<EnhancedTriple[]>([])
 const selectedState = ref<any>(null)
+const latestEvent = ref('None')
 
-const rulers = ref([
-  { name: 'Napoleon', title: 'EMPEROR' },
-  { name: 'Frederick Augustus', title: 'KING' },
-  { name: 'Alexander I', title: 'TSAR' },
-  { name: 'Francis II', title: 'EMPEROR' },
-])
+const mediatizeModalRef = ref<InstanceType<typeof MediatizeModal> | null>(null)
 
-const latestEvent = ref('Select a state to view events.')
-const eventTriples = ref<Array<{ subject: string; predicate: string; object: string }>>([
-  { subject: 'Subject', predicate: 'Predicate', object: 'Object' },
-])
-
-function selectState(state: any) {
+const handleStateSelection = (state: any) => {
   selectedState.value = state
-  latestEvent.value = `${state.ruler} currently rules ${state.name}.`
-  eventTriples.value = [
-    { subject: state.ruler, predicate: 'rules', object: state.name },
-    { subject: state.name, predicate: 'hasPopulation', object: state.population },
-  ]
 }
 
-function closePanel() {
+const closePanel = () => {
   selectedState.value = null
 }
 
-function changeRuler() {
-  if (selectedState.value) showRulerModal.value = true
+onMounted(async () => {
+  try {
+    const [activeRes, allRes] = await Promise.all([api.getActiveStates(), api.getStates()])
+    activeStates.value = activeRes.states
+    allStates.value = allRes.states
+
+    console.log(activeStates)
+  } catch (error) {
+    console.error('Failed to load state data:', error)
+  }
+  loadStats()
+})
+
+const loadStats = async () => {
+  try {
+    const active = await api.getActiveStateCount()
+    activeStatesCount.value = active.count
+
+    const changes = await api.getStateChanges()
+    stateChangesFactor.value = changes.factor
+  } catch (error) {
+    console.error('Failed to fetch stats:', error)
+  }
 }
 
-function handleChangeRulerSubmit(ruler: any) {
-  api.changeRuler(selectedState.value.id, ruler.name, ruler.title)
-  latestEvent.value = `${ruler.name} became ruler of ${selectedState.value.name}.`
-  eventTriples.value = [
-    { subject: ruler.name, predicate: 'rules', object: selectedState.value.name },
-  ]
-  showRulerModal.value = false
+async function handleMediatizeSubmit(payload: { actingState: string; consumedState: string }) {
+  try {
+    const response = await api.mediatizate({
+      absorbed: payload.consumedState,
+      into: payload.actingState,
+    })
+
+    latestEvent.value = response.action
+    eventTriples.value = mapActionsToEnhanced(response.triples || [])
+    showMediatizeModal.value = false
+
+    const activeRes = await api.getActiveStates()
+    activeStates.value = activeRes.states
+
+    loadStats()
+  } catch (error) {
+    console.error('Failed to mediatize state:', error)
+    mediatizeModalRef.value?.setError('Mediatization failed on server.')
+  }
 }
 
-function mediatizate() {
-  if (selectedState.value) showMediatizeModal.value = true
-}
-
-function handleMediatizeSubmit(targetState: any) {
-  api.mediatizate(selectedState.value.id, { name: targetState.name, type: targetState.type })
-  latestEvent.value = `${selectedState.value.name} mediatized ${targetState.name}.`
-  eventTriples.value = [
-    { subject: selectedState.value.name, predicate: 'mediatizedInto', object: targetState.name },
-  ]
-  showMediatizeModal.value = false
-}
-
-function handleFoundStateSubmit(payload: any) {
-  api.foundState(payload.name, payload.ruler, payload.population, payload.type)
-  latestEvent.value = `${payload.name} was founded.`
-  eventTriples.value = [{ subject: payload.name, predicate: 'ruler', object: payload.ruler }]
-  showFoundModal.value = false
-}
-
-function handleTripleSelect(triple: any) {
-  console.log('Selected semantic statement:', triple)
+function mapActionsToEnhanced(actions: TripleAction[]): EnhancedTriple[] {
+  return actions.map((item, index) => ({
+    id: index,
+    action: item.action,
+    subject: item.triple.s.value,
+    predicate: item.triple.p.value,
+    object: item.triple.o.value,
+    raw: item.triple,
+  }))
 }
 </script>
 
@@ -206,6 +256,10 @@ function handleTripleSelect(triple: any) {
   align-items: center;
 }
 
+.banner {
+  margin-top: 0;
+}
+
 .minimize {
   font-size: var(--base-size);
   height: fit-content;
@@ -216,11 +270,18 @@ function handleTripleSelect(triple: any) {
   padding-bottom: var(--paddingHalf);
 }
 
+.dashboard-sidebar {
+  max-width: 380px;
+  width: 380px;
+  display: flex;
+}
+
 .stats-card {
   gap: 0;
   padding: var(--paddingHalf) 60px;
   justify-content: center;
   text-align: center;
+  text-transform: uppercase;
 }
 
 .stats-card h3 {
@@ -237,6 +298,7 @@ function handleTripleSelect(triple: any) {
 
 .dashboard-side-cards {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: var(--padding);
 }
@@ -257,5 +319,52 @@ function handleTripleSelect(triple: any) {
   display: flex;
   flex: 1; /* Spreads out horizontally */
   align-self: stretch; /* Stretches vertically */
+}
+
+.details-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.top {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.top h2 {
+  margin-bottom: 0;
+}
+
+.text-wrapper * {
+  margin: 0;
+}
+
+.state-details-panel h3 {
+  margin: 0;
+}
+
+.mini-table th {
+  font-size: calc(var(--base-size) * 1.2);
+}
+
+.details-spacer {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.button-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--padding);
+}
+
+.event-header-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: var(--padding);
 }
 </style>

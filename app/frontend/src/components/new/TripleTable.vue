@@ -3,6 +3,7 @@
     <table class="triple-table">
       <thead>
         <tr>
+          <th v-if="showActionColumn" class="action">Action</th>
           <th>Subject</th>
           <th>Predicate</th>
           <th>Object</th>
@@ -16,6 +17,10 @@
           :class="{ 'clickable-row': !disableSelection }"
           @click="handleRowClick(triple)"
         >
+          <td v-if="showActionColumn" class="triple-cell action">
+            <span class="action-tag">{{ triple.action }}</span>
+          </td>
+
           <td class="triple-cell">
             <div>{{ triple.subject }}</div>
             <div class="raw-uri" :title="triple.rawSubject">{{ triple.rawSubject }}</div>
@@ -37,7 +42,9 @@
         </tr>
 
         <tr v-if="triples.length === 0">
-          <td colspan="3">No Triples found.</td>
+          <td :colspan="showActionColumn ? 4 : 3">
+            {{ showActionColumn ? '' : 'No Triples found.' }}
+          </td>
         </tr>
       </tbody>
     </table>
@@ -45,36 +52,39 @@
 </template>
 
 <script setup lang="ts">
-// Define an extended local interface that supports the raw layout keys
+import { computed } from 'vue'
+
 export interface EnhancedTriple {
   id: string | number
   subject: string
-  rawSubject: string
+  rawSubject?: string
   predicate: string
-  rawPredicate: string
+  rawPredicate?: string
   object: string
-  rawObject: string
+  rawObject?: string
   isLiteral?: boolean
-  raw?: any // Attached raw layout object if present
+  action?: string
+  raw?: any
 }
 
-// Added the disableSelection prop option (defaults to false)
 const props = withDefaults(
   defineProps<{
     triples: EnhancedTriple[]
     disableSelection?: boolean
+    showActionColumn?: boolean
   }>(),
   {
     disableSelection: false,
+    showActionColumn: false,
   },
 )
 
-// Explicitly declare the custom row selection emit type configuration
+const hasActions = computed(() => props.triples.some((t) => !!t.action))
+
 const emit = defineEmits<{
   (e: 'select-row', triple: EnhancedTriple): void
 }>()
 
-// Fires the event only if selection mechanism isn't explicitly disabled
 function handleRowClick(triple: EnhancedTriple) {
   if (!props.disableSelection) {
     emit('select-row', triple)
@@ -112,5 +122,19 @@ function handleRowClick(triple: EnhancedTriple) {
 .clickable-row:hover {
   background-color: var(--highlightColor);
   border-bottom: 2px solid var(--accentColor);
+}
+
+.action-tag {
+  background: var(--borderColor);
+  padding: 4px 8px;
+  border-radius: 1px;
+  font-size: 0.85em;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.action {
+  text-align: center;
+  width: 100px;
 }
 </style>
