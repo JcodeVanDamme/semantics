@@ -12,7 +12,25 @@
           <th>STATE TYPE</th>
         </tr>
       </thead>
-      <tbody v-for="state in states" :key="state.name" class="state-row-group">
+
+      <tbody v-if="loading">
+        <tr>
+          <td class="empty-cell" colspan="7">
+            <p>Loading states...</p>
+          </td>
+        </tr>
+      </tbody>
+
+      <tbody v-else-if="errorMessage || states.length === 0">
+        <tr>
+          <td class="empty-cell" colspan="7">
+            <p v-if="errorMessage" class="error-banner">{{ errorMessage }}</p>
+            <p v-else>No States Found.</p>
+          </td>
+        </tr>
+      </tbody>
+
+      <tbody v-else v-for="state in states" :key="state.name" class="state-row-group">
         <tr
           class="main-row"
           :class="{ expanded: expandedRow === state.name }"
@@ -45,30 +63,22 @@
                 <table class="region-table">
                   <thead>
                     <tr>
-                      <th class="region-header">Regions</th>
-                      <th>Name</th>
-                      <th>Population</th>
-                      <th>Type</th>
-                      <th class="region-expand"></th>
+                      <th>Regions</th>
+                      <th colspan="5"></th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="region in state.regions" :key="region.name">
-                      <td></td>
                       <td>{{ region.name }}</td>
                       <td>{{ formatNumber(region.population) }}</td>
                       <td>{{ region.type }}</td>
-                      <td class="region-expand"></td>
+                      <td colspan="4"></td>
                     </tr>
                   </tbody>
                 </table>
               </div>
             </div>
           </td>
-        </tr>
-
-        <tr v-if="states.length === 0">
-          <td colspan="7">No States found.</td>
         </tr>
       </tbody>
     </table>
@@ -78,38 +88,49 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { CircleChevronRight } from 'lucide-vue-next'
+import type { StateData } from '@/scripts/type.ts'
+import { storeToRefs } from 'pinia'
+import { useDashboardStore } from '@/stores/dashboardStore'
 
-defineProps({
-  states: {
-    type: Array as any,
-    required: true,
-    default: () => [],
-  },
-})
+defineProps<{
+  states: StateData[]
+  errorMessage?: string | null
+}>()
 
 const expandedRow = ref<string | null>(null)
-const emit = defineEmits(['row-clicked'])
+const emit = defineEmits<{
+  (e: 'row-clicked', state: StateData): void
+}>()
 
 const toggleExpand = (name: string) => {
   expandedRow.value = expandedRow.value === name ? null : name
 }
 
-const handleRowClick = (state: any) => {
-  console.log(state)
+const handleRowClick = (state: StateData) => {
   emit('row-clicked', state)
 }
 
 const formatNumber = (num: number) => {
   return new Intl.NumberFormat('de-DE').format(num)
 }
+
+const store = useDashboardStore()
+const { loading } = storeToRefs(store)
 </script>
 
 <style scoped>
+/* 1. Table Wrapper & Layout */
 .states-table {
   table-layout: fixed;
   width: 100%;
   position: relative;
   overflow-y: auto;
+}
+
+td,
+th {
+  text-align: center;
+  padding: 10px;
 }
 
 .col-big {
@@ -120,15 +141,15 @@ const formatNumber = (num: number) => {
   padding: 0;
 }
 
-td,
-th {
-  text-align: center;
-  padding: 10px;
+/* 2. Main Row */
+.main-row {
+  transition: background-color 0.2s ease;
+  cursor: pointer;
 }
 
-.title {
-  color: var(--borderColor);
-  font-family: var(--fancyFontStyle);
+.main-row:hover {
+  background-color: var(--highlightColor);
+  border-bottom: 2px solid var(--accentColor);
 }
 
 .expand-btn {
@@ -139,8 +160,21 @@ th {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--accentColor); /* Or var(--mainFontColor) */
+  color: var(--accentColor);
   transition: opacity 0.2s;
+}
+
+.expand-icon {
+  transition: transform 0.3s ease;
+}
+
+.expand-icon.rotated {
+  transform: rotate(90deg);
+}
+
+/* 3. Detail Row (Expansion) */
+.details-row {
+  height: fit-content;
 }
 
 .expanded-cell {
@@ -155,46 +189,25 @@ th {
   background-color: var(--secondaryColor);
 }
 
-.region-wrapper {
-  overflow: hidden;
-}
-
 .expand-wrapper.expanded {
   grid-template-rows: 1fr;
 }
 
-.main-row {
-  transition: background-color 0.2s ease;
-  cursor: pointer;
-}
-
-.main-row:hover {
-  background-color: var(--highlightColor);
-  border-bottom: 2px solid var(--accentColor);
-}
-
-.expand-icon {
-  transition: transform 0.3s ease;
-}
-
-.expand-icon.rotated {
-  transform: rotate(90deg);
-}
-
 .region-wrapper {
+  overflow: hidden;
   display: flex;
   flex-direction: row;
 }
 
-.region-header {
-  color: var(--accentColor);
-  font-size: var(--text-h3) !important;
-}
-
+/* 4. Region Table */
 .region-table th {
   font-size: calc(var(--base-size) * 1.2);
   border-bottom: 2px solid var(--accentColor);
   background-color: color-mix(in srgb, var(--secondaryColor), var(--accentColor) 10%);
+}
+.region-header {
+  color: var(--accentColor);
+  font-size: var(--text-h3) !important;
 }
 
 .region-table th:not(.region-expand),
@@ -202,13 +215,7 @@ th {
   white-space: nowrap;
   width: 1px;
 }
-
-.region-expand {
-  text-align: left;
-  width: 100%;
-}
-
-.details-row {
-  height: fit-content;
+.error-container {
+  padding: var(--padding);
 }
 </style>

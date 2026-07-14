@@ -85,33 +85,6 @@ const showPreview = computed(() => {
   margin: var(--paddingHalf);
 }
 
-/* --- TOGGLE SELECTION CODES --- */
-.toggle-labels {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: var(--text-h3);
-  text-transform: uppercase;
-  margin-right: var(--padding);
-}
-
-.toggle-label {
-  color: var(--mutedFontColor);
-  cursor: pointer;
-  font-weight: var(--fw-semibold);
-  transition: color 0.2s ease;
-}
-
-.toggle-label:hover,
-.toggle-label.active {
-  color: var(--accentColor);
-}
-
-.toggle-divider {
-  color: var(--borderColor);
-  pointer-events: none;
-}
-
 /* --- INPUT TEXT ELEMENTS --- */
 .inputs-stack {
   display: flex;

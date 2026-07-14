@@ -7,7 +7,6 @@
 </template>
 
 <script setup>
-// defineProps is a built-in macro in <script setup>, no import needed!
 defineProps({
   title: {
     type: String,

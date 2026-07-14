@@ -10,5 +10,5 @@
 </template>
 
 <script setup>
-import Sidebar from '../components/new/Sidebar.vue'
+import Sidebar from '../components/util/Sidebar.vue'
 </script>

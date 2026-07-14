@@ -558,8 +558,10 @@ POST
 #### Request Body
 ```json
 {
-  "state": "gabba",
-  "ruler": "gabba"
+  "state": "http://semantics.rdf.system.data/State_Saxony",
+  "ruler": "http://semantics.rdf.system.data/Ruler_WilhelmI",
+  "label": "Wilhelm I",
+  "title": "King of Prussia"
 }
 ```
 
@@ -567,8 +569,10 @@ POST
 
 | Field | Type | Description |
 |------|------|------|
-| `state` | string | Name of the State to have its Ruler updated |
-| `ruler` | string | Name of the updated Ruler |
+| `state` | string | State to have its Ruler updated |
+| `ruler` | string | The new Ruler |
+| `label` | string | Label Literal of the new Ruler |
+| `title` | string | Title Literal of the new Ruler |
 
 #### Response Body
 ```json
@@ -653,9 +657,11 @@ POST
 #### Request Body
 ```json
 {
-  "stateName": "gabba",
-  "stateType": "gabba",
-  "rulerName": "gabba"
+  "state": "http://semantics.rdf.system.data/New_State",
+  "population": 1,
+  "ruler": "http://semantics.rdf.system.data/Ruler_WilhelmI",
+  "label": "New State",
+  "type": "Fully automated work free Society"
 }
 ```
 
@@ -663,9 +669,11 @@ POST
 
 | Field | Type | Description |
 |------|------|------|
-| `stateName` | string | Name of the new State |
-| `stateType` | string | Type of the new State |
-| `rulerName` | string | Name of the States Ruler |
+| `state` | string | Name of the new State |
+| `population` | integer | Population of the new State |
+| `ruler` | string | Ruler of the new State |
+| `label` | string | Label Literal of the new State |
+| `type` | string | Type Literal of the new State |
 
 #### Response Body
 ```json

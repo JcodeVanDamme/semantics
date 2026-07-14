@@ -33,7 +33,6 @@
 
           <td class="triple-cell">
             <div>{{ triple.object }}</div>
-
             <div v-if="!triple.isLiteral" class="raw-uri" :title="triple.rawObject">
               {{ triple.rawObject }}
             </div>
@@ -42,7 +41,7 @@
         </tr>
 
         <tr v-if="triples.length === 0">
-          <td :colspan="showActionColumn ? 4 : 3">
+          <td :colspan="showActionColumn ? 4 : 3" class="empty-cell">
             {{ showActionColumn ? '' : 'No Triples found.' }}
           </td>
         </tr>
@@ -52,20 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-
-export interface EnhancedTriple {
-  id: string | number
-  subject: string
-  rawSubject?: string
-  predicate: string
-  rawPredicate?: string
-  object: string
-  rawObject?: string
-  isLiteral?: boolean
-  action?: string
-  raw?: any
-}
+import type { EnhancedTriple } from '@/scripts/type.ts'
 
 const props = withDefaults(
   defineProps<{
@@ -79,8 +65,7 @@ const props = withDefaults(
   },
 )
 
-const hasActions = computed(() => props.triples.some((t) => !!t.action))
-
+// 3. Strongly typed Emits
 const emit = defineEmits<{
   (e: 'select-row', triple: EnhancedTriple): void
 }>()
@@ -93,39 +78,41 @@ function handleRowClick(triple: EnhancedTriple) {
 </script>
 
 <style scoped>
+/* 1. Root Table Structure */
 .triple-table {
   table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.triple-cell > * + * {
-  margin-top: var(--paddingHalf);
-}
-
-.raw-uri {
-  font-family: var(--dataFontStyle);
-  color: var(--mutedFontColor);
-  word-break: break-all;
-  font-style: italic;
-}
-
-.literal-tag {
-  color: var(--mutedFontColor);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
+/* 2. Row Behaviors */
 .clickable-row {
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
 .clickable-row:hover {
-  background-color: var(--highlightColor);
-  border-bottom: 2px solid var(--accentColor);
+  background-color: var(--highlightColor, #f5f5f5);
+  border-bottom: 2px solid var(--accentColor, #007acc);
+}
+
+/* 3. Standard Cell Styling */
+.triple-cell {
+  padding: var(--paddingHalf, 8px);
+}
+
+.triple-cell > * + * {
+  margin-top: var(--paddingHalf, 4px);
+}
+
+/* 4. Specific Column Definitions */
+.action {
+  text-align: center;
+  width: 100px;
 }
 
 .action-tag {
-  background: var(--borderColor);
+  background: var(--borderColor, #ddd);
   padding: 4px 8px;
   border-radius: 1px;
   font-size: 0.85em;
@@ -133,8 +120,18 @@ function handleRowClick(triple: EnhancedTriple) {
   text-transform: uppercase;
 }
 
-.action {
-  text-align: center;
-  width: 100px;
+.raw-uri {
+  font-family: var(--dataFontStyle), monospace;
+  color: var(--mutedFontColor, #666);
+  word-break: break-all;
+  font-style: italic;
+  font-size: 0.9em;
+}
+
+.literal-tag {
+  color: var(--mutedFontColor, #666);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.8em;
 }
 </style>

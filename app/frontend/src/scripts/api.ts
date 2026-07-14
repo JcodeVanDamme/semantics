@@ -1,70 +1,17 @@
+import type {
+  BackendTriple,
+  TripleQueryResponse,
+  HistoryResponse,
+  StateDataResponse,
+  HistoryEvent,
+} from './type.ts'
+
 const BASE_URL = 'http://localhost:8080'
 const RDF_ENDPOINT = '/semantics.rdf.system'
 const DOMAIN_ENDPOINT = '/triples'
 
-export interface RDFTerm {
-  value: string
-}
-
-export interface RDFObject extends RDFTerm {
-  isLiteral: boolean
-}
-
-export interface BackendTriple {
-  s: RDFObject
-  p: RDFObject
-  o: RDFObject
-}
-
-export interface TripleQueryResponse {
-  count: number
-  triples: BackendTriple[]
-}
-
-export interface TripleAction {
-  action: string
-  triple: BackendTriple
-}
-
-export interface HistoryResponse {
-  action: string
-  timeStamp: string
-  triples: TripleAction[]
-}
-
-export interface Ruler {
-  name: string
-  URI: string
-  title: string
-}
-
-export interface Region {
-  name: string
-  type: string
-  population: number
-}
-
-export interface MediatizatedState {
-  name: string
-  stateType: string
-  ruler: Ruler
-}
-
-export interface StateData {
-  name: string
-  URI: string
-  stateType: string
-  population: number
-  ruler: Ruler
-  regions: Region[]
-  mediatizatedStates: MediatizatedState[]
-}
-
-export interface StateDataResponse {
-  states: StateData[]
-}
-
-// --- HELPER FUNCTIONS ---
+export const ONT_URI = 'http://semantics.rdf.system.ontology/'
+export const DATA_URI = 'http://semantics.rdf.system.data/'
 
 const logger = (method: string, url: string, payload?: any) => {
   const timestamp = new Date().toISOString()
@@ -82,6 +29,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
     throw new Error(`${errorText || response.statusText}`)
   }
 
+  // Handle successful empty responses (like 201 Created or 204 No Content)
   if (response.status === 201 || response.headers.get('content-length') === '0') {
     return {} as T
   }
@@ -142,18 +90,6 @@ export const api = {
     return handleResponse<void>(response)
   },
 
-  async sparqlQuery(query: string): Promise<TripleQueryResponse> {
-    const url = `${BASE_URL}${DOMAIN_ENDPOINT}/sparql`
-    logger('POST', url, { query })
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query }),
-    })
-    return handleResponse<TripleQueryResponse>(response)
-  },
-
   /* --- DOMAIN SPECIFIC ENDPOINTS --- */
 
   async getActiveStateCount(): Promise<{ count: number }> {
@@ -172,16 +108,12 @@ export const api = {
     return handleResponse<{ factor: number }>(response)
   },
 
-  async getActiveStates(): Promise<StateDataResponse> {
-    const url = `${BASE_URL}${RDF_ENDPOINT}/activeStates`
-    logger('GET', url)
-
-    const response = await fetch(url)
-    return handleResponse<StateDataResponse>(response)
-  },
-
-  async getStates(): Promise<StateDataResponse> {
-    const url = `${BASE_URL}${RDF_ENDPOINT}/states`
+  /**
+   * Fetches state information.
+   * @param activeOnly Filters response to return exclusively currently active states when true.
+   */
+  async getStates(activeOnly: boolean = false): Promise<StateDataResponse> {
+    const url = `${BASE_URL}${RDF_ENDPOINT}/states?activeOnly=${activeOnly}`
     logger('GET', url)
 
     const response = await fetch(url)
@@ -200,11 +132,41 @@ export const api = {
     return handleResponse<HistoryResponse>(response)
   },
 
-  async getHistory(): Promise<HistoryResponse> {
+  async changeRuler(payload: { state: string; ruler: string }): Promise<HistoryResponse> {
+    const url = `${BASE_URL}${RDF_ENDPOINT}/changeRuler`
+    logger('POST', url, payload)
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+    return handleResponse<HistoryEvent[]>(response)
+  },
+
+  async foundState(payload: {
+    state: string // URI
+    population: number // LITERAL
+    ruler: string // URI
+    label: string // LITERAL
+    type: string // LITERAL
+  }): Promise<HistoryResponse> {
+    const url = `${BASE_URL}${RDF_ENDPOINT}/foundState`
+    logger('POST', url, payload)
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+    return handleResponse<HistoryEvent[]>(response)
+  },
+
+  async getHistory(): Promise<HistoryResponse[]> {
     const url = `${BASE_URL}${RDF_ENDPOINT}/history`
     logger('GET', url)
 
     const response = await fetch(url)
-    return handleResponse<HistoryResponse>(response)
+    return handleResponse<HistoryEvent[]>(response)
   },
 }

@@ -11,7 +11,13 @@
             <X :size="18" />
           </button>
         </div>
+
         <div class="divider accent"></div>
+
+        <div v-if="errorMessage" class="error-banner">
+          {{ errorMessage }}
+        </div>
+
       </div>
 
       <div class="modal-body">
@@ -27,6 +33,7 @@ import { X } from 'lucide-vue-next'
 defineProps<{
   title: string
   description?: string
+  errorMessage?: string | null
 }>()
 
 const emit = defineEmits<{

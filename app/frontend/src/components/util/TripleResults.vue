@@ -9,10 +9,10 @@
 </template>
 
 <script setup lang="ts">
-import { type Triple } from '../../store/semanticStore'
+import { type BackendTriple } from '@/scripts/type.ts'
 
 defineProps<{
-  triples: Triple[]
+  triples: BackendTriple[]
 }>()
 </script>
 

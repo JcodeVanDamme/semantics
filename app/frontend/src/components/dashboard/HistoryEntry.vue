@@ -2,7 +2,7 @@
   <div class="history-event card">
     <div class="history-header">
       <div class="event-meta">
-        <h3>{{ response.action }}</h3>
+        <h3>{{ response.action.replace(/_/g, ' ') }}</h3>
         <h3 class="timestamp">{{ formatDate(response.timeStamp) }}</h3>
       </div>
       <div class="divider accent"></div>
@@ -19,7 +19,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import TriplesTable, { type EnhancedTriple } from './TripleTable.vue'
+import { type EnhancedTriple } from '@/scripts/type.ts'
+import TriplesTable from '../util/TripleTable.vue'
 
 interface TripleAction {
   action: string

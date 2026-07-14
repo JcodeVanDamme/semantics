@@ -114,12 +114,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import MainLayout from '../layouts/MainLayout.vue'
-import HeaderOverview from '../components/HeaderOverview.vue'
-import TripleInputGroup from '../components/new/TripleInput.vue'
-import TriplesTable from '@/components/new/TripleTable.vue'
+import HeaderOverview from '../components/util/HeaderOverview.vue'
+import TripleInputGroup from '../components/util/TripleInput.vue'
+import TriplesTable from '@/components/util/TripleTable.vue'
 import { Database, Search, ArrowDown, Undo2, FileX2, Pencil, PackagePlus } from 'lucide-vue-next'
 
-import { api, type BackendTriple } from '../services/api'
+import { api } from '../scripts/api.ts'
+import { type BackendTriple } from '../scripts/type.ts'
 import { cleanTripleForDisplay, stripSpaces, concatUri } from '../utils/util.ts'
 import { useRdfFormValidation } from '@/composables/useRdfFormValidation'
 
@@ -197,7 +198,7 @@ async function fetchStoreTriples() {
 
       return cleanedElement
     })
-  } catch (err: any) {
+  } catch (err: Any) {
     error.value = err.message || 'Encountered an unexpected Error.'
     console.error('Triple Retrieval failed:', err)
   } finally {

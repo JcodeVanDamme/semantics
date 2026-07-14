@@ -2,24 +2,21 @@
   <MainLayout>
     <HeaderOverview title="Regional Overview" description="Gabba" />
 
-    <div class="dashboard-top flex">
-      <div class="table-header card flex">
-        <div class="space-below">
-          <h2>States</h2>
+    <div class="dashboard-top">
+        <div class="table-layout card">
+          <div class="space-below">
+            <h2>States</h2>
+            <div class="divider accent"></div>
+          </div>
 
-          <div class="divider accent"></div>
+          <StateTable
+            :states="activeStates"
+            :error-message="errorMessage"
+            @row-clicked="handleStateSelection"
+          />
         </div>
-        <p class="success-banner banner">Hallo</p>
 
-        <StateTable
-          :states="activeStates"
-          :selected-state="selectedState"
-          @row-clicked="handleStateSelection"
-        />
-        <div class="spacer"></div>
-      </div>
-
-      <div class="dashboard-sidebar">
+      <aside class="dashboard-sidebar">
         <div v-if="!selectedState" class="dashboard-side-cards">
           <div class="stats-card card">
             <h3>Active States</h3>
@@ -47,7 +44,7 @@
           <div class="details-header">
             <div class="top">
               <h2>{{ selectedState.name }}</h2>
-              <button type="button" class="close-button button accent" @click="closePanel()">
+              <button class="close-button button accent" @click="closePanel()">
                 <X :size="18" />
               </button>
             </div>
@@ -55,7 +52,6 @@
           </div>
 
           <h3 class="upper">Mediatizated States</h3>
-
           <table class="mini-table">
             <thead>
               <tr>
@@ -75,7 +71,6 @@
                   </td>
                 </tr>
               </template>
-
               <tr v-else>
                 <td colspan="3" class="empty-state">No mediatized states.</td>
               </tr>
@@ -93,42 +88,35 @@
             </button>
           </div>
         </div>
-      </div>
+      </aside>
     </div>
 
-    <div class="table-header card">
-      <div>
-        <div class="event-header">
-          <div class="event-header-wrapper">
-            <h2>Latest Event:</h2>
-            <h2 class="event-description">{{ latestEvent }}</h2>
-          </div>
-          <button class="button accent minimize" @click="showHistoryModal = true">
-            View History
-          </button>
+    <section class="table-layout card">
+      <div class="event-header">
+        <div class="event-header-wrapper">
+          <h2>Latest Event:</h2>
+          <h2 class="event-description">{{ latestEvent }}</h2>
         </div>
-        <div class="divider accent"></div>
+        <button class="button accent minimize" @click="showHistoryModal = true">
+          View History
+        </button>
       </div>
+      <div class="divider accent"></div>
       <LatestActionTable :triples="eventTriples" :showActionColumn="true" />
-    </div>
+    </section>
 
-    <FoundStateModal
-      v-if="showFoundModal"
-      @close="showFoundModal = false"
-      @submit="handleFoundStateSubmit"
-    />
+    <FoundStateModal v-if="showFoundModal" @close="showFoundModal = false" @submit="handleSubmit" />
     <ChangeRulerModal
       v-if="showRulerModal"
-      :states="allStates"
+      :state-uri="selectedState?.URI"
       @close="showRulerModal = false"
-      @submit="handleRulerSubmit"
+      @submit="handleSubmit"
     />
     <MediatizeModal
       v-if="showMediatizeModal"
       :acting-state="selectedState?.name"
-      :states="activeStates"
       @close="showMediatizeModal = false"
-      @submit="handleMediatizeSubmit"
+      @submit="handleSubmit"
     />
     <HistoryModal v-if="showHistoryModal" @close="showHistoryModal = false" />
   </MainLayout>
@@ -136,97 +124,73 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { api } from '../services/api'
-import MainLayout from '../layouts/MainLayout.vue'
-import HistoryModal from '../components/new/HistoryModal.vue'
-import FoundStateModal from '../components/new/FoundStateModal.vue'
-import ChangeRulerModal from '../components/new/ChangeRulerModal.vue'
-import MediatizeModal from '../components/new/MediatizeModal.vue'
-import LatestActionTable from '@/components/new/TripleTable.vue'
-import StateTable from '@/components/new/StatesTable.vue'
-import HeaderOverview from '@/components/HeaderOverview.vue'
 import { Crown, Flag, X, TrendingUp, TrendingDown } from 'lucide-vue-next'
-import { type EnhancedTriple } from '../components/new/TripleTable.vue'
+import { storeToRefs } from 'pinia'
+import { useDashboardStore } from '@/stores/dashboardStore'
 
-const activeStates = ref<any[]>([])
-const allStates = ref<any[]>([])
+// Layouts & Components
+import MainLayout from '../layouts/MainLayout.vue'
+import HistoryModal from '@/components/dashboard/HistoryModal.vue'
+import FoundStateModal from '../components/dashboard/FoundStateModal.vue'
+import ChangeRulerModal from '../components/dashboard/ChangeRulerModal.vue'
+import MediatizeModal from '../components/dashboard/MediatizeModal.vue'
+import LatestActionTable from '@/components/util/TripleTable.vue'
+import StateTable from '@/components/dashboard/StatesTable.vue'
+import HeaderOverview from '@/components/util/HeaderOverview.vue'
 
-const activeStatesCount = ref<any>()
-const stateChangesFactor = ref<any>()
+// Store
+const store = useDashboardStore()
+const { activeStates, activeStatesCount, stateChangesFactor, errorMessage } = storeToRefs(store)
 
+// State
+const selectedState = ref<any>(null)
+const eventTriples = ref<any[]>([])
+const latestEvent = ref<string>('None')
 const showFoundModal = ref(false)
 const showRulerModal = ref(false)
 const showMediatizeModal = ref(false)
 const showHistoryModal = ref(false)
 
-const eventTriples = ref<EnhancedTriple[]>([])
-const selectedState = ref<any>(null)
-const latestEvent = ref('None')
-
-const mediatizeModalRef = ref<InstanceType<typeof MediatizeModal> | null>(null)
-
-const handleStateSelection = (state: any) => {
-  selectedState.value = state
-}
-
-const closePanel = () => {
-  selectedState.value = null
-}
-
-onMounted(async () => {
-  try {
-    const [activeRes, allRes] = await Promise.all([api.getActiveStates(), api.getStates()])
-    activeStates.value = activeRes.states
-    allStates.value = allRes.states
-
-    console.log(activeStates)
-  } catch (error) {
-    console.error('Failed to load state data:', error)
-  }
-  loadStats()
+// Lifecycle
+onMounted(() => {
+  store.fetchDashboardData()
 })
 
-const loadStats = async () => {
-  try {
-    const active = await api.getActiveStateCount()
-    activeStatesCount.value = active.count
+// Handlers
+const handleStateSelection = (state: any) => (selectedState.value = state)
+const closePanel = () => (selectedState.value = null)
 
-    const changes = await api.getStateChanges()
-    stateChangesFactor.value = changes.factor
-  } catch (error) {
-    console.error('Failed to fetch stats:', error)
-  }
+async function handleSubmit(payload: any) {
+  // Update UI immediately with response
+  updateLatestAction(payload)
+  // Refresh Store data
+  await store.fetchDashboardData()
+  // Close modals
+  showFoundModal.value = false
+  showRulerModal.value = false
+  showMediatizeModal.value = false
 }
 
-async function handleMediatizeSubmit(payload: { actingState: string; consumedState: string }) {
-  try {
-    const response = await api.mediatizate({
-      absorbed: payload.consumedState,
-      into: payload.actingState,
-    })
+const updateLatestAction = (payload: any) => {
+  const latestEventData = payload.history?.[0]
 
-    latestEvent.value = response.action
-    eventTriples.value = mapActionsToEnhanced(response.triples || [])
-    showMediatizeModal.value = false
+  latestEvent.value = latestEventData.action.replace(/_/g, ' ')
 
-    const activeRes = await api.getActiveStates()
-    activeStates.value = activeRes.states
-
-    loadStats()
-  } catch (error) {
-    console.error('Failed to mediatize state:', error)
-    mediatizeModalRef.value?.setError('Mediatization failed on server.')
-  }
-}
-
-function mapActionsToEnhanced(actions: TripleAction[]): EnhancedTriple[] {
-  return actions.map((item, index) => ({
+  eventTriples.value = (latestEventData.triples || []).map((item: any, index: number) => ({
     id: index,
-    action: item.action,
+    action: item.action, // Top-level property, this worked before
+
+    // Extract nested values to create the flat structure the table expects
     subject: item.triple.s.value,
+    rawSubject: item.triple.s.value,
+
     predicate: item.triple.p.value,
+    rawPredicate: item.triple.p.value,
+
     object: item.triple.o.value,
-    raw: item.triple,
+    rawObject: item.triple.o.value,
+
+    isLiteral: item.triple.o.isLiteral,
   }))
 }
 </script>
@@ -244,42 +208,21 @@ function mapActionsToEnhanced(actions: TripleAction[]): EnhancedTriple[] {
   }
 }
 
-.table-header {
+.table-layout {
   display: flex;
-  gap: 0;
-}
-
-.event-header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.banner {
-  margin-top: 0;
-}
-
-.minimize {
-  font-size: var(--base-size);
-  height: fit-content;
-  padding: 5px var(--padding);
-}
-
-.space-below {
-  padding-bottom: var(--paddingHalf);
+  flex: 1;
+  flex-direction: column;
+  gap: var(--paddingHalf);
 }
 
 .dashboard-sidebar {
-  max-width: 380px;
-  width: 380px;
+  width: 400px;
   display: flex;
 }
 
+/* Stats Card Styles */
 .stats-card {
-  gap: 0;
   padding: var(--paddingHalf) 60px;
-  justify-content: center;
   text-align: center;
   text-transform: uppercase;
 }
@@ -290,24 +233,14 @@ function mapActionsToEnhanced(actions: TripleAction[]): EnhancedTriple[] {
   margin: 0;
 }
 .stats-card span {
-  font-family: var(--baseFontStyle);
-  color: var(--mainFontColor);
   font-size: var(--text-h1);
   font-weight: lighter;
-}
-
-.dashboard-side-cards {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: var(--padding);
 }
 
 .delta {
   display: flex;
   justify-content: center;
 }
-
 .delta svg {
   color: var(--accentColor);
   width: 40px;
@@ -315,56 +248,44 @@ function mapActionsToEnhanced(actions: TripleAction[]): EnhancedTriple[] {
   align-self: flex-end;
 }
 
-.flex {
+/* Details Panel */
+.dashboard-side-cards {
   display: flex;
-  flex: 1; /* Spreads out horizontally */
-  align-self: stretch; /* Stretches vertically */
-}
-
-.details-header {
-  display: flex;
-  flex-direction: column;
-}
-
-.top {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
   flex: 1;
+  flex-direction: column;
+  gap: var(--padding);
 }
-
-.top h2 {
-  margin-bottom: 0;
+.event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-
-.text-wrapper * {
-  margin: 0;
-}
-
-.state-details-panel h3 {
-  margin: 0;
+.event-header-wrapper {
+  display: flex;
+  gap: var(--padding);
 }
 
 .mini-table th {
-  font-size: calc(var(--base-size) * 1.2);
+  font-size: calc(var(--base-size) * 1.1);
 }
 
-.details-spacer {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  justify-content: space-between;
+.mini-table th,td {
+  text-align: center;
+  padding: var(--paddingHalf);
 }
-
 .button-wrapper {
   display: flex;
   flex-direction: column;
   gap: var(--padding);
 }
 
-.event-header-wrapper {
-  display: flex;
-  flex-direction: row;
-  gap: var(--padding);
+.minimize {
+  font-size: var(--base-size);
+  height: fit-content;
+  padding: 5px var(--padding);
+}
+.state-details-panel h3 {
+  margin: 0;
+  text-align: center;
 }
 </style>

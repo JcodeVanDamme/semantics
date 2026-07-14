@@ -44,6 +44,7 @@
   --padding: 15px;
   --paddingHalf: 8px;
   --paddingDouble: 22px;
+  --paddingEmpty: 40px;
   --border: 2px;
 }
 
@@ -141,6 +142,13 @@ h3 {
   flex-direction: column;
   gap: 0;
   overflow: hidden;
+}
+
+.empty-cell {
+  text-align: center;
+  padding: var(--paddingEmpty, 16px);
+  color: var(--mutedFontColor, #666);
+  font-style: italic;
 }
 
 .composite-card-header {
@@ -344,4 +352,70 @@ table td {
 .modal-form h3 {
   margin: 0;
   margin-bottom: 10px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--paddingHalf, 8px);
+  margin-bottom: var(--padding, 16px);
+}
+
+label {
+  font-size: var(--text-h4);
+  color: var(--mainFontColor, #333);
+  text-transform: uppercase;
+}
+
+.base-input {
+  border: none;
+  border-bottom: 2px solid var(--borderColor, #ccc);
+  background: transparent;
+  color: var(--mainFontColor, #333);
+  font-family: var(--baseFontStyle), monospace;
+  transition: border-color 0.2s ease;
+  width: 100%;
+}
+
+.base-input:focus {
+  outline: none;
+  border-color: var(--accentColor, #007acc);
+}
+
+select {
+  padding-top: var(--padding);
+  padding-bottom: var(--paddingHalf);
+  margin-bottom: var(--paddingDouble);
+}
+
+/* --- TOGGLE SELECTION CODES --- */
+.toggle-labels {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-h3);
+  text-transform: uppercase;
+  margin-right: var(--padding);
+}
+
+.title {
+  color: var(--borderColor);
+  font-family: var(--fancyFontStyle);
+}
+
+.toggle-label {
+  color: var(--mutedFontColor);
+  cursor: pointer;
+  font-weight: var(--fw-semibold);
+  transition: color 0.2s ease;
+}
+
+.toggle-label:hover,
+.toggle-label.active {
+  color: var(--accentColor);
+}
+
+.toggle-divider {
+  color: var(--borderColor);
+  pointer-events: none;
 }

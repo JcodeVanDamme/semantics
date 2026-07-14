@@ -120,7 +120,7 @@
 </template>
 
 <script setup lang="ts">
-import HeaderOverview from '../components/HeaderOverview.vue'
+import HeaderOverview from '../components/util/HeaderOverview.vue'
 
 import { ref } from 'vue'
 
@@ -128,10 +128,9 @@ import MainLayout from '../layouts/MainLayout.vue'
 
 import { Search, CircleX } from 'lucide-vue-next'
 
-import CollapsiblePanel from '@/components/new/CollapsiblePanel.vue'
-import TriplesResultsCard from '@/components/new/TripleResults.vue'
-import TriplesTable from '@/components/new/TripleTable.vue'
-import type { Triple } from '@/store/semanticStore.ts'
+import CollapsiblePanel from '@/components/util/CollapsiblePanel.vue'
+import TriplesResultsCard from '@/components/util/TripleResults.vue'
+import TriplesTable from '@/components/util/TripleTable.vue'
 
 const results = ref<Triple[]>([])
 const query = ref('')
