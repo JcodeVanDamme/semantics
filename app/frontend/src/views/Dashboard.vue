@@ -3,18 +3,18 @@
     <HeaderOverview title="Regional Overview" description="Gabba" />
 
     <div class="dashboard-top">
-        <div class="table-layout card">
-          <div class="space-below">
-            <h2>States</h2>
-            <div class="divider accent"></div>
-          </div>
-
-          <StateTable
-            :states="activeStates"
-            :error-message="errorMessage"
-            @row-clicked="handleStateSelection"
-          />
+      <div class="table-layout card">
+        <div class="space-below">
+          <h2>States</h2>
+          <div class="divider accent"></div>
         </div>
+
+        <StateTable
+          :states="activeStates"
+          :error-message="errorMessage"
+          @row-clicked="handleStateSelection"
+        />
+      </div>
 
       <aside class="dashboard-sidebar">
         <div v-if="!selectedState" class="dashboard-side-cards">
@@ -72,7 +72,7 @@
                 </tr>
               </template>
               <tr v-else>
-                <td colspan="3" class="empty-state">No mediatized states.</td>
+                <td colspan="3" class="empty-cell">No mediatized states.</td>
               </tr>
             </tbody>
           </table>
@@ -165,10 +165,6 @@ async function handleSubmit(payload: any) {
   updateLatestAction(payload)
   // Refresh Store data
   await store.fetchDashboardData()
-  // Close modals
-  showFoundModal.value = false
-  showRulerModal.value = false
-  showMediatizeModal.value = false
 }
 
 const updateLatestAction = (payload: any) => {
@@ -269,7 +265,8 @@ const updateLatestAction = (payload: any) => {
   font-size: calc(var(--base-size) * 1.1);
 }
 
-.mini-table th,td {
+.mini-table th,
+td {
   text-align: center;
   padding: var(--paddingHalf);
 }

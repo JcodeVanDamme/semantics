@@ -383,7 +383,7 @@ label {
 }
 
 select {
-  padding-top: var(--padding);
+  padding-top: var(--paddingDouble);
   padding-bottom: var(--paddingHalf);
   margin-bottom: var(--paddingDouble);
 }
@@ -417,5 +417,12 @@ select {
 
 .toggle-divider {
   color: var(--borderColor);
+  pointer-events: none;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(1);
   pointer-events: none;
 }

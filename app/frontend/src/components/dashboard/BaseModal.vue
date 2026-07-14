@@ -11,13 +11,10 @@
             <X :size="18" />
           </button>
         </div>
-
         <div class="divider accent"></div>
-
         <div v-if="errorMessage" class="error-banner">
           {{ errorMessage }}
         </div>
-
       </div>
 
       <div class="modal-body">

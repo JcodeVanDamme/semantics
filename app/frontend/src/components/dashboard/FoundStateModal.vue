@@ -8,7 +8,7 @@
     <div class="modal-form">
       <BaseInput label="State Name" v-model="form.name" placeholder="Kingdom of..." />
 
-      <label class="select-header">Ruler (URI)</label>
+      <label class="select-header">Ruler</label>
       <select v-model="form.ruler" class="base-input">
         <option value="" disabled selected>Select a Ruler URI</option>
         <option v-for="uri in rulerOptions" :key="uri" :value="uri">

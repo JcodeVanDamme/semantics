@@ -63,16 +63,20 @@
                 <table class="region-table">
                   <thead>
                     <tr>
-                      <th>Regions</th>
-                      <th colspan="5"></th>
+                      <th class="region-header">Regions</th>
+                      <th>Name</th>
+                      <th>Population</th>
+                      <th>Type</th>
+                      <th colspan="3"></th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="region in state.regions" :key="region.name">
+                      <td></td>
                       <td>{{ region.name }}</td>
                       <td>{{ formatNumber(region.population) }}</td>
                       <td>{{ region.type }}</td>
-                      <td colspan="4"></td>
+                      <td colspan="3"></td>
                     </tr>
                   </tbody>
                 </table>
@@ -201,13 +205,13 @@ th {
 
 /* 4. Region Table */
 .region-table th {
-  font-size: calc(var(--base-size) * 1.2);
+  font-size: calc(var(--base-size) * 1.1);
   border-bottom: 2px solid var(--accentColor);
   background-color: color-mix(in srgb, var(--secondaryColor), var(--accentColor) 10%);
 }
-.region-header {
+.region-table th.region-header {
+  font-size: calc(var(--base-size) * 1.2);
   color: var(--accentColor);
-  font-size: var(--text-h3) !important;
 }
 
 .region-table th:not(.region-expand),

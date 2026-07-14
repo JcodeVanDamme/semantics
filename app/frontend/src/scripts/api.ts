@@ -1,7 +1,6 @@
 import type {
   BackendTriple,
   TripleQueryResponse,
-  HistoryResponse,
   StateDataResponse,
   HistoryEvent,
 } from './type.ts'
@@ -120,7 +119,7 @@ export const api = {
     return handleResponse<StateDataResponse>(response)
   },
 
-  async mediatizate(payload: { absorbed: string; into: string }): Promise<HistoryResponse> {
+  async mediatizate(payload: { absorbed: string; into: string }): Promise<HistoryEvent[]> {
     const url = `${BASE_URL}${RDF_ENDPOINT}/mediatizate`
     logger('POST', url, payload)
 
@@ -129,10 +128,10 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     })
-    return handleResponse<HistoryResponse>(response)
+    return handleResponse<HistoryEvent[]>(response)
   },
 
-  async changeRuler(payload: { state: string; ruler: string }): Promise<HistoryResponse> {
+  async changeRuler(payload: { state: string; ruler: string }): Promise<HistoryEvent[]> {
     const url = `${BASE_URL}${RDF_ENDPOINT}/changeRuler`
     logger('POST', url, payload)
 
@@ -150,7 +149,7 @@ export const api = {
     ruler: string // URI
     label: string // LITERAL
     type: string // LITERAL
-  }): Promise<HistoryResponse> {
+  }): Promise<HistoryEvent[]> {
     const url = `${BASE_URL}${RDF_ENDPOINT}/foundState`
     logger('POST', url, payload)
 
@@ -162,7 +161,7 @@ export const api = {
     return handleResponse<HistoryEvent[]>(response)
   },
 
-  async getHistory(): Promise<HistoryResponse[]> {
+  async getHistory(): Promise<HistoryEvent[]> {
     const url = `${BASE_URL}${RDF_ENDPOINT}/history`
     logger('GET', url)
 

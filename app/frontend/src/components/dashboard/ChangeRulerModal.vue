@@ -33,7 +33,7 @@
         <input v-model="form.title" class="base-input" placeholder="e.g. King of Prussia" />
       </div>
 
-      <div class="input-button-wrapper">
+      <div  class="input-button-wrapper" >
         <button class="button accent" :disabled="!isValid || isProcessing" @click="handleSubmit">
           <Flag :size="18" />
           {{ isProcessing ? 'PROCESSING...' : 'CONFIRM CHANGE' }}
@@ -45,10 +45,11 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { Flag } from 'lucide-vue-next'
-import BaseModal from './BaseModal.vue'
 import { useDashboardStore } from '@/stores/dashboardStore'
 import { api } from '@/scripts/api.ts'
+import { Flag } from 'lucide-vue-next'
+import BaseModal from './BaseModal.vue'
+import type { HistoryEvent, ChangeRulerRequest, StateData } from '../../scripts/type.ts'
 
 const props = defineProps<{
   stateUri: string
@@ -56,7 +57,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'close'): void
-  (e: 'submit', payload: any): void
+  (e: 'submit', payload: HistoryEvent[]): void
 }>()
 
 const store = useDashboardStore()
@@ -64,29 +65,26 @@ const errorMessage = ref<string | null>(null)
 const isProcessing = ref(false)
 const mode = ref<'select' | 'create'>('select')
 
-// Temporary state for the form
 const form = ref({
   label: '',
   title: '',
 })
 const selectedRulerUri = ref('')
 
-// Clear errors when mode changes
 watch(mode, () => {
   errorMessage.value = null
   selectedRulerUri.value = ''
   form.value = { label: '', title: '' }
 })
 
-// Generate unique ruler options from store
 const rulerOptions = computed(() => {
   const rulers = new Map()
-  store.allStates.forEach((s) => {
+  store.allStates.forEach((s: StateData) => {
     if (s.ruler?.URI && !rulers.has(s.ruler.URI)) {
       rulers.set(s.ruler.URI, {
         uri: s.ruler.URI,
-        name: s.ruler.name || s.ruler.URI,
-        title: s.ruler.title || 'Unknown Title',
+        name: s.ruler.name || '',
+        title: s.ruler.title || '',
       })
     }
   })
@@ -103,9 +101,10 @@ async function handleSubmit() {
   isProcessing.value = true
 
   try {
-    let payload: any
+    let payload: ChangeRulerRequest
 
     if (mode.value === 'select') {
+      console.log('SelURI:' + selectedRulerUri.value)
       const selected = rulerOptions.value.find((o) => o.uri === selectedRulerUri.value)
       payload = {
         state: props.stateUri,
@@ -139,5 +138,15 @@ async function handleSubmit() {
 <style scoped>
 .pad-top {
   padding-top: var(--paddingDouble);
+}
+
+.toggle-label {
+  color: var(--mutedFontColor);
+  font-size: var(--text-h4);
+}
+
+.toggle-label:hover,
+.toggle-label.active {
+  color: var(--mainFontColor);
 }
 </style>

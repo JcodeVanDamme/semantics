@@ -16,6 +16,8 @@ import com.github.jcodevandamme.semantics.rdf.bmatrix.TripleAlreadyExistsExcepti
 import com.github.jcodevandamme.semantics.rdf.bmatrix.TripleNotFoundException;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 import com.github.jcodevandamme.semantics.rdf.tripleStore.TripleStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 @Component
 public class DomainActor {
 
+    private static final Logger log = LoggerFactory.getLogger(DomainActor.class);
     private final TripleStore store;
     private final TripleLogger tripleStoreLogger;
     private final HistoryLogger domainHistoryLogger;
@@ -49,7 +52,7 @@ public class DomainActor {
 
     public int fetchStateCount() {
         int stateCount = 0;
-        for (String state : fetchStateNames()) {
+        for (String state : fetchStateURIS()) {
             if (exists(state, Vocab.Domain.IS_ACTIVE, "true")) {
                 stateCount++;
             }
@@ -58,7 +61,7 @@ public class DomainActor {
     }
 
     public double fetchChangeFactor() {
-        List<String> allStates = fetchStateNames();
+        List<String> allStates = fetchStateURIS();
 
         List<String> activeStates = allStates.stream()
                 .filter(state -> exists(state, Vocab.Domain.IS_ACTIVE, "true"))
@@ -86,7 +89,7 @@ public class DomainActor {
     public List<State> fetchStateData(boolean filterActiveStates) {
         List<State> states = new ArrayList<>();
 
-        List<String> stateURIs = fetchStateNames();
+        List<String> stateURIs = fetchStateURIS();
         for (String stateURI : stateURIs) {
 
             if (filterActiveStates && !exists(stateURI, Vocab.Domain.IS_ACTIVE, "true")) {
@@ -109,24 +112,43 @@ public class DomainActor {
     }
 
     private List<MedState> fetchMediatizatedStates(String stateURI) {
-        List<Triple> medTriples = store.query(
+        /*List<Triple> medTriples = store.query(
                 stateURI,
                 Vocab.Domain.MEDIATIZED,
                 null
         );
+            return medTriples.stream()
+            .map(t -> t.o().value().toString())
+            .map(medStateURI -> {
+                MedState medState = new MedState();
 
-        return medTriples.stream()
+                medState.name = getSingleObjectValue(medStateURI, Vocab.Rdfs.LABEL);
+                medState.type = getSingleObjectValue(medStateURI, Vocab.Domain.STATE_TYPE);
+                medState.ruler = fetchStateRuler(medStateURI);
+
+                return medState;
+            })
+            .collect(Collectors.toList());
+         */
+
+        List<String> mediatizatedURIs =
+                store.query(stateURI, null, null)
+                .stream()
+                .filter(t -> t.p().value().equals(Vocab.Domain.MEDIATIZED))
                 .map(t -> t.o().value().toString())
-                .map(medStateURI -> {
-                    MedState medState = new MedState();
+                .toList();
 
-                    medState.name = getSingleObjectValue(medStateURI, Vocab.Rdfs.LABEL);
-                    medState.type = getSingleObjectValue(medStateURI, Vocab.Domain.STATE_TYPE);
-                    medState.ruler = fetchStateRuler(medStateURI);
+        List<MedState> states = new ArrayList<>();
+        for (String medStateURI : mediatizatedURIs) {
+            MedState medState = new MedState();
 
-                    return medState;
-                })
-                .collect(Collectors.toList());
+            medState.name = getSingleObjectValue(medStateURI, Vocab.Rdfs.LABEL);
+            medState.type = getSingleObjectValue(medStateURI, Vocab.Domain.STATE_TYPE);
+            medState.ruler = fetchStateRuler(medStateURI);
+
+            states.add(medState);
+        }
+        return states;
     }
 
     private Ruler fetchStateRuler(String stateURI) {
@@ -159,7 +181,7 @@ public class DomainActor {
         return region;
     }
 
-    private List<String> fetchStateNames() {
+    private List<String> fetchStateURIS() {
         List<Triple> states =  store.query(
                 null,
                 Vocab.Rdf.TYPE,
@@ -288,7 +310,7 @@ public class DomainActor {
 
         // data:rulerURI ont:rulerTitle titleLiteral
         if (!exists(rulerURI, Vocab.Domain.RULER_TITLE, titleLiteral)) {
-            newT = new Triple(labelLiteral,  Vocab.Domain.RULER_TITLE, titleLiteral, true);
+            newT = new Triple(rulerURI,  Vocab.Domain.RULER_TITLE, titleLiteral, true);
             performCreate(newT, tripleActions, RULER_EX);
         }
 
@@ -343,8 +365,8 @@ public class DomainActor {
         t = new Triple(stateURI, Vocab.Domain.POPULATION, populationLiteral, true);
         performCreate(t, tripleActions, STATE_EX);
 
-        // data:state ont:stateType label
-        t = new Triple(stateURI, Vocab.Domain.STATE_TYPE, stateLabelLiteral, true);
+        // data:state ont:stateType type
+        t = new Triple(stateURI, Vocab.Domain.STATE_TYPE, stateTypeLiteral, true);
         performCreate(t, tripleActions, STATE_EX);
 
         // data:state ont:isOriginalState false

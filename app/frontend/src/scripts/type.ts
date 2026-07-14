@@ -29,7 +29,7 @@ export interface HistoryEvent {
 
 export interface Ruler {
   name: string
-  uri: string
+  URI: string
   title: string
 }
 
@@ -70,4 +70,11 @@ export interface EnhancedTriple {
   isLiteral: boolean
   action?: string
   raw?: BackendTriple
+}
+
+export interface ChangeRulerRequest {
+  state: string // URI
+  ruler: string // URI
+  label: string // LITERAL
+  title: string // LITERAL
 }
