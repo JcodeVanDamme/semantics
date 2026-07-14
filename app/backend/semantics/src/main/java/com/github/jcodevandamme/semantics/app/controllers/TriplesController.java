@@ -26,11 +26,14 @@ public class TriplesController {
     }
 
     @PostMapping
-    public synchronized HttpStatus createTriple(@Validated @RequestBody TripleDto triple) throws TripleAlreadyExistsException, IOException {
+    public synchronized ResponseEntity<Void> createTriple(@RequestBody TripleDto triple) throws TripleAlreadyExistsException, IOException {
+        if (tripleNotValid(triple)) {
+            return ResponseEntity.badRequest().build();
+        }
         if (!service.addTriple(triple)) {
             throw new TripleAlreadyExistsException();
         };
-        return HttpStatus.CREATED;
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     @GetMapping
     public synchronized ResponseEntity<TripleQueryResponse> tripleQuery(
@@ -46,25 +49,29 @@ public class TriplesController {
         return ResponseEntity.ok(response);
     }
 
-    /*@PostMapping("/sparql")
-    public synchronized ResponseEntity<Object> sparqlQuery(@Validated @RequestBody String query) {
-        Object res = service.querySparql(query);
-        return ResponseEntity.ok(res);
-    }*/
-
     @PutMapping
-    public synchronized HttpStatus updateTriple(@Validated @RequestBody PutTriplesRequest request) throws TripleNotFoundException, TripleAlreadyExistsException, IOException {
+    public synchronized ResponseEntity<Void> updateTriple(@Validated @RequestBody PutTriplesRequest request) throws TripleNotFoundException, TripleAlreadyExistsException, IOException {
+        if (request == null || tripleNotValid(request.original()) || tripleNotValid(request.update())) {
+            return ResponseEntity.badRequest().build();
+        }
         if (!service.updateTriple(request)) {
             throw new TripleNotFoundException();
         }
-        return HttpStatus.OK;
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping
-    public synchronized HttpStatus deleteTriple(@Validated @RequestBody TripleDto triple) throws TripleNotFoundException, IOException {
+    public synchronized ResponseEntity<Void> deleteTriple(@Validated @RequestBody TripleDto triple) throws TripleNotFoundException, IOException {
+        if (tripleNotValid(triple)) {
+            return ResponseEntity.badRequest().build();
+        }
        if (!service.deleteTriple(triple)) {
            throw new TripleNotFoundException();
        }
-        return HttpStatus.OK;
+        return ResponseEntity.ok().build();
+    }
+
+    private boolean tripleNotValid(TripleDto t) {
+        return t == null || t.s() == null || t.p() == null || t.o() == null;
     }
 }

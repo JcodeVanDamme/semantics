@@ -32,17 +32,16 @@ public class DomainService {
         this.logger = logger;
     }
 
-    public CountResponse countActiveStates() {
-        return new CountResponse(domain.fetchStateCount());
+    public int countActiveStates() {
+        return domain.fetchStateCount();
     }
 
-    public FactorResponse calculateStateChangeFactor() {
-        return new FactorResponse(domain.fetchChangeFactor());
+    public double calculateStateChangeFactor() {
+        return domain.fetchChangeFactor();
     }
 
-    public StateResponse getStates(boolean filterActiveStates) {
-        List<State> states = domain.fetchStateData(filterActiveStates);
-        return new StateResponse(statesToDTO(states));
+    public List<State> getStates(boolean filterActiveStates) {
+        return domain.fetchStateData(filterActiveStates);
     }
 
     public HistoryDto mediatizate(MediatizationRequest req) throws IOException, DomainActionException {
@@ -72,55 +71,5 @@ public class DomainService {
         String pop = String.valueOf(req.population());
 
         return domain.createState(state, ruler, pop, label, type);
-    }
-
-    private StateDto[] statesToDTO(List<State> states) {
-        StateDto[] dtos = new StateDto[states.size()];
-        for (int i = 0; i < states.size(); i++) {
-            State state = states.get(i);
-            dtos[i] = new StateDto(
-                    state.name,
-                    state.URI,
-                    state.type,
-                    state.population,
-                    new RulerDto(
-                            state.ruler.name,
-                            state.ruler.URI,
-                            state.ruler.title
-                    ),
-                    regionsToDTO(state.regions),
-                    medStatesToDTO(state.mediatizatedStates)
-            );
-        }
-        return dtos;
-    }
-
-    private MediatizatedStateDto[] medStatesToDTO(List<MedState> medStates) {
-        MediatizatedStateDto[] dtos = new MediatizatedStateDto[medStates.size()];
-        for (int i = 0; i < medStates.size(); i++) {
-            MedState medState = medStates.get(i);
-            dtos[i] = new MediatizatedStateDto(
-                    medState.name,
-                    medState.type,
-                    new RulerDto(
-                            medState.ruler.name,
-                            medState.ruler.URI,
-                            medState.ruler.title
-                    )
-            );
-        }
-        return dtos;
-    }
-    private RegionDto[] regionsToDTO(List<Region> regions) {
-        RegionDto[] dtos = new RegionDto[regions.size()];
-        for (int i = 0; i < regions.size(); i++) {
-            Region region = regions.get(i);
-            dtos[i] = new RegionDto(
-                    region.name,
-                    region.type,
-                    region.population
-            );
-        }
-        return dtos;
     }
 }

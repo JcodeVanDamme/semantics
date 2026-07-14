@@ -13,15 +13,13 @@ The accompanying web application models and explores the mediatization and terri
 
 - [**GET** `/triples`](#read-triples-triple-query) - Query triples with optional filters (`s`, `p`, `o`)
 
-- [**POST** `/triples/sparql`](#read-triples-sparql-query) - Query triples using SPARQL
-
 - [**PUT** `/triples`](#update-triple) - Update an existing triple
 
 - [**DELETE** `/triples`](#delete-triple) - Delete a triple
 
 ## Domain-Specific-Endpoints
 
-- [**GET** `/semantics.rdf.system/activeStates`](#get-active-states) - Retrieve the number of active States
+- [**GET** `/semantics.rdf.system/activeStateCount`](#get-active-states) - Retrieve the number of active States
 
 - [**GET** `/semantics.rdf.system/stateChanges`](#get-state-change-factor) - Retrieve the difference of active States and original States
 
@@ -121,7 +119,6 @@ GET
 | Code | Meaning |
 |------|------|
 | `200 OK` | Query executed successfully |
-| `400 Bad Request` | Invalid query parameters |
 | `500 Internal Server Error` | Server-side processing error |
 
 
@@ -143,73 +140,17 @@ GET
 
 | Field | Type | Description |
 |------|------|------|
-| `count` | integer | Number of returned triples |
-| `triples` | array | List of matching triples |
-| `triples[].s` | string | Subject |
-| `triples[].p` | string | Predicate |
-| `triples[].o` | string | Object |
-
----
-
-# Read Triples (SPARQL-Query)
-
-- Returns Triples matching the passed SPARQL-Query
-
-### Endpoint
-```
-/triples/sparql
-```
-
-### Method
-```
-POST
-```
-
-### Response Codes
-
-| Code | Meaning |
-|------|------|
-| `200 OK` | Query executed successfully |
-| `400 Bad Request` | Invalid Request Body |
-| `500 Internal Server Error` | Server-side processing error |
-
-
-### Request Body
-```json
-{
-  "query": "SELECT ?s ?p ?o WHERE { ... }"
-}
-```
-
-### Request Schema
-
-| Field | Type | Description |
-|------|------|------|
-| `query` | string | SPARQL-Query |
-
-### Response Body
-```json
-{
-  "count": 1,
-    "triples": [
-      {
-        "s": { "value": "gabba" },
-        "p": { "value": "gabba" },
-        "o": { "value": "gabba", "isLiteral": false }
-      }
-    ]
-}
-```
-
-### Response Schema
-
-| Field | Type | Description |
-|------|------|------|
-| `count` | integer | Number of returned triples |
-| `triples` | array | List of matching triples |
-| `triples[].s` | string | Subject |
-| `triples[].p` | string | Predicate |
-| `triples[].o` | string | Object |
+|count|integer|The Number of Triples matching the Query.|#
+|triples|array| Array containing the matched Triple Objects. |
+| `triples[].s` | object | The Triple Subject. |
+| `triples[].s.value` | String | The value of the subject. |
+| `triples[].s.isLiteral` | Boolean | Always `false`. |
+| `triples[].p` | object | The Triple Predicate. |
+| `triples[].p.value` | String | The value of the predicate. |
+| `triples[].p.isLiteral` | Boolean | Always `false`. |
+| `triples[].o` | object | The Triple Object. |
+| `triples[].o.value` | String | The value of the object (can be a URI or a literal. |
+| `triples[].o.isLiteral` | Boolean | `true` if the object value is a literal; `false` if it is a URI. |
 
 ---
 
@@ -332,13 +273,13 @@ DELETE
 
 ---
 
-## Get active States
+## Get Number of active  States
 
 - Returns the number of currently active States
 
 #### Endpoint
 ```text
-/semantics.rdf.system/activeStates
+/semantics.rdf.system/activeStateCount
 ```
 
 #### Method
@@ -418,6 +359,12 @@ GET
 GET
 ```
 
+### Query Parameters
+
+| Name | Type | Required | Default | Description |
+|------|------|------|------|------|
+| `activeOnly` | Boolean | No | `false` | If true, filters the response to return exclusively currently active states.|
+
 #### Response Codes
 
 | Code | Meaning |
@@ -492,7 +439,7 @@ GET
 
 - Performs all necessary Triple-Store-Actions to mark the State whose name is passed under `absorbed` as inactive aswell as performing all Actions for it to be mediatizated into the State whose Name is passed under `into`
 - Returns all resulting Triple-Store-Actions including their Action-Type along with their respective Subject, Predicate and Object
-- Logs the resulting Triple-Store-Actions to be receivable via a call to **/ops/history**
+- Logs the resulting Triple-Store-Actions to be receivable via a call to **/semantics.rdf.system/history**
 
 #### Endpoint
 ```text
@@ -532,27 +479,32 @@ POST
 #### Response Body
 ```json
 {
-    "action": "MEDIATIZATION",
-    "timeStamp": "2026-07-13T07:12:39.873639600Z",
-    "triples": [
-        {
-            "action": "Created",
-            "triple": {
-                "s": {
-                    "value": "http://semantics.rdf.system.data/State_Prussia",
-                    "isLiteral": false
-                },
-                "p": {
-                    "value": "http://semantics.rdf.system.ontology/mediatized",
-                    "isLiteral": false
-                },
-                "o": {
-                    "value": "http://semantics.rdf.system.data/State_Bavaria",
-                    "isLiteral": false
+  "history": [
+      {
+        "action": "STATE_FOUNDING",
+        "timeStamp": "2026-07-14T06:38:49.010883400Z",
+        "triples": [
+            {
+                "action": "Created",
+                "triple": {
+                    "s": {
+                        "value": "http://semantics.rdf.system.data/State_new",
+                        "isLiteral": false
+                    },
+                    "p": {
+                        "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                        "isLiteral": false
+                    },
+                    "o": {
+                        "value": "http://semantics.rdf.system.ontology/State",
+                        "isLiteral": false
+                    }
                 }
             }
-        }
-	]
+        ]
+      }
+    }
+  ]
 }
 ```
 
@@ -560,20 +512,21 @@ POST
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
-| `action` | String | The event identifier. |
-| `timeStamp` | String | The ISO-8601 timestamp when the event occurred. |
-| `triples` | Array | A collection of modifications applied to the triple store. |
-| `triples[].action` | String | The operation performed with the Triple. |
-| `triples[].triple` | Object | The Action Triple. |
-| `triples[].triple.s` | Object | Subject of the Action Triple |
-| `triples[].triple.s.value` | String | The Value of the Subject. |
-| `triples[].triple.s.isLiteral` | Boolean | Always True. |
-| `triples[].triple.p` | Object | Predicate of the Action Triple. |
-| `triples[].triple.p.value` | String | The Value of the Subject. |
-| `triples[].triple.p.isLiteral` | Boolean | Always True. |
-| `triples[].triple.o` | Object | Object of the Action Triple. |
-| `triples[].triple.o.value` | String | The URI string or the literal value of the Object. |
-| `triples[].triple.o.isLiteral` | Boolean | `true` if the object value is a literal; `false` if it is a URI. |
+| `history` | Array | Wrapper containing the list of events. |
+| `history[].action` | String | The event identifier. |
+| `history[].timeStamp` | String | The ISO-8601 timestamp when the event occurred. |
+| `history[].triples` | Array | A collection of modifications applied to the triple store during this event. |
+| `history[].triples[].action` | String | The operation performed with the Triple. |
+| `history[].triples[].triple` | Object | The Action Triple containing subject, predicate, and object. |
+| `history[].triples[].triple.s` | Object | Subject of the Action Triple. |
+| `history[].triples[].triple.s.value` | String | The URI string of the Subject. |
+| `history[].triples[].triple.s.isLiteral` | Boolean | Always `false`. |
+| `history[].triples[].triple.p` | Object | Predicate of the Action Triple. |
+| `history[].triples[].triple.p.value` | String | The URI string of the Predicate. |
+| `history[].triples[].triple.p.isLiteral` | Boolean | Always `false`. |
+| `history[].triples[].triple.o` | Object | Object of the Action Triple. |
+| `history[].triples[].triple.o.value` | String | The URI string or the literal value of the Object. |
+| `history[].triples[].triple.o.isLiteral` | Boolean | `true` if the object value is a literal; `false` if it is a URI. |
 
 ---
 
@@ -581,11 +534,11 @@ POST
 
 - Performs all necessary Triple-Store-Actions to change the Ruler of the State whose Name is passed under `state` to the Ruler whose name is passed under `ruler`
 - Returns all resulting Triple-Store-Actions including their Action-Type along with their respective Subject, Predicate and Object
-- Logs the resulting Triple-Store-Actions to be receivable via a call to **/ops/history**
+- Logs the resulting Triple-Store-Actions to be receivable via a call to **/semantics.rdf.system/history**
 
 #### Endpoint
 ```
-/ops/changeRuler
+/semantics.rdf.system/changeRuler
 ```
 
 #### Method
@@ -620,27 +573,32 @@ POST
 #### Response Body
 ```json
 {
-    "action": "MEDIATIZATION",
-    "timeStamp": "2026-07-13T07:12:39.873639600Z",
-    "triples": [
-        {
-            "action": "Created",
-            "triple": {
-                "s": {
-                    "value": "http://semantics.rdf.system.data/State_Prussia",
-                    "isLiteral": false
-                },
-                "p": {
-                    "value": "http://semantics.rdf.system.ontology/mediatized",
-                    "isLiteral": false
-                },
-                "o": {
-                    "value": "http://semantics.rdf.system.data/State_Bavaria",
-                    "isLiteral": false
+  "history": [
+      {
+        "action": "STATE_FOUNDING",
+        "timeStamp": "2026-07-14T06:38:49.010883400Z",
+        "triples": [
+            {
+                "action": "Created",
+                "triple": {
+                    "s": {
+                        "value": "http://semantics.rdf.system.data/State_new",
+                        "isLiteral": false
+                    },
+                    "p": {
+                        "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                        "isLiteral": false
+                    },
+                    "o": {
+                        "value": "http://semantics.rdf.system.ontology/State",
+                        "isLiteral": false
+                    }
                 }
             }
-        }
-	]
+        ]
+      }
+    }
+  ]
 }
 ```
 
@@ -648,20 +606,21 @@ POST
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
-| `action` | String | The event identifier. |
-| `timeStamp` | String | The ISO-8601 timestamp when the event occurred. |
-| `triples` | Array | A collection of modifications applied to the triple store. |
-| `triples[].action` | String | The operation performed with the Triple. |
-| `triples[].triple` | Object | The Action Triple. |
-| `triples[].triple.s` | Object | Subject of the Action Triple |
-| `triples[].triple.s.value` | String | The Value of the Subject. |
-| `triples[].triple.s.isLiteral` | Boolean | Always True. |
-| `triples[].triple.p` | Object | Predicate of the Action Triple. |
-| `triples[].triple.p.value` | String | The Value of the Subject. |
-| `triples[].triple.p.isLiteral` | Boolean | Always True. |
-| `triples[].triple.o` | Object | Object of the Action Triple. |
-| `triples[].triple.o.value` | String | The URI string or the literal value of the Object. |
-| `triples[].triple.o.isLiteral` | Boolean | `true` if the object value is a literal; `false` if it is a URI. |
+| `history` | Array | Wrapper containing the list of events. |
+| `history[].action` | String | The event identifier. |
+| `history[].timeStamp` | String | The ISO-8601 timestamp when the event occurred. |
+| `history[].triples` | Array | A collection of modifications applied to the triple store during this event. |
+| `history[].triples[].action` | String | The operation performed with the Triple. |
+| `history[].triples[].triple` | Object | The Action Triple containing subject, predicate, and object. |
+| `history[].triples[].triple.s` | Object | Subject of the Action Triple. |
+| `history[].triples[].triple.s.value` | String | The URI string of the Subject. |
+| `history[].triples[].triple.s.isLiteral` | Boolean | Always `false`. |
+| `history[].triples[].triple.p` | Object | Predicate of the Action Triple. |
+| `history[].triples[].triple.p.value` | String | The URI string of the Predicate. |
+| `history[].triples[].triple.p.isLiteral` | Boolean | Always `false`. |
+| `history[].triples[].triple.o` | Object | Object of the Action Triple. |
+| `history[].triples[].triple.o.value` | String | The URI string or the literal value of the Object. |
+| `history[].triples[].triple.o.isLiteral` | Boolean | `true` if the object value is a literal; `false` if it is a URI. |
 
 ---
 
@@ -669,7 +628,7 @@ POST
 
 - Performs all necessary Triple-Store-Actions to create the State per Data passed in the Request-Body
 - Returns all resulting Triple-Store-Actions including their Action-Type along with their respective Subject, Predicate and Object
-- Logs the resulting Triple-Store-Actions to be receivable via a call to **/ops/history**
+- Logs the resulting Triple-Store-Actions to be receivable via a call to **/semantics.rdf.system/history**
 
 #### Endpoint
 ```
@@ -711,27 +670,32 @@ POST
 #### Response Body
 ```json
 {
-    "action": "MEDIATIZATION",
-    "timeStamp": "2026-07-13T07:12:39.873639600Z",
-    "triples": [
-        {
-            "action": "Created",
-            "triple": {
-                "s": {
-                    "value": "http://semantics.rdf.system.data/State_Prussia",
-                    "isLiteral": false
-                },
-                "p": {
-                    "value": "http://semantics.rdf.system.ontology/mediatized",
-                    "isLiteral": false
-                },
-                "o": {
-                    "value": "http://semantics.rdf.system.data/State_Bavaria",
-                    "isLiteral": false
+  "history": [
+      {
+        "action": "STATE_FOUNDING",
+        "timeStamp": "2026-07-14T06:38:49.010883400Z",
+        "triples": [
+            {
+                "action": "Created",
+                "triple": {
+                    "s": {
+                        "value": "http://semantics.rdf.system.data/State_new",
+                        "isLiteral": false
+                    },
+                    "p": {
+                        "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                        "isLiteral": false
+                    },
+                    "o": {
+                        "value": "http://semantics.rdf.system.ontology/State",
+                        "isLiteral": false
+                    }
                 }
             }
-        }
-	]
+        ]
+      }
+    }
+  ]
 }
 ```
 
@@ -739,26 +703,27 @@ POST
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
-| `action` | String | The event identifier. |
-| `timeStamp` | String | The ISO-8601 timestamp when the event occurred. |
-| `triples` | Array | A collection of modifications applied to the triple store. |
-| `triples[].action` | String | The operation performed with the Triple. |
-| `triples[].triple` | Object | The Action Triple. |
-| `triples[].triple.s` | Object | Subject of the Action Triple |
-| `triples[].triple.s.value` | String | The Value of the Subject. |
-| `triples[].triple.s.isLiteral` | Boolean | Always True. |
-| `triples[].triple.p` | Object | Predicate of the Action Triple. |
-| `triples[].triple.p.value` | String | The Value of the Subject. |
-| `triples[].triple.p.isLiteral` | Boolean | Always True. |
-| `triples[].triple.o` | Object | Object of the Action Triple. |
-| `triples[].triple.o.value` | String | The URI string or the literal value of the Object. |
-| `triples[].triple.o.isLiteral` | Boolean | `true` if the object value is a literal; `false` if it is a URI. |
+| `history` | Array | Wrapper containing the list of events. |
+| `history[].action` | String | The event identifier. |
+| `history[].timeStamp` | String | The ISO-8601 timestamp when the event occurred. |
+| `history[].triples` | Array | A collection of modifications applied to the triple store during this event. |
+| `history[].triples[].action` | String | The operation performed with the Triple. |
+| `history[].triples[].triple` | Object | The Action Triple containing subject, predicate, and object. |
+| `history[].triples[].triple.s` | Object | Subject of the Action Triple. |
+| `history[].triples[].triple.s.value` | String | The URI string of the Subject. |
+| `history[].triples[].triple.s.isLiteral` | Boolean | Always `false`. |
+| `history[].triples[].triple.p` | Object | Predicate of the Action Triple. |
+| `history[].triples[].triple.p.value` | String | The URI string of the Predicate. |
+| `history[].triples[].triple.p.isLiteral` | Boolean | Always `false`. |
+| `history[].triples[].triple.o` | Object | Object of the Action Triple. |
+| `history[].triples[].triple.o.value` | String | The URI string or the literal value of the Object. |
+| `history[].triples[].triple.o.isLiteral` | Boolean | `true` if the object value is a literal; `false` if it is a URI. |
 
 ---
 
 ## Get State-Action-History
 
-- Returns a complete List of all State-Relevant-Triple-Store-Actions resulting from calls to **/ops/mediatizate**, **/ops/changeRuler** and **/ops/foundState**
+- Returns a complete List of all State-Relevant-Triple-Store-Actions resulting from calls to **/semantics.rdf.system/mediatizate**, **/semantics.rdf.system/changeRuler** and **/semantics.rdf.system/foundState**
 
 #### Endpoint
 ```
@@ -773,28 +738,31 @@ GET
 #### Response Body
 ```json
 {
-  [
-    "action": "MEDIATIZATION",
-    "timeStamp": "2026-07-13T07:12:39.873639600Z",
-    "triples": [
-        {
-            "action": "Created",
-            "triple": {
-                "s": {
-                    "value": "http://semantics.rdf.system.data/State_Prussia",
-                    "isLiteral": false
-                },
-                "p": {
-                    "value": "http://semantics.rdf.system.ontology/mediatized",
-                    "isLiteral": false
-                },
-                "o": {
-                    "value": "http://semantics.rdf.system.data/State_Bavaria",
-                    "isLiteral": false
+  "history": [
+      {
+        "action": "STATE_FOUNDING",
+        "timeStamp": "2026-07-14T06:38:49.010883400Z",
+        "triples": [
+            {
+                "action": "Created",
+                "triple": {
+                    "s": {
+                        "value": "http://semantics.rdf.system.data/State_new",
+                        "isLiteral": false
+                    },
+                    "p": {
+                        "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                        "isLiteral": false
+                    },
+                    "o": {
+                        "value": "http://semantics.rdf.system.ontology/State",
+                        "isLiteral": false
+                    }
                 }
             }
-        }
-	  ]
+        ]
+      }
+    }
   ]
 }
 ```
@@ -803,20 +771,21 @@ GET
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
-| `action` | String | The event identifier. |
-| `timeStamp` | String | The ISO-8601 timestamp when the event occurred. |
-| `triples` | Array | A collection of modifications applied to the triple store. |
-| `triples[].action` | String | The operation performed with the Triple. |
-| `triples[].triple` | Object | The Action Triple. |
-| `triples[].triple.s` | Object | Subject of the Action Triple |
-| `triples[].triple.s.value` | String | The Value of the Subject. |
-| `triples[].triple.s.isLiteral` | Boolean | Always True. |
-| `triples[].triple.p` | Object | Predicate of the Action Triple. |
-| `triples[].triple.p.value` | String | The Value of the Subject. |
-| `triples[].triple.p.isLiteral` | Boolean | Always True. |
-| `triples[].triple.o` | Object | Object of the Action Triple. |
-| `triples[].triple.o.value` | String | The URI string or the literal value of the Object. |
-| `triples[].triple.o.isLiteral` | Boolean | `true` if the object value is a literal; `false` if it is a URI. |
+| `history` | Array | Wrapper containing the list of events. |
+| `history[].action` | String | The event identifier. |
+| `history[].timeStamp` | String | The ISO-8601 timestamp when the event occurred. |
+| `history[].triples` | Array | A collection of modifications applied to the triple store during this event. |
+| `history[].triples[].action` | String | The operation performed with the Triple. |
+| `history[].triples[].triple` | Object | The Action Triple containing subject, predicate, and object. |
+| `history[].triples[].triple.s` | Object | Subject of the Action Triple. |
+| `history[].triples[].triple.s.value` | String | The URI string of the Subject. |
+| `history[].triples[].triple.s.isLiteral` | Boolean | Always `false`. |
+| `history[].triples[].triple.p` | Object | Predicate of the Action Triple. |
+| `history[].triples[].triple.p.value` | String | The URI string of the Predicate. |
+| `history[].triples[].triple.p.isLiteral` | Boolean | Always `false`. |
+| `history[].triples[].triple.o` | Object | Object of the Action Triple. |
+| `history[].triples[].triple.o.value` | String | The URI string or the literal value of the Object. |
+| `history[].triples[].triple.o.isLiteral` | Boolean | `true` if the object value is a literal; `false` if it is a URI. |
 
 ---
 

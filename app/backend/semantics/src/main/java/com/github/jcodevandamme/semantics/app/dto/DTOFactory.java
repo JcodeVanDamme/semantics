@@ -1,9 +1,10 @@
 package com.github.jcodevandamme.semantics.app.dto;
 
-import com.github.jcodevandamme.semantics.app.dto.util.RDFObjectDTO;
-import com.github.jcodevandamme.semantics.app.dto.util.TripleActionDto;
-import com.github.jcodevandamme.semantics.app.dto.util.TripleDto;
+import com.github.jcodevandamme.semantics.app.dto.util.*;
 import com.github.jcodevandamme.semantics.app.persistence.UpdateType;
+import com.github.jcodevandamme.semantics.app.services.domain.actor.data.MedState;
+import com.github.jcodevandamme.semantics.app.services.domain.actor.data.Region;
+import com.github.jcodevandamme.semantics.app.services.domain.actor.data.State;
 import com.github.jcodevandamme.semantics.app.services.domain.logger.TripleAction;
 import com.github.jcodevandamme.semantics.rdf.model.Triple;
 
@@ -34,6 +35,56 @@ public class DTOFactory {
             dtos[i] = new TripleActionDto(
                     actionToString(actions.get(i).type()),
                     DTOFactory.triple(actions.get(i).triple())
+            );
+        }
+        return dtos;
+    }
+
+    public static StateDto[] statesToDTO(List<State> states) {
+        StateDto[] dtos = new StateDto[states.size()];
+        for (int i = 0; i < states.size(); i++) {
+            State state = states.get(i);
+            dtos[i] = new StateDto(
+                    state.name,
+                    state.URI,
+                    state.type,
+                    state.population,
+                    new RulerDto(
+                            state.ruler.name,
+                            state.ruler.URI,
+                            state.ruler.title
+                    ),
+                    regionsToDTO(state.regions),
+                    medStatesToDTO(state.mediatizatedStates)
+            );
+        }
+        return dtos;
+    }
+
+    private static MediatizatedStateDto[] medStatesToDTO(List<MedState> medStates) {
+        MediatizatedStateDto[] dtos = new MediatizatedStateDto[medStates.size()];
+        for (int i = 0; i < medStates.size(); i++) {
+            MedState medState = medStates.get(i);
+            dtos[i] = new MediatizatedStateDto(
+                    medState.name,
+                    medState.type,
+                    new RulerDto(
+                            medState.ruler.name,
+                            medState.ruler.URI,
+                            medState.ruler.title
+                    )
+            );
+        }
+        return dtos;
+    }
+    private static RegionDto[] regionsToDTO(List<Region> regions) {
+        RegionDto[] dtos = new RegionDto[regions.size()];
+        for (int i = 0; i < regions.size(); i++) {
+            Region region = regions.get(i);
+            dtos[i] = new RegionDto(
+                    region.name,
+                    region.type,
+                    region.population
             );
         }
         return dtos;

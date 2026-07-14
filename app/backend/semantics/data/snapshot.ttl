@@ -1,382 +1,337 @@
-<http://semantics.rdf.system.ontology/Place>
-        a       <http://www.w3.org/2002/07/owl#Class> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Place" .
-
-<http://semantics.rdf.system.ontology/State>
-        a       <http://www.w3.org/2002/07/owl#Class> ;
-        <http://www.w3.org/2000/01/rdf-schema#subClassOf>  <http://semantics.rdf.system.ontology/Place> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "State" .
-
-<http://semantics.rdf.system.ontology/Region>
-        a       <http://www.w3.org/2002/07/owl#Class> ;
-        <http://www.w3.org/2000/01/rdf-schema#subClassOf>  <http://semantics.rdf.system.ontology/Place> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Region" .
-
-<http://semantics.rdf.system.ontology/Person>
-        a       <http://www.w3.org/2002/07/owl#Class> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Person" .
-
-<http://semantics.rdf.system.ontology/Ruler>
-        a       <http://www.w3.org/2002/07/owl#Class> ;
-        <http://www.w3.org/2000/01/rdf-schema#subClassOf>  <http://semantics.rdf.system.ontology/Person> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Ruler" .
-
-<http://semantics.rdf.system.ontology/hasRuler>
-        a       <http://www.w3.org/2002/07/owl#ObjectProperty> ;
-        <http://www.w3.org/2000/01/rdf-schema#domain>  <http://semantics.rdf.system.ontology/State> ;
-        <http://www.w3.org/2000/01/rdf-schema#range>  <http://semantics.rdf.system.ontology/Ruler> .
-
-<http://semantics.rdf.system.ontology/formerRuler>
-        a       <http://www.w3.org/2002/07/owl#ObjectProperty> ;
-        <http://www.w3.org/2000/01/rdf-schema#domain>  <http://semantics.rdf.system.ontology/State> ;
-        <http://www.w3.org/2000/01/rdf-schema#range>  <http://semantics.rdf.system.ontology/Ruler> .
-
-<http://semantics.rdf.system.ontology/locatedIn>
-        a       <http://www.w3.org/2002/07/owl#ObjectProperty> ;
-        <http://www.w3.org/2000/01/rdf-schema#domain>  <http://semantics.rdf.system.ontology/Region> ;
-        <http://www.w3.org/2000/01/rdf-schema#range>  <http://semantics.rdf.system.ontology/State> .
-
-<http://semantics.rdf.system.ontology/mediatized>
-        a       <http://www.w3.org/2002/07/owl#ObjectProperty> ;
-        <http://www.w3.org/2000/01/rdf-schema#domain>  <http://semantics.rdf.system.ontology/State> ;
-        <http://www.w3.org/2000/01/rdf-schema#range>  <http://semantics.rdf.system.ontology/State> .
-
-<http://semantics.rdf.system.ontology/isActive>
-        a       <http://www.w3.org/2002/07/owl#DatatypeProperty> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "is active" ;
-        <http://www.w3.org/2000/01/rdf-schema#domain>  <http://semantics.rdf.system.ontology/State> ;
-        <http://www.w3.org/2000/01/rdf-schema#range>  <http://www.w3.org/2001/XMLSchema#boolean> .
-
-<http://semantics.rdf.system.ontology/population>
-        a       <http://www.w3.org/2002/07/owl#DatatypeProperty> ;
-        <http://www.w3.org/2000/01/rdf-schema#domain>  <http://semantics.rdf.system.ontology/Place> ;
-        <http://www.w3.org/2000/01/rdf-schema#range>  <http://www.w3.org/2001/XMLSchema#integer> .
-
-<http://semantics.rdf.system.ontology/stateType>
-        a       <http://www.w3.org/2002/07/owl#DatatypeProperty> ;
-        <http://www.w3.org/2000/01/rdf-schema#domain>  <http://semantics.rdf.system.ontology/State> ;
-        <http://www.w3.org/2000/01/rdf-schema#range>  <http://www.w3.org/2001/XMLSchema#string> .
-
-<http://semantics.rdf.system.ontology/regionType>
-        a       <http://www.w3.org/2002/07/owl#DatatypeProperty> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "region type" ;
-        <http://www.w3.org/2000/01/rdf-schema#domain>  <http://semantics.rdf.system.ontology/Region> ;
-        <http://www.w3.org/2000/01/rdf-schema#range>  <http://www.w3.org/2001/XMLSchema#string> .
-
-<http://semantics.rdf.system.ontology/isOriginalState>
-        a       <http://www.w3.org/2002/07/owl#DatatypeProperty> ;
-        <http://www.w3.org/2000/01/rdf-schema#domain>  <http://semantics.rdf.system.ontology/State> ;
-        <http://www.w3.org/2000/01/rdf-schema#range>  <http://www.w3.org/2001/XMLSchema#boolean> .
-
-<http://semantics.rdf.system.ontology/rulerTitle>
-        a       <http://www.w3.org/2002/07/owl#DatatypeProperty> ;
-        <http://www.w3.org/2000/01/rdf-schema#domain>  <http://semantics.rdf.system.ontology/Ruler> ;
-        <http://www.w3.org/2000/01/rdf-schema#range>  <http://www.w3.org/2001/XMLSchema#string> .
-
-<http://semantics.rdf.system.data/State_Prussia>
-        a       <http://semantics.rdf.system.ontology/State> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Kingdom of Prussia" ;
-        <http://semantics.rdf.system.ontology/hasRuler>  <http://semantics.rdf.system.data/Ruler_WilhelmI> ;
-        <http://semantics.rdf.system.ontology/stateType>  "Kingdom" ;
-        <http://semantics.rdf.system.ontology/isOriginalState>  "true" ;
-        <http://semantics.rdf.system.ontology/isActive>  "true" ;
-        <http://semantics.rdf.system.ontology/mediatized>  <http://semantics.rdf.system.data/State_Anhalt> .
-
-<http://semantics.rdf.system.data/State_Bavaria>
-        a       <http://semantics.rdf.system.ontology/State> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Kingdom of Bavaria" ;
-        <http://semantics.rdf.system.ontology/hasRuler>  <http://semantics.rdf.system.data/Ruler_LudwigII> ;
-        <http://semantics.rdf.system.ontology/population>  "4800000" ;
-        <http://semantics.rdf.system.ontology/stateType>  "Kingdom" ;
-        <http://semantics.rdf.system.ontology/isOriginalState>  "true" ;
-        <http://semantics.rdf.system.ontology/isActive>  "true" .
-
-<http://semantics.rdf.system.data/State_Saxony>
-        a       <http://semantics.rdf.system.ontology/State> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Kingdom of Saxony" ;
-        <http://semantics.rdf.system.ontology/population>  "2400000" ;
-        <http://semantics.rdf.system.ontology/stateType>  "Kingdom" ;
-        <http://semantics.rdf.system.ontology/isOriginalState>  "true" ;
-        <http://semantics.rdf.system.ontology/isActive>  "true" .
-
-<http://semantics.rdf.system.data/State_Wuerttemberg>
-        a       <http://semantics.rdf.system.ontology/State> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Kingdom of Württemberg" ;
-        <http://semantics.rdf.system.ontology/hasRuler>  <http://semantics.rdf.system.data/Ruler_KarlI> ;
-        <http://semantics.rdf.system.ontology/population>  "1800000" ;
-        <http://semantics.rdf.system.ontology/stateType>  "Kingdom" ;
-        <http://semantics.rdf.system.ontology/isOriginalState>  "true" ;
-        <http://semantics.rdf.system.ontology/isActive>  "true" .
-
-<http://semantics.rdf.system.data/State_Baden>
-        a       <http://semantics.rdf.system.ontology/State> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Grand Duchy of Baden" ;
-        <http://semantics.rdf.system.ontology/hasRuler>  <http://semantics.rdf.system.data/Ruler_FriedrichI> ;
-        <http://semantics.rdf.system.ontology/population>  "1400000" ;
-        <http://semantics.rdf.system.ontology/stateType>  "Grand Duchy" ;
-        <http://semantics.rdf.system.ontology/isOriginalState>  "true" ;
-        <http://semantics.rdf.system.ontology/isActive>  "true" .
-
-<http://semantics.rdf.system.data/State_Hesse>
-        a       <http://semantics.rdf.system.ontology/State> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Grand Duchy of Hesse" ;
-        <http://semantics.rdf.system.ontology/hasRuler>  <http://semantics.rdf.system.data/Ruler_LudwigIII> ;
-        <http://semantics.rdf.system.ontology/population>  "850000" ;
-        <http://semantics.rdf.system.ontology/stateType>  "Grand Duchy" ;
-        <http://semantics.rdf.system.ontology/isOriginalState>  "true" ;
-        <http://semantics.rdf.system.ontology/isActive>  "true" .
-
-<http://semantics.rdf.system.data/State_Mecklenburg>
-        a       <http://semantics.rdf.system.ontology/State> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Grand Duchy of Mecklenburg-Schwerin" ;
-        <http://semantics.rdf.system.ontology/hasRuler>  <http://semantics.rdf.system.data/Ruler_FriedrichFrancisII> ;
-        <http://semantics.rdf.system.ontology/population>  "560000" ;
-        <http://semantics.rdf.system.ontology/stateType>  "Grand Duchy" ;
-        <http://semantics.rdf.system.ontology/isOriginalState>  "true" ;
-        <http://semantics.rdf.system.ontology/isActive>  "true" .
-
-<http://semantics.rdf.system.data/State_Oldenburg>
-        a       <http://semantics.rdf.system.ontology/State> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Grand Duchy of Oldenburg" ;
-        <http://semantics.rdf.system.ontology/hasRuler>  <http://semantics.rdf.system.data/Ruler_PeterII> ;
-        <http://semantics.rdf.system.ontology/population>  "315000" ;
-        <http://semantics.rdf.system.ontology/stateType>  "Grand Duchy" ;
-        <http://semantics.rdf.system.ontology/isOriginalState>  "true" ;
-        <http://semantics.rdf.system.ontology/isActive>  "true" .
-
-<http://semantics.rdf.system.data/State_Anhalt>
-        a       <http://semantics.rdf.system.ontology/State> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Duchy of Anhalt" ;
-        <http://semantics.rdf.system.ontology/hasRuler>  <http://semantics.rdf.system.data/Ruler_WilhelmI> ;
-        <http://semantics.rdf.system.ontology/formerRuler>  <http://semantics.rdf.system.data/Ruler_LeopoldIV> ;
-        <http://semantics.rdf.system.ontology/population>  "200000" ;
-        <http://semantics.rdf.system.ontology/stateType>  "Duchy" ;
-        <http://semantics.rdf.system.ontology/isOriginalState>  "false" ;
-        <http://semantics.rdf.system.ontology/isActive>  "false" .
-
-<http://semantics.rdf.system.data/State_Hanover>
-        a       <http://semantics.rdf.system.ontology/State> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Kingdom of Hanover" ;
-        <http://semantics.rdf.system.ontology/hasRuler>  <http://semantics.rdf.system.data/Ruler_GeorgeV> ;
-        <http://semantics.rdf.system.ontology/population>  "1900000" ;
-        <http://semantics.rdf.system.ontology/stateType>  "Kingdom" ;
-        <http://semantics.rdf.system.ontology/isOriginalState>  "false" .
-
-<http://semantics.rdf.system.data/Ruler_WilhelmI>
-        a       <http://semantics.rdf.system.ontology/Ruler> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Wilhelm I" ;
-        <http://semantics.rdf.system.ontology/rulerTitle>  "King of Prussia" .
-
-<http://semantics.rdf.system.data/Ruler_LudwigII>
-        a       <http://semantics.rdf.system.ontology/Ruler> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Ludwig II" ;
-        <http://semantics.rdf.system.ontology/rulerTitle>  "King of Bavaria" .
-
-<http://semantics.rdf.system.data/Ruler_Johann>
-        a       <http://semantics.rdf.system.ontology/Ruler> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Johann" ;
-        <http://semantics.rdf.system.ontology/rulerTitle>  "King of Saxony" .
-
-<http://semantics.rdf.system.data/Ruler_KarlI>
-        a       <http://semantics.rdf.system.ontology/Ruler> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Karl I" ;
-        <http://semantics.rdf.system.ontology/rulerTitle>  "King of Württemberg" .
-
-<http://semantics.rdf.system.data/Ruler_FriedrichI>
-        a       <http://semantics.rdf.system.ontology/Ruler> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Friedrich I" ;
-        <http://semantics.rdf.system.ontology/rulerTitle>  "Grand Duke of Baden" .
-
-<http://semantics.rdf.system.data/Ruler_LudwigIII>
-        a       <http://semantics.rdf.system.ontology/Ruler> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Ludwig III" ;
-        <http://semantics.rdf.system.ontology/rulerTitle>  "Grand Duke of Hesse" .
-
-<http://semantics.rdf.system.data/Ruler_FriedrichFrancisII>
-        a       <http://semantics.rdf.system.ontology/Ruler> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Friedrich Francis II" ;
-        <http://semantics.rdf.system.ontology/rulerTitle>  "Grand Duke of Mecklenburg-Schwerin" .
-
-<http://semantics.rdf.system.data/Ruler_PeterII>
-        a       <http://semantics.rdf.system.ontology/Ruler> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Peter II" ;
-        <http://semantics.rdf.system.ontology/rulerTitle>  "Grand Duke of Oldenburg" .
-
-<http://semantics.rdf.system.data/Ruler_LeopoldIV>
-        a       <http://semantics.rdf.system.ontology/Ruler> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Leopold IV" ;
-        <http://semantics.rdf.system.ontology/rulerTitle>  "Duke of Anhalt" .
-
-<http://semantics.rdf.system.data/Ruler_GeorgeV>
-        a       <http://semantics.rdf.system.ontology/Ruler> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "George V" ;
-        <http://semantics.rdf.system.ontology/rulerTitle>  "King of Hanover" .
-
-<http://semantics.rdf.system.data/Region_Prussia_1>
-        a       <http://semantics.rdf.system.ontology/Region> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "East Prussia" ;
-        <http://semantics.rdf.system.ontology/population>  "1500000" ;
-        <http://semantics.rdf.system.ontology/regionType>  "Province" ;
-        <http://semantics.rdf.system.ontology/locatedIn>  <http://semantics.rdf.system.data/State_Prussia> .
-
-<http://semantics.rdf.system.data/Region_Prussia_2>
-        a       <http://semantics.rdf.system.ontology/Region> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "West Prussia" ;
-        <http://semantics.rdf.system.ontology/population>  "900000" ;
-        <http://semantics.rdf.system.ontology/regionType>  "Province" ;
-        <http://semantics.rdf.system.ontology/locatedIn>  <http://semantics.rdf.system.data/State_Prussia> .
-
-<http://semantics.rdf.system.data/Region_Bavaria_1>
-        a       <http://semantics.rdf.system.ontology/Region> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Upper Bavaria" ;
-        <http://semantics.rdf.system.ontology/population>  "1200000" ;
-        <http://semantics.rdf.system.ontology/regionType>  "District" ;
-        <http://semantics.rdf.system.ontology/locatedIn>  <http://semantics.rdf.system.data/State_Bavaria> .
-
-<http://semantics.rdf.system.data/Region_Bavaria_2>
-        a       <http://semantics.rdf.system.ontology/Region> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Lower Bavaria" ;
-        <http://semantics.rdf.system.ontology/population>  "600000" ;
-        <http://semantics.rdf.system.ontology/regionType>  "District" ;
-        <http://semantics.rdf.system.ontology/locatedIn>  <http://semantics.rdf.system.data/State_Bavaria> .
-
-<http://semantics.rdf.system.data/Region_Saxony_1>
-        a       <http://semantics.rdf.system.ontology/Region> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Dresden" ;
-        <http://semantics.rdf.system.ontology/population>  "800000" ;
-        <http://semantics.rdf.system.ontology/regionType>  "Administrative Region" ;
-        <http://semantics.rdf.system.ontology/locatedIn>  <http://semantics.rdf.system.data/State_Saxony> .
-
-<http://semantics.rdf.system.data/Region_Saxony_2>
-        a       <http://semantics.rdf.system.ontology/Region> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Leipzig" ;
-        <http://semantics.rdf.system.ontology/population>  "700000" ;
-        <http://semantics.rdf.system.ontology/regionType>  "Administrative Region" ;
-        <http://semantics.rdf.system.ontology/locatedIn>  <http://semantics.rdf.system.data/State_Saxony> .
-
-<http://semantics.rdf.system.data/Region_Wuerttemberg_1>
-        a       <http://semantics.rdf.system.ontology/Region> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Neckar" ;
-        <http://semantics.rdf.system.ontology/population>  "900000" ;
-        <http://semantics.rdf.system.ontology/regionType>  "District" ;
-        <http://semantics.rdf.system.ontology/locatedIn>  <http://semantics.rdf.system.data/State_Wuerttemberg> .
-
-<http://semantics.rdf.system.data/Region_Wuerttemberg_2>
-        a       <http://semantics.rdf.system.ontology/Region> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Black Forest" ;
-        <http://semantics.rdf.system.ontology/population>  "400000" ;
-        <http://semantics.rdf.system.ontology/regionType>  "District" ;
-        <http://semantics.rdf.system.ontology/locatedIn>  <http://semantics.rdf.system.data/State_Wuerttemberg> .
-
-<http://semantics.rdf.system.data/Region_Baden_1>
-        a       <http://semantics.rdf.system.ontology/Region> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Karlsruhe" ;
-        <http://semantics.rdf.system.ontology/population>  "700000" ;
-        <http://semantics.rdf.system.ontology/regionType>  "Administrative Region" ;
-        <http://semantics.rdf.system.ontology/locatedIn>  <http://semantics.rdf.system.data/State_Baden> .
-
-<http://semantics.rdf.system.data/Region_Hesse_1>
-        a       <http://semantics.rdf.system.ontology/Region> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Upper Hesse" ;
-        <http://semantics.rdf.system.ontology/population>  "400000" ;
-        <http://semantics.rdf.system.ontology/regionType>  "Province" ;
-        <http://semantics.rdf.system.ontology/locatedIn>  <http://semantics.rdf.system.data/State_Hesse> .
-
-<http://semantics.rdf.system.data/Region_Hesse_2>
-        a       <http://semantics.rdf.system.ontology/Region> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Starkenburg" ;
-        <http://semantics.rdf.system.ontology/population>  "300000" ;
-        <http://semantics.rdf.system.ontology/regionType>  "Province" ;
-        <http://semantics.rdf.system.ontology/locatedIn>  <http://semantics.rdf.system.data/State_Hesse> .
-
-<http://semantics.rdf.system.data/Region_Mecklenburg_1>
-        a       <http://semantics.rdf.system.ontology/Region> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Schwerin" ;
-        <http://semantics.rdf.system.ontology/population>  "250000" ;
-        <http://semantics.rdf.system.ontology/regionType>  "District" ;
-        <http://semantics.rdf.system.ontology/locatedIn>  <http://semantics.rdf.system.data/State_Mecklenburg> .
-
-<http://semantics.rdf.system.data/Region_Mecklenburg_2>
-        a       <http://semantics.rdf.system.ontology/Region> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Rostock" ;
-        <http://semantics.rdf.system.ontology/population>  "200000" ;
-        <http://semantics.rdf.system.ontology/regionType>  "District" ;
-        <http://semantics.rdf.system.ontology/locatedIn>  <http://semantics.rdf.system.data/State_Mecklenburg> .
-
-<http://semantics.rdf.system.data/Region_Oldenburg_1>
-        a       <http://semantics.rdf.system.ontology/Region> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Oldenburg Land" ;
-        <http://semantics.rdf.system.ontology/population>  "200000" ;
-        <http://semantics.rdf.system.ontology/regionType>  "Administrative Region" ;
-        <http://semantics.rdf.system.ontology/locatedIn>  <http://semantics.rdf.system.data/State_Oldenburg> .
-
-<http://semantics.rdf.system.data/Region_Anhalt_1>
-        a       <http://semantics.rdf.system.ontology/Region> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Dessau" ;
-        <http://semantics.rdf.system.ontology/population>  "100000" ;
-        <http://semantics.rdf.system.ontology/regionType>  "Administrative Region" ;
-        <http://semantics.rdf.system.ontology/locatedIn>  <http://semantics.rdf.system.data/State_Anhalt> .
-
-<http://semantics.rdf.system.data/Region_Anhalt_2>
-        a       <http://semantics.rdf.system.ontology/Region> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Bernburg" ;
-        <http://semantics.rdf.system.ontology/population>  "80000" ;
-        <http://semantics.rdf.system.ontology/regionType>  "Administrative Region" ;
-        <http://semantics.rdf.system.ontology/locatedIn>  <http://semantics.rdf.system.data/State_Anhalt> .
-
-<http://semantics.rdf.system.data/Region_Hanover_1>
-        a       <http://semantics.rdf.system.ontology/Region> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Calenberg" ;
-        <http://semantics.rdf.system.ontology/population>  "600000" ;
-        <http://semantics.rdf.system.ontology/regionType>  "District" .
-
-<http://semantics.rdf.system.data/Region_Hanover_2>
-        a       <http://semantics.rdf.system.ontology/Region> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Lüneburg" ;
-        <http://semantics.rdf.system.ontology/population>  "500000" ;
-        <http://semantics.rdf.system.ontology/regionType>  "District" .
-
-<http://semantics.rdf.system.data/Region_Hanover_3>
-        a       <http://semantics.rdf.system.ontology/Region> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "East Frisia" ;
-        <http://semantics.rdf.system.ontology/population>  "300000" ;
-        <http://semantics.rdf.system.ontology/regionType>  "Province" .
-
-<http://semantics.rdf.system.data/State_Prussia>
-        <http://semantics.rdf.system.ontology/mediatized>  <http://semantics.rdf.system.data/State_Hanover> .
-
-<http://semantics.rdf.system.data/State_Hanover>
-        <http://semantics.rdf.system.ontology/isActive>  "false" .
-
-<http://semantics.rdf.system.data/State_Prussia>
-        <http://semantics.rdf.system.ontology/population>  "20391000" .
-
-<http://semantics.rdf.system.data/Region_Hanover_1>
-        <http://semantics.rdf.system.ontology/locatedIn>  <http://semantics.rdf.system.data/State_Prussia> .
-
-<http://semantics.rdf.system.data/Region_Hanover_2>
-        <http://semantics.rdf.system.ontology/locatedIn>  <http://semantics.rdf.system.data/State_Prussia> .
-
-<http://semantics.rdf.system.data/Region_Hanover_3>
-        <http://semantics.rdf.system.ontology/locatedIn>  <http://semantics.rdf.system.data/State_Prussia> .
-
-<http://semantics.rdf.system.data/State_Saxony>
-        <http://semantics.rdf.system.ontology/hasRuler>  <http://semantics.rdf.system.data/Ruler_WilhelmI> .
-
-<http://semantics.rdf.system.data/pimmel_gross>
-        a       <http://semantics.rdf.system.ontology/Ruler> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "Digger Schwängel" .
-
-<Digger\u0020Schwängel>
-        <http://semantics.rdf.system.ontology/rulerTitle>  "Groestes Glied" .
-
-<http://semantics.rdf.system.data/State_Saxony>
-        <http://semantics.rdf.system.ontology/hasRuler>  <http://semantics.rdf.system.data/pimmel_gross> .
-
-<http/gabba_state>  a  <http://semantics.rdf.system.ontology/State> ;
-        <http://www.w3.org/2000/01/rdf-schema#label>  "gabba" ;
-        <http://semantics.rdf.system.ontology/hasRuler>  <http://semantics.rdf.system.data/Ruler_WilhelmI> ;
-        <http://semantics.rdf.system.ontology/population>  "1" ;
-        <http://semantics.rdf.system.ontology/stateType>  "gabba" ;
-        <http://semantics.rdf.system.ontology/isOriginalState>  "false" ;
-        <http://semantics.rdf.system.ontology/isActive>  "true" .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# --- NAMESPACES ---
+@prefix ont: <http://semantics.rdf.system.ontology/> .
+@prefix data: <http://semantics.rdf.system.data/> .
+
+# ==============================================================================
+# SCHEMA DEFINITIONS (T-Box)
+# ==============================================================================
+
+ont:Place a owl:Class ;
+    rdfs:label "Place" .
+
+ont:State a owl:Class ;
+    rdfs:subClassOf ont:Place ;
+    rdfs:label "State" .
+
+ont:Region a owl:Class ;
+    rdfs:subClassOf ont:Place ;
+    rdfs:label "Region" .
+
+ont:Person a owl:Class ;
+    rdfs:label "Person" .
+
+ont:Ruler a owl:Class ;
+    rdfs:subClassOf ont:Person ;
+    rdfs:label "Ruler" .
+
+ont:hasRuler a owl:ObjectProperty ;
+    rdfs:domain ont:State ;
+    rdfs:range ont:Ruler .
+
+ont:formerRuler a owl:ObjectProperty ;
+    rdfs:domain ont:State ;
+    rdfs:range ont:Ruler .
+
+ont:locatedIn a owl:ObjectProperty ;
+    rdfs:domain ont:Region ;
+    rdfs:range ont:State .
+
+ont:mediatized a owl:ObjectProperty ;
+    rdfs:domain ont:State ;
+    rdfs:range ont:State .
+	
+ont:isActive a owl:DatatypeProperty ;
+    rdfs:label "is active" ;
+    rdfs:domain ont:State ;
+    rdfs:range xsd:boolean .
+
+ont:population a owl:DatatypeProperty ;
+    rdfs:domain ont:Place ;
+    rdfs:range xsd:integer .
+
+ont:stateType a owl:DatatypeProperty ;
+    rdfs:domain ont:State ;
+    rdfs:range xsd:string .
+	
+ont:regionType a owl:DatatypeProperty ;
+    rdfs:label "region type" ;
+    rdfs:domain ont:Region ;
+    rdfs:range xsd:string .
+
+ont:isOriginalState a owl:DatatypeProperty ;
+    rdfs:domain ont:State ;
+    rdfs:range xsd:boolean .
+
+ont:rulerTitle a owl:DatatypeProperty ;
+    rdfs:domain ont:Ruler ;
+    rdfs:range xsd:string .
+
+# --- STATE 1: Kingdom of Prussia ---
+data:State_Prussia a ont:State ;
+    rdfs:label "Kingdom of Prussia" ;
+    ont:hasRuler data:Ruler_WilhelmI ;
+    ont:population 18491000 ;
+    ont:stateType "Kingdom" ;
+    ont:isOriginalState true ;
+    ont:isActive true ;
+	ont:mediatized data:State_Anhalt .
+
+# --- STATE 2: Kingdom of Bavaria ---
+data:State_Bavaria a ont:State ;
+    rdfs:label "Kingdom of Bavaria" ;
+    ont:hasRuler data:Ruler_LudwigII ;
+    ont:population 4800000 ;
+    ont:stateType "Kingdom" ;
+    ont:isOriginalState true ;
+    ont:isActive true .
+
+# --- STATE 3: Kingdom of Saxony ---
+data:State_Saxony a ont:State ;
+    rdfs:label "Kingdom of Saxony" ;
+    ont:hasRuler data:Ruler_Johann ;
+    ont:population 2400000 ;
+    ont:stateType "Kingdom" ;
+    ont:isOriginalState true ;
+    ont:isActive true .
+
+# --- STATE 4: Kingdom of Württemberg ---
+data:State_Wuerttemberg a ont:State ;
+    rdfs:label "Kingdom of Württemberg" ;
+    ont:hasRuler data:Ruler_KarlI ;
+    ont:population 1800000 ;
+    ont:stateType "Kingdom" ;
+    ont:isOriginalState true ;
+    ont:isActive true .
+
+# --- STATE 5: Grand Duchy of Baden ---
+data:State_Baden a ont:State ;
+    rdfs:label "Grand Duchy of Baden" ;
+    ont:hasRuler data:Ruler_FriedrichI ;
+    ont:population 1400000 ;
+    ont:stateType "Grand Duchy" ;
+    ont:isOriginalState true ;
+    ont:isActive true .
+
+# --- STATE 6: Grand Duchy of Hesse ---
+data:State_Hesse a ont:State ;
+    rdfs:label "Grand Duchy of Hesse" ;
+    ont:hasRuler data:Ruler_LudwigIII ;
+    ont:population 850000 ;
+    ont:stateType "Grand Duchy" ;
+    ont:isOriginalState true ;
+    ont:isActive true .
+
+# --- STATE 7: Grand Duchy of Mecklenburg-Schwerin ---
+data:State_Mecklenburg a ont:State ;
+    rdfs:label "Grand Duchy of Mecklenburg-Schwerin" ;
+    ont:hasRuler data:Ruler_FriedrichFrancisII ;
+    ont:population 560000 ;
+    ont:stateType "Grand Duchy" ;
+    ont:isOriginalState true ;
+    ont:isActive true .
+
+# --- STATE 8: Grand Duchy of Oldenburg ---
+data:State_Oldenburg a ont:State ;
+    rdfs:label "Grand Duchy of Oldenburg" ;
+    ont:hasRuler data:Ruler_PeterII ;
+    ont:population 315000 ;
+    ont:stateType "Grand Duchy" ;
+    ont:isOriginalState true ;
+    ont:isActive true .
+
+# --- STATE 9: Duchy of Anhalt (Annexed) ---
+data:State_Anhalt a ont:State ;
+    rdfs:label "Duchy of Anhalt" ;
+    ont:hasRuler data:Ruler_WilhelmI ;
+    ont:formerRuler data:Ruler_LeopoldIV ;
+    ont:population 200000 ;
+    ont:stateType "Duchy" ;
+    ont:isOriginalState false ;
+    ont:isActive false .
+
+# --- STATE 10: Kingdom of Hanover ---
+data:State_Hanover a ont:State ;
+    rdfs:label "Kingdom of Hanover" ;
+    ont:hasRuler data:Ruler_GeorgeV ;
+    ont:population 1900000 ;
+    ont:stateType "Kingdom" ;
+    ont:isOriginalState false ;
+    ont:isActive true .
+
+# ==============================================================================
+# RULER DEFINITIONS
+# ==============================================================================
+
+data:Ruler_WilhelmI a ont:Ruler ;
+    rdfs:label "Wilhelm I" ;
+    ont:rulerTitle "King of Prussia" .
+
+data:Ruler_LudwigII a ont:Ruler ;
+    rdfs:label "Ludwig II" ;
+    ont:rulerTitle "King of Bavaria" .
+
+data:Ruler_Johann a ont:Ruler ;
+    rdfs:label "Johann" ;
+    ont:rulerTitle "King of Saxony" .
+
+data:Ruler_KarlI a ont:Ruler ;
+    rdfs:label "Karl I" ;
+    ont:rulerTitle "King of Württemberg" .
+
+data:Ruler_FriedrichI a ont:Ruler ;
+    rdfs:label "Friedrich I" ;
+    ont:rulerTitle "Grand Duke of Baden" .
+
+data:Ruler_LudwigIII a ont:Ruler ;
+    rdfs:label "Ludwig III" ;
+    ont:rulerTitle "Grand Duke of Hesse" .
+
+data:Ruler_FriedrichFrancisII a ont:Ruler ;
+    rdfs:label "Friedrich Francis II" ;
+    ont:rulerTitle "Grand Duke of Mecklenburg-Schwerin" .
+
+data:Ruler_PeterII a ont:Ruler ;
+    rdfs:label "Peter II" ;
+    ont:rulerTitle "Grand Duke of Oldenburg" .
+
+data:Ruler_LeopoldIV a ont:Ruler ;
+    rdfs:label "Leopold IV" ;
+    ont:rulerTitle "Duke of Anhalt" .
+
+data:Ruler_GeorgeV a ont:Ruler ;
+    rdfs:label "George V" ;
+    ont:rulerTitle "King of Hanover" .
+	
+# ==============================================================================
+# REGION DEFINITIONS
+# ==============================================================================
+	
+
+# --- REGIONS FOR PRUSSIA ---
+data:Region_Prussia_1 a ont:Region ;
+    rdfs:label "East Prussia" ;
+    ont:population 1500000 ;
+    ont:regionType "Province" ;
+    ont:locatedIn data:State_Prussia .
+
+data:Region_Prussia_2 a ont:Region ;
+    rdfs:label "West Prussia" ;
+    ont:population 900000 ;
+    ont:regionType "Province" ;
+    ont:locatedIn data:State_Prussia .
+
+# --- REGIONS FOR BAVARIA ---
+data:Region_Bavaria_1 a ont:Region ;
+    rdfs:label "Upper Bavaria" ;
+    ont:population 1200000 ;
+    ont:regionType "District" ;
+    ont:locatedIn data:State_Bavaria .
+
+data:Region_Bavaria_2 a ont:Region ;
+    rdfs:label "Lower Bavaria" ;
+    ont:population 600000 ;
+    ont:regionType "District" ;
+    ont:locatedIn data:State_Bavaria .
+
+# --- REGIONS FOR SAXONY ---
+data:Region_Saxony_1 a ont:Region ;
+    rdfs:label "Dresden" ;
+    ont:population 800000 ;
+    ont:regionType "Administrative Region" ;
+    ont:locatedIn data:State_Saxony .
+
+data:Region_Saxony_2 a ont:Region ;
+    rdfs:label "Leipzig" ;
+    ont:population 700000 ;
+    ont:regionType "Administrative Region" ;
+    ont:locatedIn data:State_Saxony .
+
+# --- REGIONS FOR WÜRTTEMBERG ---
+data:Region_Wuerttemberg_1 a ont:Region ;
+    rdfs:label "Neckar" ;
+    ont:population 900000 ;
+    ont:regionType "District" ;
+    ont:locatedIn data:State_Wuerttemberg .
+
+data:Region_Wuerttemberg_2 a ont:Region ;
+    rdfs:label "Black Forest" ;
+    ont:population 400000 ;
+    ont:regionType "District" ;
+    ont:locatedIn data:State_Wuerttemberg .
+
+# --- REGIONS FOR BADEN ---
+data:Region_Baden_1 a ont:Region ;
+    rdfs:label "Karlsruhe" ;
+    ont:population 700000 ;
+    ont:regionType "Administrative Region" ;
+    ont:locatedIn data:State_Baden .
+
+# --- REGIONS FOR HESSE ---
+data:Region_Hesse_1 a ont:Region ;
+    rdfs:label "Upper Hesse" ;
+    ont:population 400000 ;
+    ont:regionType "Province" ;
+    ont:locatedIn data:State_Hesse .
+
+data:Region_Hesse_2 a ont:Region ;
+    rdfs:label "Starkenburg" ;
+    ont:population 300000 ;
+    ont:regionType "Province" ;
+    ont:locatedIn data:State_Hesse .
+
+# --- REGIONS FOR MECKLENBURG ---
+data:Region_Mecklenburg_1 a ont:Region ;
+    rdfs:label "Schwerin" ;
+    ont:population 250000 ;
+    ont:regionType "District" ;
+    ont:locatedIn data:State_Mecklenburg .
+
+data:Region_Mecklenburg_2 a ont:Region ;
+    rdfs:label "Rostock" ;
+    ont:population 200000 ;
+    ont:regionType "District" ;
+    ont:locatedIn data:State_Mecklenburg .
+
+# --- REGIONS FOR OLDENBURG ---
+data:Region_Oldenburg_1 a ont:Region ;
+    rdfs:label "Oldenburg Land" ;
+    ont:population 200000 ;
+    ont:regionType "Administrative Region" ;
+    ont:locatedIn data:State_Oldenburg .
+
+# --- REGIONS FOR ANHALT ---
+data:Region_Anhalt_1 a ont:Region ;
+    rdfs:label "Dessau" ;
+    ont:population 100000 ;
+    ont:regionType "Administrative Region" ;
+    ont:locatedIn data:State_Anhalt .
+
+data:Region_Anhalt_2 a ont:Region ;
+    rdfs:label "Bernburg" ;
+    ont:population 80000 ;
+    ont:regionType "Administrative Region" ;
+    ont:locatedIn data:State_Anhalt .
+
+# --- REGIONS FOR HANOVER ---
+data:Region_Hanover_1 a ont:Region ;
+    rdfs:label "Calenberg" ;
+    ont:population 600000 ;
+    ont:regionType "District" ;
+    ont:locatedIn data:State_Hanover .
+
+data:Region_Hanover_2 a ont:Region ;
+    rdfs:label "Lüneburg" ;
+    ont:population 500000 ;
+    ont:regionType "District" ;
+    ont:locatedIn data:State_Hanover .
+
+data:Region_Hanover_3 a ont:Region ;
+    rdfs:label "East Frisia" ;
+    ont:population 300000 ;
+    ont:regionType "Province" ;
+    ont:locatedIn data:State_Hanover .
