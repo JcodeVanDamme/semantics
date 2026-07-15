@@ -16,6 +16,10 @@ export interface TripleQueryResponse {
   triples: BackendTriple[]
 }
 
+export interface HistoryApiResponse {
+  history: HistoryEvent[]
+}
+
 export interface TripleAction {
   action: string
   triple: BackendTriple
@@ -28,28 +32,28 @@ export interface HistoryEvent {
 }
 
 export interface Ruler {
-  name: string
-  URI: string
-  title: string
+  name: string // LITERAL
+  URI: string // URI
+  title: string // LITERAL
 }
 
 export interface Region {
-  name: string
-  type: string
-  population: number
+  name: string // LITERAL
+  type: string // LITERAL
+  population: number // LITERAL
 }
 
 export interface MediatizatedState {
-  name: string
-  stateType: string
+  name: string // LITERAL
+  stateType: string // LITERAL
   ruler: Ruler
 }
 
 export interface StateData {
-  name: string
-  URI: string,
-  stateType: string
-  population: number
+  name: string // LITERAL
+  URI: string // URI
+  stateType: string // LITERAL
+  population: number // LITERAL
   ruler: Ruler
   regions: Region[]
   mediatizatedStates: MediatizatedState[]
@@ -77,4 +81,17 @@ export interface ChangeRulerRequest {
   ruler: string // URI
   label: string // LITERAL
   title: string // LITERAL
+}
+
+export interface FoundStateRequest {
+  state: string // URI
+  label: string // LITERAL
+  ruler: string // URI
+  population: number // LITERAL
+  type: string // LITERAL
+}
+
+interface MediatizationRequest {
+  absorbed: string // URI
+  into: string // URI
 }

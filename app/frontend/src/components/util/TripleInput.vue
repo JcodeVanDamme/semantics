@@ -3,34 +3,46 @@
     <div class="input-header">
       <h3>{{ label }}</h3>
 
-      <div v-if="hasToggle" class="toggle-labels">
-        <span
-          class="toggle-label"
+      <div v-if="hasToggle" class="toggle-group" role="group" aria-label="Input mode">
+        <button
+          type="button"
+          class="toggle-btn"
           :class="{ active: mode === 'literal' }"
           @click="mode = 'literal'"
         >
           Literal
-        </span>
+        </button>
         <span class="toggle-divider">/</span>
-        <span class="toggle-label" :class="{ active: mode === 'uri' }" @click="mode = 'uri'">
+        <button
+          type="button"
+          class="toggle-btn"
+          :class="{ active: mode === 'uri' }"
+          @click="mode = 'uri'"
+        >
           URI
-        </span>
+        </button>
       </div>
     </div>
 
     <div class="inputs-stack">
-      <input v-model="value" type="text" :placeholder="placeholderValue" />
+      <input
+        v-model="value"
+        type="text"
+        :placeholder="placeholderValue || 'Enter value...'"
+        aria-label="Value"
+      />
 
       <input
         v-model="uri"
         type="text"
-        :placeholder="placeholderUri || 'Optional: Custom URI Namespace'"
+        :placeholder="placeholderUri || 'Namespace (Optional)'"
         class="uri-input"
         :class="{ 'invisible-spacer': hasToggle && mode !== 'uri' }"
+        aria-label="Namespace URI"
       />
 
       <div v-if="showPreview" class="uri-preview">
-        <span class="preview-label">Final {{ label }}:</span>
+        <span class="preview-label">Generated:</span>
         <span class="preview-string">{{ uriPreview }}</span>
       </div>
     </div>
@@ -41,8 +53,7 @@
 import { computed } from 'vue'
 import { DEFAULT_NAMESPACE } from '../../utils/util.ts'
 
-// Component Properties
-defineProps<{
+const props = defineProps<{
   label: string
   placeholderValue?: string
   placeholderUri?: string
@@ -54,45 +65,74 @@ const uri = defineModel<string>('uri', { default: '' })
 const mode = defineModel<'literal' | 'uri'>('mode', { default: 'literal' })
 
 const uriPreview = computed(() => {
-  const cleanToken = value.value.replace(/\s+/g, '') // Entfernt alle Whitespaces
-  if (!cleanToken) return ''
-
+  const cleanToken = value.value.trim()
   const cleanBase = uri.value.trim() || DEFAULT_NAMESPACE
+
+  const isUriMode = props.hasToggle ? mode.value === 'uri' : true
+
+  if (!isUriMode) {
+    return cleanToken
+  }
+
   const needsSlash = !cleanBase.endsWith('/') && !cleanBase.endsWith('#')
+  const fullUri = `${cleanBase}${needsSlash ? '/' : ''}${cleanToken}`
 
-  return `${cleanBase}${needsSlash ? '/' : ''}${cleanToken}`
+  return cleanToken ? fullUri : cleanBase
 })
 
-const showPreview = computed(() => {
-  return value.value.trim().length > 0
-})
+const showPreview = computed(() => value.value.trim().length > 0)
 </script>
 
 <style scoped>
 .triple-input-group {
   display: flex;
   flex-direction: column;
+  margin-bottom: var(--padding);
 }
 
 .input-header {
   display: flex;
-  gap: var(--padding);
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--paddingHalf);
 }
 
 .input-header h3 {
-  margin: var(--paddingHalf);
+  margin: 0;
+  font-size: var(--text-h4);
+  color: var(--mainFontColor);
 }
 
-/* --- INPUT TEXT ELEMENTS --- */
+/* --- Toggle Buttons --- */
+.toggle-group {
+  display: flex;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--mutedFontColor);
+  padding: 0;
+  font-size: calc(var(--base-size) * 1.1);
+  text-transform: uppercase;
+}
+
+.toggle-btn.active {
+  color: var(--accentColor);
+  font-weight: bold;
+}
+
+/* --- Inputs --- */
 .inputs-stack {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
-.triple-input-group input {
+input {
   border: none;
   border-bottom: 2px solid var(--borderColor);
   background: transparent;
@@ -103,40 +143,38 @@ const showPreview = computed(() => {
   transition: border-color 0.2s;
 }
 
-.triple-input-group input:focus {
+input:focus {
   border-color: var(--accentColor);
 }
 
-.triple-input-group input::placeholder {
-  color: #999;
-}
-
-.triple-input-group .uri-input {
+.uri-input {
   font-size: 13.5px;
   font-style: italic;
-  border-bottom-style: dashed; /* Softly differentiates standard string vs URI specs */
+  border-bottom-style: dashed;
 }
 
 .invisible-spacer {
   visibility: hidden;
-  pointer-events: none; /* Verhindert, dass der Nutzer das unsichtbare Feld per Tab/Klick fokussiert */
+  height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  border: none;
 }
 
+/* --- Preview --- */
 .uri-preview {
-  padding-top: var(--padding);
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
+  margin-top: 4px;
+  font-size: 13px;
 }
 
 .preview-label {
-  font-weight: bolder;
-  padding-right: var(--paddingHalf);
+  color: var(--mutedFontColor);
+  margin-right: var(--paddingHalf);
 }
 
 .preview-string {
-  font-weight: bolder;
   color: var(--accentColor);
-  line-break: anywhere;
+  font-family: monospace;
+  word-break: break-all;
 }
 </style>

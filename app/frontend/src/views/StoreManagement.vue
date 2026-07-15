@@ -119,7 +119,7 @@ import TripleInputGroup from '../components/util/TripleInput.vue'
 import TriplesTable from '@/components/util/TripleTable.vue'
 import { Database, Search, ArrowDown, Undo2, FileX2, Pencil, PackagePlus } from 'lucide-vue-next'
 
-import { api } from '../scripts/api.ts'
+import { api } from '../scripts/apiClient.ts'
 import { type BackendTriple } from '../scripts/type.ts'
 import { cleanTripleForDisplay, stripSpaces, concatUri } from '../utils/util.ts'
 import { useRdfFormValidation } from '@/composables/useRdfFormValidation'

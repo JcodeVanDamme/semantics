@@ -136,7 +136,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue' // Added computed
 import { Search, ArrowDown } from 'lucide-vue-next'
 
 import MainLayout from '../layouts/MainLayout.vue'
@@ -146,9 +146,10 @@ import TriplesTable from '@/components/util/TripleTable.vue'
 import TripleInputGroup from '../components/util/TripleInput.vue'
 import CollapsiblePanel from '../components/util/CollapsiblePanel.vue'
 
-import { api } from '../scripts/api'
+import { api } from '../scripts/apiClient'
 import { cleanTripleForDisplay, concatUri } from '../utils/util.ts'
 import { useRdfFormValidation } from '../composables/useRdfFormValidation.ts'
+import { DEFAULT_NAMESPACE } from '../utils/util.ts' // Ensure this is imported
 
 // Form Structural States
 const subject = ref('')
@@ -160,6 +161,8 @@ const predicateUri = ref('')
 const object = ref('')
 const objectUri = ref('')
 const objectMode = ref<'literal' | 'uri'>('literal')
+
+const hasSearched = ref(false)
 
 // Asynchronous Request UI State Handlers
 const results = ref<any[]>([])
@@ -181,48 +184,46 @@ async function executeQuery() {
 
   isLoading.value = true
   error.value = null
+  hasSearched.value = true // Mark that a search has been attempted
 
   try {
-    const DEFAULT_NS = 'http://semantics.rdf.system/'
+    const cleanSubjectVal = subject.value.trim()
+    const cleanPredicateVal = predicate.value.trim()
+    const cleanObjectVal = object.value.trim()
 
-    const cleanSubjectVal = subject.value.replace(/\s+/g, '')
-    const cleanPredicateVal = predicate.value.replace(/\s+/g, '')
-    const cleanObjectVal = object.value.replace(/\s+/g, '')
+    // Helper to determine final URI or wildcard
+    const getFinal = (val: string, uri: string) => {
+      if (!val) return undefined // Wildcard
+      return concatUri(uri.trim() || DEFAULT_NAMESPACE, val.replace(/\s+/g, ''))
+    }
 
-    const baseSubject = subjectUri.value.trim() || DEFAULT_NS
-    const finalSubject = concatUri(baseSubject, cleanSubjectVal)
+    const finalSubject = getFinal(cleanSubjectVal, subjectUri.value)
+    const finalPredicate = getFinal(cleanPredicateVal, predicateUri.value)
 
-    const basePredicate = predicateUri.value.trim() || DEFAULT_NS
-    const finalPredicate = concatUri(basePredicate, cleanPredicateVal)
-
-    let finalObject = ''
+    let finalObject: string | undefined = undefined
     if (objectMode.value === 'uri') {
-      const baseObject = objectUri.value.trim() || DEFAULT_NS
-      finalObject = concatUri(baseObject, cleanObjectVal)
+      finalObject = getFinal(cleanObjectVal, objectUri.value)
     } else {
-      finalObject = object.value.trim() // Keep literal spaces intact if desired, or use cleanObjectVal
+      finalObject = cleanObjectVal || undefined // Literal wildcard
     }
 
     const response = await api.getTriples({
-      s: finalSubject || undefined,
-      p: finalPredicate || undefined,
-      o: finalObject || undefined,
+      s: finalSubject,
+      p: finalPredicate,
+      o: finalObject,
     })
-    console.log(response)
 
-    results.value = response.triples.map((triple: any, index: number) => {
-      const rawTriple = {
+    results.value = response.triples.map((triple: any, index: number) =>
+      cleanTripleForDisplay({
         id: index,
         subject: triple.s.value,
         predicate: triple.p.value,
         object: triple.o.value,
         isLiteral: triple.o.isLiteral,
-      }
-      return cleanTripleForDisplay(rawTriple)
-    })
+      }),
+    )
   } catch (err: any) {
-    error.value = err.message || 'An error occurred while scanning the remote RDF matrix store.'
-    console.error('Query execution failed:', err)
+    error.value = err.message || 'An error occurred while scanning the store.'
   } finally {
     isLoading.value = false
   }

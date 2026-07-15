@@ -18,8 +18,9 @@
   "dependencies": {
     "vue": "beta",
     "vue-router": "^5.0.7",
-	"@fortawesome/fontawesome-free": "^7.2.0",
-    "lucide-vue-next": "^1.0.0"
+    "@fortawesome/fontawesome-free": "^7.2.0",
+    "lucide-vue-next": "^1.0.0",
+    "pinia": "^3.0.1"
   },
   "devDependencies": {
     "@tsconfig/node24": "^24.0.4",

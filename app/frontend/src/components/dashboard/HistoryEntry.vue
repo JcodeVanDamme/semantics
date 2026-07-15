@@ -1,11 +1,8 @@
 <template>
   <div class="history-event card">
     <div class="history-header">
-      <div class="event-meta">
-        <h3>{{ response.action.replace(/_/g, ' ') }}</h3>
-        <h3 class="timestamp">{{ formatDate(response.timeStamp) }}</h3>
-      </div>
-      <div class="divider accent"></div>
+      <h3>{{ response.action.replace(/_/g, ' ') }}</h3>
+      <h3 class="timestamp">{{ formatDate(response.timeStamp) }}</h3>
     </div>
 
     <TriplesTable
@@ -19,33 +16,21 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { type EnhancedTriple } from '@/scripts/type.ts'
 import TriplesTable from '../util/TripleTable.vue'
-
-interface TripleAction {
-  action: string
-  triple: {
-    s: { value: string }
-    p: { value: string }
-    o: { value: string; isLiteral: boolean }
-  }
-}
-
-interface HistoryResponse {
-  action: string
-  timeStamp: string
-  triples: TripleAction[]
-}
+import type { HistoryEvent, EnhancedTriple } from '@/scripts/type.ts'
 
 const props = defineProps<{
-  response: HistoryResponse
+  response: HistoryEvent
 }>()
 
-// Map the nested TripleAction to the EnhancedTriple format
+/**
+ * Transforms incoming BackendTriple data into the flattened EnhancedTriple
+ * format required by the TriplesTable component.
+ */
 const formattedTriples = computed<EnhancedTriple[]>(() => {
   return props.response.triples.map((ta, index) => ({
     id: index,
-    action: ta.action, // Used for the Action column
+    action: ta.action,
     subject: ta.triple.s.value,
     rawSubject: ta.triple.s.value,
     predicate: ta.triple.p.value,
@@ -57,7 +42,7 @@ const formattedTriples = computed<EnhancedTriple[]>(() => {
   }))
 })
 
-function formatDate(isoString: string) {
+function formatDate(isoString: string): string {
   return new Date(isoString).toLocaleString(undefined, {
     dateStyle: 'medium',
     timeStyle: 'short',
@@ -66,6 +51,7 @@ function formatDate(isoString: string) {
 </script>
 
 <style scoped>
+/* --- LAYOUT --- */
 .history-event {
   display: flex;
   flex-direction: column;
@@ -73,27 +59,33 @@ function formatDate(isoString: string) {
 }
 
 .history-header {
-  background-color: var(--accentColor);
-  display: flex;
-  align-items: center;
-  padding: var(--paddingHalf);
-}
-
-.event-meta {
+  background-color: var(--secondaryColor);
+  border-bottom: 2px solid var(--accentColor);
   display: flex;
   flex-direction: row;
   gap: var(--padding);
   align-items: center;
+  height: fit-content;
+  padding: var(--paddingHalf);
 }
-.event-meta h3 {
+
+/* --- COMPONENTS & TYPOGRAPHY --- */
+
+.history-header h3 {
   margin: 0;
-  color: white;
+  color: var(--accentColor);
 }
 
 .timestamp {
   font-family: var(--fancyFontStyle);
   font-weight: lighter;
-  color: var(--mutedFontColor);
+  color: rgba(255, 255, 255, 0.7); /* Slightly muted white for better contrast */
   padding-bottom: 3px;
+}
+
+.divider {
+  margin-top: var(--paddingHalf);
+  height: 1px;
+  width: 100%;
 }
 </style>

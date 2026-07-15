@@ -19,7 +19,7 @@
       <div v-if="mode === 'select'" class="input-group">
         <select v-model="selectedRulerUri" class="base-input">
           <option value="" disabled selected>Select a Ruler</option>
-          <option v-for="opt in rulerOptions" :key="opt.uri" :value="opt.uri">
+          <option v-for="opt in rulerOptions" :key="opt.URI" :value="opt.URI">
             {{ opt.name }}
           </option>
         </select>
@@ -33,7 +33,7 @@
         <input v-model="form.title" class="base-input" placeholder="e.g. King of Prussia" />
       </div>
 
-      <div  class="input-button-wrapper" >
+      <div class="input-button-wrapper">
         <button class="button accent" :disabled="!isValid || isProcessing" @click="handleSubmit">
           <Flag :size="18" />
           {{ isProcessing ? 'PROCESSING...' : 'CONFIRM CHANGE' }}
@@ -45,11 +45,13 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { useDashboardStore } from '@/stores/dashboardStore'
-import { api } from '@/scripts/api.ts'
 import { Flag } from 'lucide-vue-next'
+import { useDashboardStore } from '@/stores/dashboardStore'
+import { api } from '@/scripts/apiClient.js'
 import BaseModal from './BaseModal.vue'
-import type { HistoryEvent, ChangeRulerRequest, StateData } from '../../scripts/type.ts'
+
+// Imported Interfaces
+import type { Ruler, StateData, ChangeRulerRequest, HistoryEvent } from '@/scripts/type.ts'
 
 const props = defineProps<{
   stateUri: string
@@ -71,23 +73,23 @@ const form = ref({
 })
 const selectedRulerUri = ref('')
 
+// Reset form state when switching modes
 watch(mode, () => {
   errorMessage.value = null
   selectedRulerUri.value = ''
   form.value = { label: '', title: '' }
 })
 
-const rulerOptions = computed(() => {
-  const rulers = new Map()
+// Compute unique rulers from the store, cast as Ruler array
+const rulerOptions = computed<Ruler[]>(() => {
+  const rulers = new Map<string, Ruler>()
+
   store.allStates.forEach((s: StateData) => {
     if (s.ruler?.URI && !rulers.has(s.ruler.URI)) {
-      rulers.set(s.ruler.URI, {
-        uri: s.ruler.URI,
-        name: s.ruler.name || '',
-        title: s.ruler.title || '',
-      })
+      rulers.set(s.ruler.URI, s.ruler)
     }
   })
+
   return Array.from(rulers.values())
 })
 
@@ -104,13 +106,15 @@ async function handleSubmit() {
     let payload: ChangeRulerRequest
 
     if (mode.value === 'select') {
-      console.log('SelURI:' + selectedRulerUri.value)
-      const selected = rulerOptions.value.find((o) => o.uri === selectedRulerUri.value)
+      const selected = rulerOptions.value.find((o) => o.URI === selectedRulerUri.value)
+
+      if (!selected) throw new Error('Ruler not found')
+
       payload = {
         state: props.stateUri,
-        ruler: selected?.uri,
-        label: selected?.name,
-        title: selected?.title,
+        ruler: selected.URI,
+        label: selected.name,
+        title: selected.title,
       }
     } else {
       // Create Mode: Construct URI
@@ -124,8 +128,6 @@ async function handleSubmit() {
     }
 
     const res = await api.changeRuler(payload)
-
-    console.log('Change Res: ', res)
     emit('submit', res)
   } catch (err: any) {
     errorMessage.value = err.message || 'Failed to update ruler.'
@@ -136,17 +138,41 @@ async function handleSubmit() {
 </script>
 
 <style scoped>
+/* --- LAYOUT & SPACING --- */
 .pad-top {
   padding-top: var(--paddingDouble);
 }
 
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--paddingHalf);
+}
+
+.input-button-wrapper {
+  margin-top: 1rem;
+}
+
+/* --- INTERACTIVE ELEMENTS --- */
+.toggle-labels {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
 .toggle-label {
+  cursor: pointer;
   color: var(--mutedFontColor);
   font-size: var(--text-h4);
+  transition: color 0.2s;
 }
 
 .toggle-label:hover,
 .toggle-label.active {
   color: var(--mainFontColor);
+}
+
+.toggle-divider {
+  color: var(--mutedFontColor);
 }
 </style>

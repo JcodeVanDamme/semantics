@@ -1,8 +1,8 @@
 <template>
-  <div>
-    <div class="results">
-      <h2>QUERY RESULTS:</h2>
-      <h2 class="muted">{{ triples.length }} TRIPLES</h2>
+  <div class="results-container">
+    <div class="results-header">
+      <h2 class="result-title">QUERY RESULTS</h2>
+      <h2 class="count">{{ triples.length }} TRIPLES</h2>
     </div>
     <div class="divider accent"></div>
   </div>
@@ -17,9 +17,27 @@ defineProps<{
 </script>
 
 <style scoped>
-.results {
+.results-container {
+  margin-bottom: var(--padding);
+}
+
+.results-header {
   display: flex;
-  flex-direction: row;
+  align-items: baseline; /* Keeps text aligned even with different font sizes */
   gap: var(--padding);
+  margin-bottom: var(--paddingHalf);
+}
+
+.result-title {
+  margin: 0;
+  font-size: var(--text-h2);
+  font-style: var(--baseFontStyle);
+}
+
+.count {
+  margin: 0;
+  color: var(--mutedFontColor);
+  font-size: var(--text-h3);
+  font-weight: normal;
 }
 </style>

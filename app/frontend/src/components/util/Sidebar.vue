@@ -1,59 +1,54 @@
 <template>
-  <div class="sidebar">
+  <aside class="sidebar">
     <div class="logo-box">
       <div class="logo-icon">
         <Map />
       </div>
-
-      <h2 class="logo-text">
-        Semantics
-        <br />
-        RDF System
-      </h2>
+      <h2 class="logo-text">Semantics<br />RDF System</h2>
     </div>
 
     <div class="divider"></div>
 
-    <!-- MENU -->
     <ul class="menu">
-      <router-link to="/" custom v-slot="{ navigate, isActive }">
+      <router-link
+        v-for="item in menuItems"
+        :key="item.path"
+        :to="item.path"
+        custom
+        v-slot="{ navigate, isActive }"
+      >
         <li @click="navigate" :class="{ active: isActive }">
-          <Map />
-          Dashboard
-        </li>
-      </router-link>
-
-      <router-link to="/triple-explorer" custom v-slot="{ navigate, isActive }">
-        <li @click="navigate" :class="{ active: isActive }">
-          <GitBranch />
-          Triple Explorer
-        </li>
-      </router-link>
-
-      <router-link to="/query-builder" custom v-slot="{ navigate, isActive }">
-        <li @click="navigate" :class="{ active: isActive }">
-          <Terminal />
-          Query Builder
-        </li>
-      </router-link>
-
-      <router-link to="/store-management" custom v-slot="{ navigate, isActive }">
-        <li @click="navigate" :class="{ active: isActive }">
-          <Database />
-          Store Management
+          <component :is="item.icon" />
+          {{ item.label }}
         </li>
       </router-link>
     </ul>
 
     <div class="divider"></div>
-  </div>
+  </aside>
 </template>
 
 <script setup lang="ts">
+import { markRaw, type Component } from 'vue'
 import { Map, GitBranch, Terminal, Database } from 'lucide-vue-next'
+
+interface MenuItem {
+  label: string
+  path: string
+  icon: Component
+}
+
+// Configuration driven menu
+const menuItems: MenuItem[] = [
+  { label: 'Dashboard', path: '/', icon: markRaw(Map) },
+  { label: 'Triple Explorer', path: '/triple-explorer', icon: markRaw(GitBranch) },
+  { label: 'Query Builder', path: '/query-builder', icon: markRaw(Terminal) },
+  { label: 'Store Management', path: '/store-management', icon: markRaw(Database) },
+]
 </script>
 
 <style scoped>
+/* --- Sidebar Container --- */
 .sidebar {
   position: relative;
   background: var(--primaryColor);
@@ -61,6 +56,7 @@ import { Map, GitBranch, Terminal, Database } from 'lucide-vue-next'
   padding: var(--padding);
 }
 
+/* --- Logo Section --- */
 .logo-box {
   display: flex;
   align-items: center;
@@ -81,11 +77,6 @@ import { Map, GitBranch, Terminal, Database } from 'lucide-vue-next'
   margin-right: 15px;
 }
 
-.logo-icon svg {
-  width: 50px;
-  height: 50px;
-}
-
 .logo-text {
   line-height: 1;
   text-align: center;
@@ -96,6 +87,7 @@ import { Map, GitBranch, Terminal, Database } from 'lucide-vue-next'
   letter-spacing: 0.1rem;
 }
 
+/* --- Menu List --- */
 .menu {
   list-style: none;
   padding-left: 0;
@@ -108,8 +100,10 @@ import { Map, GitBranch, Terminal, Database } from 'lucide-vue-next'
   font-family: var(--fancyFontStyle);
   cursor: pointer;
   display: flex;
+  align-items: center;
   gap: var(--paddingHalf);
   border-left: 4px solid transparent;
+  transition: all 0.2s ease;
 }
 
 .menu li svg {
@@ -117,6 +111,7 @@ import { Map, GitBranch, Terminal, Database } from 'lucide-vue-next'
   height: 24px;
 }
 
+/* --- Menu States --- */
 .menu li.active {
   background: var(--secondaryColor);
   border-left: 4px solid var(--accentColor);

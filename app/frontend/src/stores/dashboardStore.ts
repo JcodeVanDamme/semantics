@@ -1,20 +1,28 @@
 import { defineStore } from 'pinia'
-import { api } from '@/scripts/api'
+import { api } from '@/scripts/apiClient.ts'
 import type { StateData } from '../scripts/type.ts'
 
+interface DashboardState {
+  activeStates: StateData[]
+  allStates: StateData[]
+  activeStatesCount: number
+  stateChangesFactor: number
+  loading: boolean
+  errorMessage: string | null
+}
+
 export const useDashboardStore = defineStore('dashboard', {
-  state: () => ({
-    activeStates: [] as StateData[],
-    allStates: [] as StateData[],
+  state: (): DashboardState => ({
+    activeStates: [],
+    allStates: [],
     activeStatesCount: 0,
     stateChangesFactor: 0,
     loading: false,
-    errorMessage: null as string | null, // Simply null, no ref() needed here
+    errorMessage: null,
   }),
 
   actions: {
     async fetchDashboardData() {
-      // Use 'this' to access state in Options stores
       this.loading = true
       this.errorMessage = null
 
@@ -32,7 +40,6 @@ export const useDashboardStore = defineStore('dashboard', {
         this.stateChangesFactor = changesRes.factor
       } catch (error) {
         this.errorMessage = 'Failed to load dashboard data. Please check your connection.'
-        console.error('Failed to load dashboard data:', error)
       } finally {
         this.loading = false
       }

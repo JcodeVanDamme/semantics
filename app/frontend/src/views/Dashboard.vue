@@ -102,7 +102,7 @@
         </button>
       </div>
       <div class="divider accent"></div>
-      <LatestActionTable :triples="eventTriples" :showActionColumn="true" />
+      <LatestActionTable :triples="eventTriples" :showActionColumn="true" mode="history" />
     </section>
 
     <FoundStateModal v-if="showFoundModal" @close="showFoundModal = false" @submit="handleSubmit" />
@@ -128,7 +128,10 @@ import { Crown, Flag, X, TrendingUp, TrendingDown } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { useDashboardStore } from '@/stores/dashboardStore'
 
-// Layouts & Components
+// Types
+import type { StateData, HistoryEvent, EnhancedTriple, HistoryApiResponse } from '@/scripts/type.ts'
+
+// Components
 import MainLayout from '../layouts/MainLayout.vue'
 import HistoryModal from '@/components/dashboard/HistoryModal.vue'
 import FoundStateModal from '../components/dashboard/FoundStateModal.vue'
@@ -138,60 +141,54 @@ import LatestActionTable from '@/components/util/TripleTable.vue'
 import StateTable from '@/components/dashboard/StatesTable.vue'
 import HeaderOverview from '@/components/util/HeaderOverview.vue'
 
-// Store
 const store = useDashboardStore()
 const { activeStates, activeStatesCount, stateChangesFactor, errorMessage } = storeToRefs(store)
 
-// State
-const selectedState = ref<any>(null)
-const eventTriples = ref<any[]>([])
+const selectedState = ref<StateData | null>(null)
+const eventTriples = ref<EnhancedTriple[]>([])
 const latestEvent = ref<string>('None')
+
 const showFoundModal = ref(false)
 const showRulerModal = ref(false)
 const showMediatizeModal = ref(false)
 const showHistoryModal = ref(false)
 
-// Lifecycle
 onMounted(() => {
   store.fetchDashboardData()
 })
 
-// Handlers
-const handleStateSelection = (state: any) => (selectedState.value = state)
+const handleStateSelection = (state: StateData) => (selectedState.value = state)
 const closePanel = () => (selectedState.value = null)
 
-async function handleSubmit(payload: any) {
-  // Update UI immediately with response
-  updateLatestAction(payload)
-  // Refresh Store data
+async function handleSubmit(payload: HistoryApiResponse) {
+  if (payload.history && payload.history.length > 0) {
+    updateLatestAction(payload.history[0])
+  }
   await store.fetchDashboardData()
 }
 
-const updateLatestAction = (payload: any) => {
-  const latestEventData = payload.history?.[0]
+const updateLatestAction = (event: HistoryEvent) => {
+  latestEvent.value = event.action.replace(/_/g, ' ')
 
-  latestEvent.value = latestEventData.action.replace(/_/g, ' ')
-
-  eventTriples.value = (latestEventData.triples || []).map((item: any, index: number) => ({
-    id: index,
-    action: item.action, // Top-level property, this worked before
-
-    // Extract nested values to create the flat structure the table expects
-    subject: item.triple.s.value,
-    rawSubject: item.triple.s.value,
-
-    predicate: item.triple.p.value,
-    rawPredicate: item.triple.p.value,
-
-    object: item.triple.o.value,
-    rawObject: item.triple.o.value,
-
-    isLiteral: item.triple.o.isLiteral,
-  }))
+  eventTriples.value = event.triples.map(
+    (ta, index): EnhancedTriple => ({
+      id: index,
+      action: ta.action,
+      subject: ta.triple.s.value,
+      rawSubject: ta.triple.s.value,
+      predicate: ta.triple.p.value,
+      rawPredicate: ta.triple.p.value,
+      object: ta.triple.o.value,
+      rawObject: ta.triple.o.value,
+      isLiteral: ta.triple.o.isLiteral,
+      raw: ta.triple,
+    }),
+  )
 }
 </script>
 
 <style scoped>
+/* --- LAYOUT --- */
 .dashboard-top {
   display: flex;
   flex-direction: row;
@@ -211,12 +208,19 @@ const updateLatestAction = (payload: any) => {
   gap: var(--paddingHalf);
 }
 
+/* --- SIDEBAR & STATS --- */
 .dashboard-sidebar {
   width: 400px;
   display: flex;
 }
 
-/* Stats Card Styles */
+.dashboard-side-cards {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--padding);
+}
+
 .stats-card {
   padding: var(--paddingHalf) 60px;
   text-align: center;
@@ -228,6 +232,7 @@ const updateLatestAction = (payload: any) => {
   color: var(--accentColor);
   margin: 0;
 }
+
 .stats-card span {
   font-size: var(--text-h1);
   font-weight: lighter;
@@ -237,6 +242,7 @@ const updateLatestAction = (payload: any) => {
   display: flex;
   justify-content: center;
 }
+
 .delta svg {
   color: var(--accentColor);
   width: 40px;
@@ -244,25 +250,10 @@ const updateLatestAction = (payload: any) => {
   align-self: flex-end;
 }
 
-/* Details Panel */
-.dashboard-side-cards {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: var(--padding);
-}
-.event-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.event-header-wrapper {
-  display: flex;
-  gap: var(--padding);
-}
-
-.mini-table th {
-  font-size: calc(var(--base-size) * 1.1);
+/* --- DETAILS PANEL --- */
+.state-details-panel h3 {
+  margin: 0;
+  text-align: center;
 }
 
 .mini-table th,
@@ -270,9 +261,22 @@ td {
   text-align: center;
   padding: var(--paddingHalf);
 }
+
 .button-wrapper {
   display: flex;
   flex-direction: column;
+  gap: var(--padding);
+}
+
+/* --- EVENTS --- */
+.event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.event-header-wrapper {
+  display: flex;
   gap: var(--padding);
 }
 
@@ -280,9 +284,5 @@ td {
   font-size: var(--base-size);
   height: fit-content;
   padding: 5px var(--padding);
-}
-.state-details-panel h3 {
-  margin: 0;
-  text-align: center;
 }
 </style>

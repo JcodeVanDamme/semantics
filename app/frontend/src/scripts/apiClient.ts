@@ -2,9 +2,10 @@ import type {
   BackendTriple,
   TripleQueryResponse,
   StateDataResponse,
-  HistoryEvent,
+  HistoryApiResponse,
 } from './type.ts'
 
+// --- CONFIG ---
 const BASE_URL = 'http://localhost:8080'
 const RDF_ENDPOINT = '/semantics.rdf.system'
 const DOMAIN_ENDPOINT = '/triples'
@@ -12,13 +13,10 @@ const DOMAIN_ENDPOINT = '/triples'
 export const ONT_URI = 'http://semantics.rdf.system.ontology/'
 export const DATA_URI = 'http://semantics.rdf.system.data/'
 
+// --- UTIL ---
 const logger = (method: string, url: string, payload?: any) => {
   const timestamp = new Date().toISOString()
-  if (payload) {
-    console.info(`[${timestamp}] API ${method} ${url}`, payload)
-  } else {
-    console.info(`[${timestamp}] API ${method} ${url}`)
-  }
+  console.info(`[${timestamp}] API ${method} ${url}`, payload || '')
 }
 
 async function handleResponse<T>(response: Response): Promise<T> {
@@ -27,18 +25,14 @@ async function handleResponse<T>(response: Response): Promise<T> {
     console.error(`[API ERROR] ${response.url} - ${response.status}: ${errorText}`)
     throw new Error(`${errorText || response.statusText}`)
   }
-
-  // Handle successful empty responses (like 201 Created or 204 No Content)
   if (response.status === 201 || response.headers.get('content-length') === '0') {
     return {} as T
   }
-
   return response.json()
 }
 
-export const api = {
-  /* --- DOMAIN-AGNOSTIC CRUD ENDPOINTS --- */
-
+// --- 3. DOMAIN AGNOSTIC SERVICE ---
+const triplesService = {
   async getTriples(filters?: { s?: string; p?: string; o?: string }): Promise<TripleQueryResponse> {
     const params = new URLSearchParams()
     if (filters?.s) params.append('s', filters.s)
@@ -47,125 +41,118 @@ export const api = {
 
     const query = params.toString()
     const url = query ? `${BASE_URL}${DOMAIN_ENDPOINT}?${query}` : `${BASE_URL}${DOMAIN_ENDPOINT}`
-
     logger('GET', url)
-    const response = await fetch(url)
-    return handleResponse<TripleQueryResponse>(response)
+    return handleResponse<TripleQueryResponse>(await fetch(url))
   },
 
   async createTriple(triple: BackendTriple): Promise<void> {
     const url = `${BASE_URL}${DOMAIN_ENDPOINT}`
     logger('POST', url, triple)
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(triple),
-    })
-    return handleResponse<void>(response)
+    return handleResponse<void>(
+      await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(triple),
+      }),
+    )
   },
 
   async updateTriple(payload: { original: BackendTriple; update: BackendTriple }): Promise<void> {
     const url = `${BASE_URL}${DOMAIN_ENDPOINT}`
     logger('PUT', url, payload)
-
-    const response = await fetch(url, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
-    return handleResponse<void>(response)
+    return handleResponse<void>(
+      await fetch(url, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      }),
+    )
   },
 
   async deleteTriple(triple: BackendTriple): Promise<void> {
     const url = `${BASE_URL}${DOMAIN_ENDPOINT}`
     logger('DELETE', url, triple)
-
-    const response = await fetch(url, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(triple),
-    })
-    return handleResponse<void>(response)
+    return handleResponse<void>(
+      await fetch(url, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(triple),
+      }),
+    )
   },
+}
 
-  /* --- DOMAIN SPECIFIC ENDPOINTS --- */
-
+// --- DOMAIN SPECIFIC SERVICE ---
+const statesService = {
   async getActiveStateCount(): Promise<{ count: number }> {
     const url = `${BASE_URL}${RDF_ENDPOINT}/activeStateCount`
     logger('GET', url)
-
-    const response = await fetch(url)
-    return handleResponse<{ count: number }>(response)
+    return handleResponse<{ count: number }>(await fetch(url))
   },
 
   async getStateChanges(): Promise<{ factor: number }> {
     const url = `${BASE_URL}${RDF_ENDPOINT}/stateChanges`
     logger('GET', url)
-
-    const response = await fetch(url)
-    return handleResponse<{ factor: number }>(response)
+    return handleResponse<{ factor: number }>(await fetch(url))
   },
 
-  /**
-   * Fetches state information.
-   * @param activeOnly Filters response to return exclusively currently active states when true.
-   */
   async getStates(activeOnly: boolean = false): Promise<StateDataResponse> {
     const url = `${BASE_URL}${RDF_ENDPOINT}/states?activeOnly=${activeOnly}`
     logger('GET', url)
-
-    const response = await fetch(url)
-    return handleResponse<StateDataResponse>(response)
+    return handleResponse<StateDataResponse>(await fetch(url))
   },
 
-  async mediatizate(payload: { absorbed: string; into: string }): Promise<HistoryEvent[]> {
+  async mediatizate(payload: { absorbed: string; into: string }): Promise<HistoryApiResponse> {
     const url = `${BASE_URL}${RDF_ENDPOINT}/mediatizate`
     logger('POST', url, payload)
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
-    return handleResponse<HistoryEvent[]>(response)
+    return handleResponse<HistoryApiResponse>(
+      await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      }),
+    )
   },
 
-  async changeRuler(payload: { state: string; ruler: string }): Promise<HistoryEvent[]> {
+  async changeRuler(payload: { state: string; ruler: string }): Promise<HistoryApiResponse> {
     const url = `${BASE_URL}${RDF_ENDPOINT}/changeRuler`
     logger('POST', url, payload)
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
-    return handleResponse<HistoryEvent[]>(response)
+    return handleResponse<HistoryApiResponse>(
+      await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      }),
+    )
   },
 
   async foundState(payload: {
-    state: string // URI
-    population: number // LITERAL
-    ruler: string // URI
-    label: string // LITERAL
-    type: string // LITERAL
-  }): Promise<HistoryEvent[]> {
+    state: string
+    population: number
+    ruler: string
+    label: string
+    type: string
+  }): Promise<HistoryApiResponse> {
     const url = `${BASE_URL}${RDF_ENDPOINT}/foundState`
     logger('POST', url, payload)
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
-    return handleResponse<HistoryEvent[]>(response)
+    return handleResponse<HistoryApiResponse>(
+      await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      }),
+    )
   },
 
-  async getHistory(): Promise<HistoryEvent[]> {
+  async getHistory(): Promise<HistoryApiResponse> {
     const url = `${BASE_URL}${RDF_ENDPOINT}/history`
     logger('GET', url)
-
-    const response = await fetch(url)
-    return handleResponse<HistoryEvent[]>(response)
+    return handleResponse<HistoryApiResponse>(await fetch(url))
   },
+}
+
+// --- PUBLIC API EXPORT ---
+export const api = {
+  ...triplesService,
+  ...statesService,
 }
