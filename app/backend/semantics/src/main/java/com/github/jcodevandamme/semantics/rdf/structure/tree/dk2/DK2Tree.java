@@ -334,12 +334,6 @@ public class DK2Tree implements K2 {
         return res.oBefore() + leaf.bits().rank1(i - res.bBefore());
     }
 
-    private int access(DynamicBitVector b, int i) {
-        FindLeafResult res = findLeaf(b, i);
-        LeafNode leaf = (LeafNode) res.node();
-        return leaf.bits().access(i - res.bBefore());
-    }
-
     @Override
     public String toString() {
         return
