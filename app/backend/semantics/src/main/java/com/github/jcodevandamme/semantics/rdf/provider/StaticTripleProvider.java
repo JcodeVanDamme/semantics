@@ -28,6 +28,10 @@ public class StaticTripleProvider implements TripleProvider {
         triples.add(new Triple("G. Sullivan", "lives in", "US"));
     }
 
+    public StaticTripleProvider(List<Triple> triples) {
+        this.triples = triples;
+    }
+
     @Override
     public void initTriples(TripleStore tripleStore) {
         for (Triple t : triples) {

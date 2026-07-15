@@ -37,7 +37,14 @@ public class BMatrix {
         st.addEntry(s, tripleIdx);
         ot.addEntry(o, tripleIdx);
         bp.registerTriple(tripleIdx, p);
-        triples.add(new EncodedTriple(s, p, o));
+        //triples.add(new EncodedTriple(s, p, o));
+
+        if (tripleIdx < triples.size()) {
+            triples.set(tripleIdx, new EncodedTriple(s, p, o));
+        } else {
+            triples.add(new EncodedTriple(s, p, o));
+        }
+
         return true;
     }
 
