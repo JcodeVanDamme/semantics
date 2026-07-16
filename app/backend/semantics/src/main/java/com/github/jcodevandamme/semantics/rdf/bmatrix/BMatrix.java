@@ -248,6 +248,7 @@ public class BMatrix {
         results.sort(Comparator.comparingInt(t -> (int) t.s()));
         return results;
     }
+
     public List<EncodedTriple> ___Query() {
         return triples;
     }

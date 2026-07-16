@@ -1,6 +1,6 @@
 <template>
   <MainLayout>
-    <HeaderOverview title="Regional Overview" description="Gabba" />
+    <HeaderOverview title="Regional Overview" description="View the current geopolitcal Climate and perform Territorial Changes." />
 
     <div class="dashboard-top">
       <div class="table-layout card">
