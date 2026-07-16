@@ -11,24 +11,24 @@ import java.util.*;
 
 public class Benchmark {
 
-    private static final int UNQ_SUBJECT_PERCENTAGE = 10;
-    private static final int UNQ_PREDICATES_PERCENTAGE = 2;
+    private static final int UNQ_SUBJECT_PERCENTAGE = 100;
+    private static final int UNQ_PREDICATES_PERCENTAGE = 100;
     private static final int UNQ_OBJECT_PERCENTAGE = 100;
 
-    private static final int WARMUP_RUNS = 1000;
-    private static final int MEASUREMENT_RUNS = 2000;
+    private static final int WARMUP_RUNS = 500;
+    private static final int MEASUREMENT_RUNS = 1000;
 
 
     private record BenchmarkResult(
             int storeSize,
-            QueryType t,
+            String action,
             double medNano,
             double medMill,
             double avgNano,
             double avgMill
     ) {
         public String toCsv() {
-            return String.format(java.util.Locale.US, "%d,%s,%.2f,%.2f,%.2f,%.2f", storeSize, t, medNano, medMill, avgNano, avgMill);
+            return String.format(java.util.Locale.US, "%d,%s,%.2f,%.2f,%.2f,%.2f", storeSize, action, medNano, medMill, avgNano, avgMill);
         }
     }
 
@@ -36,17 +36,19 @@ public class Benchmark {
         List<BenchmarkResult> results = new ArrayList<>();
         for (Integer size : benchmarkStoreSizes) {
             System.out.println("Starting Triple Store Benchmark with Store Size: " + size);
+
+            TripleStore store = initStore(size, results);
+
             for (QueryType t : QueryType.values()) {
-                results.add(queryBenchmark(size, t, WARMUP_RUNS, MEASUREMENT_RUNS));
+
+                results.add(queryBenchmark(store, size, t, WARMUP_RUNS, MEASUREMENT_RUNS));
             }
             System.out.println("Finished Benchmark.\n");
         }
         exportResultsToCsv(results, outputFilePath);
     }
 
-    public static BenchmarkResult queryBenchmark(Integer storeSize, QueryType type, Integer warmupRuns, Integer measurementRuns) {
-        TripleStore store = initBenchmark(storeSize);
-
+    public static BenchmarkResult queryBenchmark(TripleStore store, Integer storeSize, QueryType type, Integer warmupRuns, Integer measurementRuns) {
         System.out.println("Warming up. Executing: " + warmupRuns + " Queries...");
 
         int maxSubjects = Math.max(1, storeSize / UNQ_SUBJECT_PERCENTAGE);
@@ -104,7 +106,7 @@ public class Benchmark {
 
         return new BenchmarkResult(
                 storeSize,
-                type,
+                type.toString(),
                 medianQueryTimeNanos,
                 medianQueryTimesMillis,
                 avgTimeNanos,
@@ -112,12 +114,36 @@ public class Benchmark {
         );
     }
 
-    private static TripleStore initBenchmark(int storeSize) {
+    private static TripleStore initStore(int storeSize, List<BenchmarkResult> results) {
         TripleStore store = new TripleStore();
         List<Triple> benchmarkData = generateMockData(storeSize);
         StaticTripleProvider provider = new StaticTripleProvider(benchmarkData);
+
+        long startTime = System.nanoTime();
+
         provider.initTriples(store);
-        benchmarkData = null;
+
+        long endTime = System.nanoTime();
+        long initTimeNanos = endTime - startTime;
+        double initTimeMillis = initTimeNanos / 1_000_000.0;
+
+        System.out.println("========================================");
+        System.out.println("Benchmark Results for Initialisation:");
+        System.out.println("Init Time (Nanoseconds): " + String.format("%.2f", (double) initTimeNanos) + " ns");
+        System.out.println("Init Time (Milliseconds): " + String.format("%.2f", initTimeMillis) + " ns");
+        System.out.println("========================================");
+
+        results.add(
+                new BenchmarkResult(
+                        storeSize,
+                        "init",
+                        initTimeNanos,
+                        initTimeNanos,
+                        initTimeNanos,
+                        initTimeNanos
+                )
+        );
+
         return store;
     }
 

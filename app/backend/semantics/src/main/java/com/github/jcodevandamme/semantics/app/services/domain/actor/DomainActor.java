@@ -112,24 +112,6 @@ public class DomainActor {
     }
 
     private List<MedState> fetchMediatizatedStates(String stateURI) {
-        /*List<Triple> medTriples = store.query(
-                stateURI,
-                Vocab.Domain.MEDIATIZED,
-                null
-        );
-            return medTriples.stream()
-            .map(t -> t.o().value().toString())
-            .map(medStateURI -> {
-                MedState medState = new MedState();
-
-                medState.name = getSingleObjectValue(medStateURI, Vocab.Rdfs.LABEL);
-                medState.type = getSingleObjectValue(medStateURI, Vocab.Domain.STATE_TYPE);
-                medState.ruler = fetchStateRuler(medStateURI);
-
-                return medState;
-            })
-            .collect(Collectors.toList());
-         */
 
         List<String> mediatizatedURIs =
                 store.query(stateURI, null, null)

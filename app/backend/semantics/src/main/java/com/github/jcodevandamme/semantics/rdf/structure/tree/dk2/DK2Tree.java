@@ -192,7 +192,6 @@ public class DK2Tree implements K2 {
             // "A rank operation is performed to compute the position where its children should be located"
             int childBlockStartIdx = rank1(tTree, parentGlobalIdx + 1) * (k * k);
 
-            // 3. FIX: Map global index space to local lTree index space if targeting L
             if (isNextLevelL) {
                 childBlockStartIdx -= tTree.size();
             }
@@ -204,7 +203,6 @@ public class DK2Tree implements K2 {
             int parentBlockSize = currentSubSize;
             int childBlockSize = currentSubSize / k;
 
-            // 4. Cleaned up coordinate tracking using the outer scope variables
             int childRow = localRow / childBlockSize;
             int childCol = localCol / childBlockSize;
             int targetChildOffset = childRow * k + childCol;
@@ -218,10 +216,9 @@ public class DK2Tree implements K2 {
 
             // "The procedure continues recursively until it reaches the last level"
             if (isNextLevelL) {
-                break; // Reached L tree, expansion complete!
+                break;
             }
 
-            // Prepare for the next level down safely
             parentGlobalIdx = targetBitGlobalIdx;
             localRow = localRow % childBlockSize;
             localCol = localCol % childBlockSize;
@@ -313,8 +310,9 @@ public class DK2Tree implements K2 {
         for (int i = 0; i < entries.size(); i++) {
             Entry e = entries.get(i);
 
-            // Follow the child if 'p' falls inside it, OR if 'p' is exactly at the
-            // boundary of the very last entry (meaning we are appending to the end of the tree)
+            // Follow the Child if p falls inside it, OR if p is exactly at the
+            // boundary of the very last entry
+            // -> we are appending to the end of the tree
             if (p < e.b() + bBefore || (i == entries.size() - 1)) {
                 return checkNode(
                         p,
@@ -324,8 +322,8 @@ public class DK2Tree implements K2 {
             bBefore += e.b();
             oBefore += e.o();
         }
-
-        return null; // Should only hit this if p > total size of the tree
+        // Should not be hit
+        return null;
     }
 
     private int rank1(DynamicBitVector b, int i) {

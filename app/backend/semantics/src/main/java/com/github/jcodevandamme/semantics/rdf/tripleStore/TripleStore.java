@@ -21,12 +21,12 @@ import java.util.Objects;
 
 public class TripleStore {
 
-    private static final int DEFAULT_K = 12;
+    private static final int DEFAULT_K = 8;
     private static final int DEFAULT_T = 10;
-    private static final int DEFAULT_BITVECTOR_CHUNKSIZE = 144;
-    private static final int DEFAULT_BITVECTOR_LEAF_MAX = 20;
+    private static final int DEFAULT_BITVECTOR_CHUNKSIZE = 64;
+    private static final int DEFAULT_BITVECTOR_LEAF_MAX = 10;
     private static final int DEFAULT_BITVECTOR_INT_MIN = 1;
-    private static final int DEFAULT_BITVECTOR_INT_MAX = 2000;
+    private static final int DEFAULT_BITVECTOR_INT_MAX = 20;
 
     private final TripleDictionary dict;
     private final BMatrix bMatrix;

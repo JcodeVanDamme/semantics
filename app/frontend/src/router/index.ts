@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import Dashboard from '../views/Dashboard.vue'
 import TripleExplorer from '../views/TripleExplorer.vue'
-import QueryBuilder from '../views/QueryBuilder.vue'
 import StoreManagement from '../views/StoreManagement.vue'
 
 const routes = [
@@ -15,11 +14,6 @@ const routes = [
     path: '/triple-explorer',
     name: 'tripleExplorer',
     component: TripleExplorer
-  },
-  {
-    path: '/query-builder',
-    name: 'queryBuilder',
-    component: QueryBuilder
   },
   {
   path: '/store-management',

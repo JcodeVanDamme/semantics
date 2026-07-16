@@ -48,7 +48,6 @@ public class K2Tree implements K2 {
             int childRow = row / subSize;
             int childCol = col / subSize;
             // Obtain Child Index and map 2D-Coords into BitMap Index using Row-Major-Transformation
-            // (Black-Magic-Fuckery)
             int child = childRow * k + childCol;
 
             // Obtain Base Offset for the continuous Block of currentBitIndex`s Children

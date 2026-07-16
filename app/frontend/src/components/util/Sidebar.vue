@@ -42,7 +42,6 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   { label: 'Dashboard', path: '/', icon: markRaw(Map) },
   { label: 'Triple Explorer', path: '/triple-explorer', icon: markRaw(GitBranch) },
-  { label: 'Query Builder', path: '/query-builder', icon: markRaw(Terminal) },
   { label: 'Store Management', path: '/store-management', icon: markRaw(Database) },
 ]
 </script>
