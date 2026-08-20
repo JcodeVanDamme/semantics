@@ -1,10 +1,3 @@
-# About
-
-Implementation of a compact RDF store based on the BMatrix/k2-tree approach proposed by Nieves R. Brisaboa et al. in their 2020 Paper [*Revisiting compact RDF stores based on k2-trees*](https://arxiv.org/abs/2002.11622).
-Developed in Java with a Spring Boot backend and Vue.js frontend.
-The accompanying web application models and explores the mediatization and territorial restructuring of the german territories during the early 19th century.
-
-
 # API Documentation
 
 ## Domain-Agnostic-Endpoints (CRUD)
