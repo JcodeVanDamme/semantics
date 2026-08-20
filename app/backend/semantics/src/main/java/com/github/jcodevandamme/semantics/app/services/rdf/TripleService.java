@@ -47,10 +47,6 @@ public class TripleService {
         return DTOFactory.tripleArr(results);
     }
 
-    /*public Object querySparql(String sparqlQuery) {
-        return tripleStore.query(sparqlQuery);
-    }*/
-
     public boolean updateTriple(PutTriplesRequest request) throws TripleNotFoundException, IOException {
         TripleDto original = request.original();
         Triple oldT = new Triple(

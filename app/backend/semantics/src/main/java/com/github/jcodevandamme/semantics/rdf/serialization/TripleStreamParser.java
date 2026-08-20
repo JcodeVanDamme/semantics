@@ -4,8 +4,8 @@ import com.github.jcodevandamme.semantics.app.persistence.TripleLogger;
 import com.github.jcodevandamme.semantics.rdf.tripleStore.TripleStore;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.riot.system.StreamRDF;
-import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.core.Quad;
 
 public class TripleStreamParser implements StreamRDF {
 

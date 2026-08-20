@@ -12,7 +12,6 @@ import com.github.jcodevandamme.semantics.rdf.query.Query;
 import com.github.jcodevandamme.semantics.rdf.query.QueryFactory;
 import com.github.jcodevandamme.semantics.rdf.query.TripleQuery;
 import com.github.jcodevandamme.semantics.rdf.query.TripleQueryProcessor;
-import com.github.jcodevandamme.semantics.rdf.query.sparql.*;
 import com.github.jcodevandamme.semantics.rdf.structure.tree.dk2.dynamicbitvector.DynamicBitVectorConfiguration;
 
 import java.util.Collections;
@@ -31,7 +30,6 @@ public class TripleStore {
     private final TripleDictionary dict;
     private final BMatrix bMatrix;
     private final TripleQueryProcessor tripleProcessor;
-    //private final SparqlProcessor sparqlProcessor;
 
     public TripleStore() {
         dict = new TripleDictionary();
@@ -45,13 +43,11 @@ public class TripleStore {
                         DEFAULT_BITVECTOR_INT_MAX
                 ));
         tripleProcessor = new TripleQueryProcessor(bMatrix);
-        //sparqlProcessor = new SparqlProcessor(tripleProcessor);
     }
     public TripleStore(int k, int t, DynamicBitVectorConfiguration config) {
         dict = new TripleDictionary();
         bMatrix = new BMatrix(k, t, config);
         tripleProcessor = new TripleQueryProcessor(bMatrix);
-        //sparqlProcessor = new SparqlProcessor(tripleProcessor);
     }
 
     public List<Triple> query(String s, String p, String o) {
@@ -69,26 +65,6 @@ public class TripleStore {
             return Collections.emptyList();
         }
     }
-
-    // Sparql-Slop
-    //
-    /*public Object query(String queryString) {
-        try {
-            SparqlQuery sparqlQuery = SparqlParser.parseSparql(queryString, this.dict);
-            SparqlResult result = sparqlProcessor.execute(sparqlQuery);
-
-            if (result.isResultSet()) {
-                // HIER findet die Dekodierung für SELECT statt!
-                return TripleDecoder.decodeSelectResults(result.getResultSet(), this.dict);
-            } else {
-                // HIER findet die Dekodierung für CONSTRUCT/DESCRIBE statt (dein bisheriger Weg)
-                return TripleDecoder.decode(result.getTripleResult(), this.dict);
-            }
-
-        } catch (Exception ex) {
-            return Collections.emptyList();
-        }
-    }*/
 
     public boolean create(Triple t) {
         register(t);
